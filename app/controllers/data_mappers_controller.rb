@@ -11,11 +11,11 @@ class DataMappersController < ApplicationController
   def create
     @data_mapper = DataMapper.new(data_mapper_params)
     if @data_mapper.save
-      flash[:notice] = "Successfully uploaded csv file. the file is being processed. <br/>
+      flash[:notice] = "Successfully uploaded csv file. the file is being processed.
         You can download the reformatted file once complete"
       redirect_to @data_mapper
     else
-      flash[:alert] = "Error uploading cdv file!"
+      flash[:alert] = "Error uploading csv file!"
       render :new
     end
   end
