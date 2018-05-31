@@ -20,19 +20,19 @@
     <% @data_mappers.each do |dm| %>
       <tr>
         <td>
-          <!-- original file -->
-          <%= dm.title %>
+          <!-- title -->
+          <%= link_to dm.title, data_mapper_path(dm) %>
         </td>
         <td>
-          <!-- original file -->
+          <!-- File type -->
           <%= dm.file_type %>
         </td>
         <td>
-          <!-- original file -->
+          <!-- progress -->
           <%= dm.rows_processed %> / <%= dm.rows %>
         </td>
         <td>
-          <!-- original file -->
+          <!-- status -->
           <%= dm.status %>
         </td>
         <td>
@@ -41,9 +41,12 @@
           <%= link_to "Mapped file", dm.mapped_file.url(:original, false) %>
         </td>
         <td>
+          <!-- Date uploaded -->
           <%= dm.created_at %>
         </td>
-        <td> <%= link_to 'Remove', data_mapper_path(dm), class: 'btn btn-danger', method: :delete, data: {confirm: 'Are you sure?'} %>
+        <td>
+          <!-- delete -->
+          <%= link_to 'Remove', data_mapper_path(dm), class: 'btn btn-danger', method: :delete, data: {confirm: 'Are you sure?'} %>
         </td>
       </tr>
     <% end %>
