@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  type: 
+  rows: 1
+  rows_processed: 1
+  status: MyString
+  message: MyText
+
+two:
+  title: MyString
+  type: 
+  rows: 1
+  rows_processed: 1
+  status: MyString
+  message: MyText
