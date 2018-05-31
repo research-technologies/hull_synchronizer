@@ -1,0 +1,7 @@
+---
+:concurrency: <%= ENV.fetch("RAILS_MAX_THREADS") || 5 %>
+production:
+  :concurrency: 1
+  :verbose: false
+  :pidfile: <%= File.join(ENV.fetch('PIDS_PATH', 'tmp'), ENV.fetch('APPLICATION_KEY', ''),'sidekiq.pid') %>
+  :logfile: <%= File.join(ENV.fetch('LOGS_PATH','log'), ENV.fetch('APPLICATION_KEY', ''), 'sidekiq.log') %>
