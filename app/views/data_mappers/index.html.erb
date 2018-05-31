@@ -1,0 +1,51 @@
+<div class="page-header">
+  <h1>CSV file mapper</h1>
+  <div class="right"><%= link_to 'Upload file', new_data_mapper_path, class: 'btn btn-success' %></div>
+</div>
+<div>
+  <% if @data_mappers.present? %>
+    <table class="table table-condensed table-striped">
+      <thead>
+      <tr>
+        <th>Title</th>
+        <th>Type</th>
+        <th>Progress</th>
+        <th>Status</th>
+        <th>Files</th>
+        <th>Date uploaded</th>
+        <th>Delete record</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% @data_mappers.each do |dm| %>
+      <tr>
+        <td>
+          <!-- original file -->
+          <%= dm.title %>
+        </td>
+        <td>
+          <!-- original file -->
+          <%= dm.file_type %>
+        </td>
+        <td>
+          <!-- original file -->
+          <%= dm.rows_processed %> / <%= dm.rows %>
+        </td>
+        <td>
+          <!-- original file -->
+          <%= dm.status %>
+        </td>
+        <td>
+          <!-- files -->
+          <%= link_to "Original file", dm.original_file.url(:original, false) %><br/>
+          <%= link_to "Mapped file", dm.mapped_file.url(:original, false) %>
+        </td>
+        <td>
+          <%= dm.created_at %>
+        </td>
+        <td> <%= link_to 'Remove', data_mapper_path(dm), class: 'btn btn-danger', method: :delete, data: {confirm: 'Are you sure?'} %>
+        </td>
+      </tr>
+    <% end %>
+  <% end %>
+</div>

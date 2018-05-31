@@ -1,0 +1,28 @@
+<div class="page-header"><h1>CSV file mapper</h1></div>
+
+<div>
+  <dl class="show">
+    <dt>Title</dt>
+    <dd><%= @data_mapper.title %></dd>
+
+    <dt>Type</dt>
+    <dd><%= @data_mapper.file_type %></dd>
+
+    <dt>Progress</dt>
+    <dd><%= @data_mapper.rows_processed %> of <%= @data_mapper.rows %> rows</dd>
+
+    <dt>Status</dt>
+    <dd><%= @data_mapper.status %></dd>
+    <dd><%= @data_mapper.message %></dd>
+
+    <dt>Files</dt>
+    <dd><%= link_to "Original file", @data_mapper.original_file.url(:original, false) %></dd>
+    <dd><%= link_to "Mapped file", @data_mapper.mapped_file.url(:original, false) %></dd>
+
+    <dt>Time Uploaded</dt>
+    <dd><%= @data_mapper.created_at %></dd>
+
+    <dt>Time Completed</dt>
+    <dd><%= @data_mapper.updated_at %></dd>
+  </dl>
+</div>

@@ -1,0 +1,29 @@
+// Place all the styles related to the DataMapper controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+dl.show dt {
+  float: left;
+  clear: left;
+  width: 100px;
+  text-align: right;
+  font-weight: bold;
+  color: #808080;
+  }
+dl.show dt::after {
+  content: ":";
+}
+dl.show dd {
+  margin: 0 0 0 110px;
+  padding: 0 0 0.5em 0;
+}
+
+.data_mapper_form label {
+  min-width: 100px;
+}
+
+.data_mapper_form .form-control {
+  max-width: 500px;
+  min-height: 45px;
+  display: inline;
+}
