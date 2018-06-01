@@ -1,5 +1,5 @@
-module DataMapper
-  class DataModel
+module DataCrosswalks
+  class DataArchiveModel
     # def fields
     #   [
     #     id,

@@ -1,12 +1,15 @@
 # Usage
-# ab_in_file = 'test/fixtures/files/AssetBank-export-2018-03-19-15-48-26.csv'
-# ab = DataImporter::MapAssetBank.new(ab_in_file)
+# require 'data_crosswalks/map_asset_bank'
+# ab_dm = DataMapper.all[2]
+# ab = DataCrosswalks::MapAssetBank.new(ab_dm)
 # ab.generate_file
 #
-module DataMapper
+require 'data_crosswalks/map_csv'
+require 'data_crosswalks/data_archive_model'
+module DataCrosswalks
   class MapAssetBank < MapCSV
     def header
-      dm = DataModel.new
+      dm = DataArchiveModel.new
       {
         'file' => dm.filename,
         'assetId' => dm.id,
