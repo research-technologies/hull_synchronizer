@@ -5,3 +5,6 @@ production:
   :verbose: false
   :pidfile: <%= File.join(ENV.fetch('PIDS_PATH', 'tmp'), ENV.fetch('APPLICATION_KEY', ''),'sidekiq.pid') %>
   :logfile: <%= File.join(ENV.fetch('LOGS_PATH','log'), ENV.fetch('APPLICATION_KEY', ''), 'sidekiq.log') %>
+:queues:
+  - default
+  - crosswalk
