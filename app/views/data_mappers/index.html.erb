@@ -37,8 +37,12 @@
         </td>
         <td>
           <!-- files -->
-          <%= link_to "Original file", dm.original_file.url(:original, false) %><br/>
-          <%= link_to "Mapped file", dm.mapped_file.url(:original, false) %>
+          <% if dm.original_file.exists? %>
+            <%= link_to "Original file", dm.original_file.url(:original, false) %><br/>
+          <% end %>
+          <% if dm.mapped_file.exists? %>
+            <%= link_to "Mapped file", dm.mapped_file.url(:original, false) %>
+          <% end %>
         </td>
         <td>
           <!-- Date uploaded -->
