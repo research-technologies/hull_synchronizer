@@ -11,6 +11,11 @@ class DataMappersController < ApplicationController
   def create
     @data_mapper = DataMapper.new(data_mapper_params)
     if @data_mapper.save
+      @data_mapper.rows = `wc -l "#{@data_mapper.original_file.path}"`.strip.split(' ')[0].to_i
+      @data_mapper.rows_processed = 0
+      @data_mapper.status = 'Waiting'
+      @data_mapper.save!
+      CsvCrosswalkJob.perform_later(@data_mapper.id, @data_mapper.file_type)
       flash[:notice] = "Successfully uploaded csv file. the file is being processed.
         You can download the reformatted file once complete"
       redirect_to @data_mapper

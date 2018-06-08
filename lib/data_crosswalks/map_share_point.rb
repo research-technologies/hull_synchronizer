@@ -1,12 +1,15 @@
 # Usage
-# sp_in_file = 'test/fixtures/files/SharePoint-example-of-export-spreadsheet.csv'
-# sp = DataImporter::MapSharePoint.new(sp_in_file)
+# require 'data_crosswalks/map_share_point'
+# sp_dm = DataMapper.first
+# sp = DataCrosswalks::MapSharePoint.new(sp_dm)
 # sp.generate_file
 #
-module DataMapper
+require 'data_crosswalks/map_csv'
+require 'data_crosswalks/data_archive_model'
+module DataCrosswalks
   class MapSharePoint < MapCSV
     def header
-      dm = DataModel.new
+      dm = DataArchiveModel.new
       {
         'Name' => dm.filename,
         'Modified' => dm.date_modified,
