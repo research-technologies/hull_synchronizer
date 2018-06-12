@@ -57,3 +57,7 @@ gem 'jquery-rails'
 gem "paperclip", "~> 5.0.0"
 gem 'sidekiq'
 gem 'sidekiq-scheduler'
+
+group :development, :test do
+  gem 'rspec-rails', '~> 3.7'
+end
