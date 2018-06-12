@@ -6,17 +6,8 @@
 # see https://stackoverflow.com/questions/19946153/how-do-i-use-pumas-configuration-file
 
 # Setup paths
-log_dir = if ENV['LOGS_PATH']
-            File.join(ENV['LOGS_PATH'], ENV['APPLICATION_KEY'])
-          else
-            'log'
-          end
-
-pids_dir = if ENV['PIDS_PATH']
-             File.join(ENV['PIDS_PATH'], ENV['APPLICATION_KEY'])
-           else
-             ENV.fetch('RAILS_TMP', 'tmp')
-           end
+log_dir = ENV.fetch('LOGS_PATH', ENV.fetch('RAILS_TMP', 'tmp'))
+pids_dir = ENV.fetch('PIDS_PATH', ENV.fetch('RAILS_TMP', 'tmp'))
 
 # The directory to operate out of.
 # The default is the current directory.
@@ -66,26 +57,31 @@ plugin :tmp_restart
 # daemonize
 daemonize true if ENV['RAILS_ENV'] == 'production'
 
-if ENV['RAILS_ENV'] == 'production'
-  # Bind the server to “url”. “tcp://”, “unix://” and “ssl://” are the only
-  # accepted protocols.
-  # The default is “tcp://0.0.0.0:9292”.
-  if ENV['PATH_TO_KEY'] && ENV['PATH_TO_CERT']
-    # bind 'ssl://127.0.0.1:9292?key=path_to_key&cert=path_to_cert'
+# Bind the server to "url". "tcp://", "unix://" and "ssl://" are the only
+# accepted protocols.
+#
+# The default is "tcp://0.0.0.0:9292".
+#
+# bind 'tcp://0.0.0.0:9292'
+# bind 'unix:///var/run/puma.sock'
+# bind 'unix:///var/run/puma.sock?umask=0111'
+# bind 'ssl://127.0.0.1:9292?key=path_to_key&cert=path_to_cert'
 
-    # Instead of 'bind 'ssl://127.0.0.1:9292?key=path_to_key&cert=path_to_cert'' you
-    # can also use the 'ssl_bind' option.
- 
-    ssl_bind '127.0.0.1', ENV.fetch('PORT', '3000'), {
-      key: ENV['PATH_TO_KEY'],
-      cert: ENV['PATH_TO_CERT']
-        }
-    else
-    # Listens on port 3000
-    # The default is 9292
-    port ENV.fetch('PORT') { 3000 }
-    bind "unix://#{File.join(pids_dir, 'puma.sock')}"
-  end
+# Instead of "bind 'ssl://127.0.0.1:9292?key=path_to_key&cert=path_to_cert'" you
+# can also use the "ssl_bind" option.
+#
+# ssl_bind '127.0.0.1', '9292', {
+#   key: path_to_key,
+#   cert: path_to_cert
+# }
+# for JRuby additional keys are required:
+# keystore: path_to_keystore,
+# keystore_pass: password
+
+if ENV['RAILS_ENV'] == 'production'
+
+  port ENV.fetch('PORT') { 3000 }
+  bind "unix://#{File.join(pids_dir, 'puma.sock')}"
 
   # Redirect STDOUT and STDERR to files specified. The 3rd parameter
   # (“append”) specifies whether the output is appended, the default is
