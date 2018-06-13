@@ -23,11 +23,11 @@ module DataCrosswalks
               # process it
               new_row = deep_copy(row)
               to_process.each do |attr, func|
-                new_row[attr] = self.send(func.to_sym, row)
+                new_row[attr] = send(func.to_sym, row)
               end
               # write each row
-              output_csv << header.keys.map{ |attr| new_row.fetch(attr, nil) }
-              @rows = @rows + 1
+              output_csv << header.keys.map { |attr| new_row.fetch(attr, nil) }
+              @rows += 1
               @data_mapper.rows_processed = @rows
               @data_mapper.save!
             end
@@ -50,6 +50,5 @@ module DataCrosswalks
     def deep_copy(o)
       Marshal.load(Marshal.dump(o))
     end
-
   end
 end

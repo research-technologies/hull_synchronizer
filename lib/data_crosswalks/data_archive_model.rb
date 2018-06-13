@@ -109,6 +109,5 @@ module DataCrosswalks
     def data_classification
       'data_classification'
     end
-
   end
 end

@@ -20,7 +20,7 @@ class DataMappersController < ApplicationController
         You can download the reformatted file once complete"
       redirect_to @data_mapper
     else
-      flash[:alert] = "Error uploading csv file!"
+      flash[:alert] = 'Error uploading csv file!'
       render :new
     end
   end
@@ -29,22 +29,21 @@ class DataMappersController < ApplicationController
     @data_mapper = DataMapper.find(params[:id])
   end
 
-  #Destroy action for deleting an already uploaded file
+  # Destroy action for deleting an already uploaded file
   def destroy
     @data_mapper = DataMapper.find(params[:id])
     if @data_mapper.destroy
-      flash[:notice] = "Successfully deleted csv record!"
-      redirect_to action: "index"
+      flash[:notice] = 'Successfully deleted csv record!'
+      redirect_to action: 'index'
     else
-      flash[:alert] = "Error deleting csv record"
+      flash[:alert] = 'Error deleting csv record'
     end
   end
 
   private
 
-  #Permitted parameters when uploading a file. This is used for security reasons.
+  # Permitted parameters when uploading a file. This is used for security reasons.
   def data_mapper_params
     params.require(:data_mapper).permit(:title, :file_type, :original_file)
   end
-
 end
