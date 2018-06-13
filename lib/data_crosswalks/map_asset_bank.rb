@@ -54,8 +54,7 @@ module DataCrosswalks
     end
 
     def process_file(row)
-      "#{File.basename(row['file'], ".*")}.#{row['assetId']}#{File.extname(row['file'])}"
+      "#{File.basename(row['file'], '.*')}.#{row['assetId']}#{File.extname(row['file'])}"
     end
-
   end
 end
