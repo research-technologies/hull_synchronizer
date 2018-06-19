@@ -24,12 +24,16 @@ module Archivematica
         job_status(
           code: 'success', message: body['message']
         )
-        Archivematica::TransferStatusJob.set(wait: 5.minutes).perform_later(
+        next_job.set(wait: 5.minutes).perform_later(
           job_status_id: job_status_id, uuid: body['uuid']
         )
       else
         job_status
       end
+    end
+
+    def next_job
+      Archivematica::TransferStatusJob
     end
   end
 end

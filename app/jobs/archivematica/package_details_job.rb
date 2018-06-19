@@ -1,7 +1,7 @@
 module Archivematica
   # call the package details archivematica storage service api
   class PackageDetailsJob < BaseJob
-    attr_reader :metadata, :dip_uuid
+    attr_reader :dip_uuid, :metadata
 
     def perform(job_status_id:, uuid:)
       @job_status_id = job_status_id
@@ -24,8 +24,7 @@ module Archivematica
 
     def act_on_ok
       if body['status'] == 'UPLOADED'
-        # TODO: metadata[:blah]
-        # we're assuming just one DIP
+        add_metadata(metadata_hash: body)
         dip_response(
           dip_uuid: dip_uuid
         )
@@ -51,7 +50,7 @@ module Archivematica
     def act_on_ok_dip(dip_r:)
       dip_body = JSON.parse(dip_r.body)
       if dip_body['status'] == 'UPLOADED'
-        metadata[:blah]
+        add_metadata(metadata_hash: dip_body)
         start_deposits
       else
         job_status(code: 'retry', message: dip_body['status'])
@@ -63,12 +62,27 @@ module Archivematica
 
     def start_deposits
       job_status(code: 'success', message: body['status'])
-      # UnpackDipForDepositJob.perform_later
-      #   (job_status_id: job_status_id, dip_location: xxx)
-      # -> Sword::PrepareDepositJob.perform_later
-      #   (job_status_id, metadata, [files], model)
-      # ---> Sword::DepositJob.perform_later
-      #   (job_status_id, deposit_bag_location)
+      UnpackDipForDepositJob.perform_later(
+        job_status_id: job_status_id,
+        dip_location: metadata[:dip_current_full_path],
+        metadata: metadata
+      )
+    end
+
+    def next_job
+      UnpackDipForDepositJob
+    end
+
+    def add_metadata(metadata_hash:)
+      p_type = metadata_hash['package_type'].downcase if metadata_hash['package_type']
+      metadata_hash.each_pair do |key, value|
+        next if %w[package_type misc_attributes related_packages].include? key
+        if key == 'origin_pipeline'
+          @metadata[key.to_sym] = value
+        else
+          @metadata["#{p_type}_#{key}".to_sym] = value
+        end
+      end
     end
   end
 end

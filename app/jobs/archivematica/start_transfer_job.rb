@@ -23,13 +23,17 @@ module Archivematica
     def act_on_ok
       if body['message'] == 'Copy successful'
         job_status(code: 'success', message: message_text)
-        Archivematica::ApproveTransferJob.perform_later(
+        next_job.perform_later(
           job_status_id: job_status_id,
           path: body['path'].split('/').last
         )
       else
         job_status(message: message_text)
       end
+    end
+
+    def next_job
+      Archivematica::ApproveTransferJob
     end
   end
 end

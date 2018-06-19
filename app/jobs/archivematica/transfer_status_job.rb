@@ -34,7 +34,7 @@ module Archivematica
 
     def complete(transfer_status:)
       job_status(code: 'success', message: transfer_status)
-      Archivematica::IngestStatusJob.set(wait: 5.minutes).perform_later(
+      next_job.set(wait: 5.minutes).perform_later(
         job_status_id: job_status_id,
         uuid: transfer_status
       )
@@ -42,7 +42,7 @@ module Archivematica
 
     def update(transfer_status:)
       job_status(code: 'retry', message: transfer_status)
-      Archivematica::TransferStatusJob.set(wait: 5.minutes).perform_later(
+      current_job.set(wait: 5.minutes).perform_later(
         job_status_id: job_status_id,
         uuid: transfer_status
       )
@@ -51,10 +51,14 @@ module Archivematica
     def user_input(transfer_status:)
       # TODO: send an email
       job_status(code: 'retry', message: transfer_status)
-      Archivematica::TransferStatusJob.set(wait: 1.days).perform_later(
+      current_job.set(wait: 1.days).perform_later(
         job_status_id: job_status_id,
         uuid: transfer_status
       )
+    end
+
+    def next_job
+      Archivematica::IngestStatusJob
     end
   end
 end

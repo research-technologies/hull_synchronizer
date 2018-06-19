@@ -17,6 +17,10 @@ module Archivematica
       JSON.parse(response.body)
     end
 
+    def current_job
+      self.class
+    end
+
     # Handle http response codes other 200
     # Reschedule x retries for 500 series errors
     def act_on_error
