@@ -7,9 +7,9 @@ RSpec.describe Archivematica::IngestStatusJob do
   describe 'successful job' do
     before do
       allow(Archivematica::PackageDetailsJob).to receive(:set).and_return(Archivematica::PackageDetailsJob)
-      allow(Archivematica::IngestStatusJob).to receive(:set).and_return(Archivematica::IngestStatusJob)
+      allow(described_class).to receive(:set).and_return(described_class)
       allow(Archivematica::PackageDetailsJob).to receive(:perform_later)
-      allow(Archivematica::IngestStatusJob).to receive(:perform_later)
+      allow(described_class).to receive(:perform_later)
       allow(JobStatusService).to receive(:new)
     end
 
@@ -34,8 +34,8 @@ RSpec.describe Archivematica::IngestStatusJob do
           .to_return(status: 200, body: { status: 'PROCESSING', uuid: 'uuid' }.to_json)
       end
       it 'performs the job, queues the next job and calls the job status service' do
-        expect(Archivematica::IngestStatusJob).to receive(:set).with(wait: 5.minutes)
-        expect(Archivematica::IngestStatusJob).to receive(:perform_later)
+        expect(described_class).to receive(:set).with(wait: 5.minutes)
+        expect(described_class).to receive(:perform_later)
         expect(JobStatusService).to receive(:new).with(hash_including(:job_status_id, :job, status: 'retry', message: '200: PROCESSING'))
         described_class.perform_now(
           job_status_id: 'job_status_id',
@@ -50,8 +50,8 @@ RSpec.describe Archivematica::IngestStatusJob do
           .to_return(status: 200, body: { status: 'USER_INPUT', uuid: 'uuid' }.to_json)
       end
       it 'performs the job, queues the next job and calls the job status service' do
-        expect(Archivematica::IngestStatusJob).to receive(:set).with(wait: 1.days)
-        expect(Archivematica::IngestStatusJob).to receive(:perform_later)
+        expect(described_class).to receive(:set).with(wait: 60.minutes)
+        expect(described_class).to receive(:perform_later)
         expect(JobStatusService).to receive(:new).with(hash_including(:job_status_id, :job, status: 'retry', message: '200: USER_INPUT'))
         described_class.perform_now(
           job_status_id: 'job_status_id',

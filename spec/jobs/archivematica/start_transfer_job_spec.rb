@@ -7,13 +7,15 @@ RSpec.describe Archivematica::StartTransferJob do
   describe 'successful job' do
     before do
       stub_request(:post, 'http://test.host/api/transfer/start_transfer/')
-        .to_return(status: 200, body: { message: 'Copy successful', path: 'path' }.to_json)
+        .to_return(status: 200, body: { message: 'Copy successful.', path: 'path' }.to_json)
       allow(Archivematica::ApproveTransferJob).to receive(:perform_later)
+      allow(Archivematica::ApproveTransferJob).to receive(:set).and_return(Archivematica::ApproveTransferJob)
       allow(JobStatusService).to receive(:new)
     end
     it 'performs the job, queues the next job and calls the job status service' do
+      expect(Archivematica::ApproveTransferJob).to receive(:set).with(wait: 30.seconds)
       expect(Archivematica::ApproveTransferJob).to receive(:perform_later)
-      expect(JobStatusService).to receive(:new).with(hash_including(:job_status_id, :job, status: 'success', message: '200: Copy successful'))
+      expect(JobStatusService).to receive(:new).with(hash_including(:job_status_id, :job, status: 'success', message: '200: Copy successful.'))
       described_class.perform_now(
         job_status_id: 'job_status_id',
         name: 'name',
@@ -27,6 +29,7 @@ RSpec.describe Archivematica::StartTransferJob do
       stub_request(:post, 'http://test.host/api/transfer/start_transfer/')
         .to_return(status: 418, body: {}.to_json, headers: { warning: 'warning message' })
       allow(Archivematica::ApproveTransferJob).to receive(:perform_later)
+      allow(Archivematica::ApproveTransferJob).to receive(:set).and_return(Archivematica::ApproveTransferJob)
       allow(JobStatusService).to receive(:new)
     end
     it 'performs the job, queues the next job and calls the job status service' do

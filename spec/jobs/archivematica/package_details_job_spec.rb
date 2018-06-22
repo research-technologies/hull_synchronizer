@@ -38,7 +38,7 @@ RSpec.describe Archivematica::PackageDetailsJob do
   describe 'successful request' do
     before do
       allow(JobStatusService).to receive(:new)
-      allow(Archivematica::PackageDetailsJob).to receive(:perform_later)
+      allow(described_class).to receive(:perform_later)
       allow(UnpackDipForDepositJob).to receive(:perform_later)
     end
 
@@ -79,7 +79,7 @@ RSpec.describe Archivematica::PackageDetailsJob do
       end
       it 'performs the job, calls the dip_response' do
         expect(JobStatusService).to receive(:new).with(hash_including(:job_status_id, :job, status: 'retry', message: '200: SOMETHING_ELSE'))
-        expect(Archivematica::PackageDetailsJob).to receive(:perform_later).with(job_status_id: 'job_status_id', uuid: 'uuid')
+        expect(described_class).to receive(:perform_later).with(job_status_id: 'job_status_id', uuid: 'uuid')
         described_class.perform_now(
           job_status_id: 'job_status_id',
           uuid: 'uuid'
@@ -97,7 +97,7 @@ RSpec.describe Archivematica::PackageDetailsJob do
       end
       it 'performs the job, calls the dip_response' do
         expect(JobStatusService).to receive(:new).with(hash_including(:job_status_id, :job, status: 'retry', message: '200: SOMETHING_ELSE'))
-        expect(Archivematica::PackageDetailsJob).to receive(:perform_later).with(job_status_id: 'job_status_id', uuid: 'uuid')
+        expect(described_class).to receive(:perform_later).with(job_status_id: 'job_status_id', uuid: 'uuid')
         described_class.perform_now(
           job_status_id: 'job_status_id',
           uuid: 'uuid'

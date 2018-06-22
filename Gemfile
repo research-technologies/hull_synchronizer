@@ -55,7 +55,7 @@ gem 'faraday'
 gem 'jquery-rails'
 gem 'paperclip', '~> 5.0.0'
 gem 'sidekiq'
-gem 'sidekiq-scheduler' # we might not need this
+# gem 'sidekiq-scheduler' # we might not need this
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
 group :development, :test do

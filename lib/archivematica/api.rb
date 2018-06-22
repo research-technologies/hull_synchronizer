@@ -45,9 +45,7 @@ module Archivematica
     # Creates connection to archivematica
     module ArchivematicaConnection
       def connection
-        if ENV['AM_URL'].blank? || ENV['AM_USER'].blank? || ENV['AM_KEY'].blank?
-          raise 'environment variables are not set'
-        end
+        raise 'environment variables are not set' if ENV['AM_URL'].blank? || ENV['AM_USER'].blank? || ENV['AM_KEY'].blank?
         auth = "ApiKey #{ENV['AM_USER']}:#{ENV['AM_KEY']}"
         connection_for(url: ENV['AM_URL'], auth: auth)
       end
@@ -56,9 +54,7 @@ module Archivematica
     # Creates connection to archivematica storage service
     module StorageServiceConnection
       def connection
-        if ENV['SS_URL'].blank? || ENV['SS_USER'].blank? || ENV['SS_KEY'].blank?
-          raise 'environment variables are not set'
-        end
+        raise 'environment variables are not set' if ENV['SS_URL'].blank? || ENV['SS_USER'].blank? || ENV['SS_KEY'].blank?
         auth = "ApiKey #{ENV['SS_USER']}:#{ENV['SS_KEY']}"
         connection_for(url: ENV['SS_URL'], auth: auth)
       end

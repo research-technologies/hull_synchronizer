@@ -1,6 +1,6 @@
 # Unpack the DIP to prepare multiple deposits
 class UnpackDipForDepositJob < ActiveJob::Base
-    queue_as :unpack
+    queue_as :processing
     attr_reader :job_status_id
     def perform(job_status_id:, dip_location:, metadata:)
         @job_status_id = job_status_id

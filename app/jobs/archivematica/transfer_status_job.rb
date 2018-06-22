@@ -11,54 +11,54 @@ module Archivematica
 
     private
 
-    def act_on_status
-      if status == 200
-        act_on_ok(transfer_status: body['status'])
-      else
-        act_on_error
+      def act_on_status
+        if status == 200
+          act_on_ok(transfer_status: body['status'])
+        else
+          act_on_error
+        end
       end
-    end
 
-    def act_on_ok(transfer_status:)
-      case transfer_status
-      when 'COMPLETE'
-        complete(transfer_status: transfer_status)
-      when 'PROCESSING'
-        update(transfer_status: transfer_status)
-      when 'USER_INPUT'
-        user_input(transfer_status: transfer_status)
-      else
-        job_status(message: transfer_status)
+      def act_on_ok(transfer_status:)
+        case transfer_status
+        when 'COMPLETE'
+          complete(transfer_status: transfer_status)
+        when 'PROCESSING'
+          update(transfer_status: transfer_status)
+        when 'USER_INPUT'
+          user_input(transfer_status: transfer_status)
+        else
+          job_status(message: transfer_status)
+        end
       end
-    end
 
-    def complete(transfer_status:)
-      job_status(code: 'success', message: transfer_status)
-      next_job.set(wait: 5.minutes).perform_later(
-        job_status_id: job_status_id,
-        uuid: transfer_status
-      )
-    end
+      def complete(transfer_status:)
+        job_status(code: 'success', message: transfer_status)
+        next_job.set(wait: 5.minutes).perform_later(
+          job_status_id: job_status_id,
+          uuid: body['sip_uuid']
+        )
+      end
 
-    def update(transfer_status:)
-      job_status(code: 'retry', message: transfer_status)
-      current_job.set(wait: 5.minutes).perform_later(
-        job_status_id: job_status_id,
-        uuid: transfer_status
-      )
-    end
+      def update(transfer_status:)
+        job_status(code: 'retry', message: transfer_status)
+        current_job.set(wait: 5.minutes).perform_later(
+          job_status_id: job_status_id,
+          uuid: body['uuid']
+        )
+      end
 
-    def user_input(transfer_status:)
-      # TODO: send an email
-      job_status(code: 'retry', message: transfer_status)
-      current_job.set(wait: 1.days).perform_later(
-        job_status_id: job_status_id,
-        uuid: transfer_status
-      )
-    end
+      def user_input(transfer_status:)
+        # TODO: send an email
+        job_status(code: 'retry', message: transfer_status)
+        current_job.set(wait: 60.minutes).perform_later(
+          job_status_id: job_status_id,
+          uuid: body['uuid']
+        )
+      end
 
-    def next_job
-      Archivematica::IngestStatusJob
-    end
+      def next_job
+        Archivematica::IngestStatusJob
+      end
   end
 end
