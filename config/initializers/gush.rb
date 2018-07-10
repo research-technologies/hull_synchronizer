@@ -8,5 +8,5 @@
 
 Gush.configure do |config|
   config.concurrency = 1
-  #config.ttl = 3600*24*7
+  # config.ttl = 3600*24*7
 end

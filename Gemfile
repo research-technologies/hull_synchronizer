@@ -61,7 +61,7 @@ gem 'sidekiq'
 gem 'gush', '~> 1.0.0'
 
 group :development, :test do
+  gem 'bixby'
   gem 'rspec-rails', '~> 3.7'
   gem 'webmock'
-  gem 'bixby'
 end

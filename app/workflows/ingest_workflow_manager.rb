@@ -8,8 +8,8 @@ class IngestWorkflowManager
   end
 
   # Monitor the workflow for retry events
-  #  delay start to give the approve / start jobs time to run
+  #  delay start to give the start and approve jobs time to run
   def monitor
-    IngestWorkflowMonitorJob.set(wait: 1.minute).perform_later(workflow_id: flow.id)
+    IngestWorkflowMonitorJob.set(wait: 1.minute).perform_later(flow.id)
   end
 end

@@ -1,0 +1,43 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Ingests</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ingest</th>
+      <th>Started at</th>
+      <th>Finished at</th>
+      <th>Status</th>
+      <th>Failure info</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @ingests.each do | ingest | %>
+      
+      <tr>
+        <td>
+          <%= ingest.id %><br />
+          <%= link_to 'Show', :action => "show", :id => ingest.id %>
+          </td>
+        <td><%= Time.at(ingest.started_at) unless ingest.started_at.blank? %></td>
+        <td><%= Time.at(ingest.finished_at) unless ingest.finished_at.blank? %></td>
+        <td><%= ingest.status %></td>
+        <td>
+          <% failed = ingest.jobs.select(&:failed?) %>
+          <% failed.each do | job | %>
+            <%= job.name %><br />
+            <%= Time.at(job.failed_at) %><br />
+            <%= job.output_payload[:event] if job.output_payload%><br />
+            <%= job.output_payload[:message] if job.output_payload %><br />
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%#= link_to 'New Ingest', new_ingest_path %>
