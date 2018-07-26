@@ -26,6 +26,5 @@ module DataCrosswalks
     def to_process
       {}
     end
-
   end
 end

@@ -1,0 +1,79 @@
+<p id="notice"><%= notice %></p>
+
+
+<table>
+
+  <tbody>
+    <tr>
+      <td>ID:</td><td><%= @ingest.id%></td>
+    </tr>
+    <tr>
+      <td>Name:</td><td><%= @ingest.class.to_s %></td>
+    </tr>
+    <tr>
+      <td>Started at:</td><td><%= Time.at(@ingest.started_at) %></td>
+    </tr>
+    <tr>
+      <td>Status</td><td><%= @ingest.status %></td>
+    </tr>
+    <tr>
+      <td>Jobs:</td><td><%= @ingest.jobs.count %></td>
+    </tr>
+    <tr>
+      <td>Enqueued jobs:</td><td><%= @ingest.jobs.select(&:enqueued?).count %></td>
+    </tr>
+    <tr>
+      <td>Running jobs:</td><td><%= @ingest.jobs.select(&:running?).count %></td>
+    </tr>
+    <tr>
+      <td>Remaining jobs:</td><td><%= @ingest.jobs.count{|j| [j.finished?, j.failed?, j.enqueued?].none? } %></td>
+    </tr>
+    <tr>
+      <td>Succeeded jobs:</td><td><%= @ingest.jobs.select(&:succeeded?).count %></td>
+    </tr>
+    <tr>
+    <% first = @ingest.initial_jobs.first %>
+    <% if first.succeeded? %>
+        <td></td>
+        <td>
+          <%= first.name %><br />
+          <% if first.output_payload %>
+            &nbsp;&nbsp;<%= first.output_payload[:message] %>
+          <% end %>
+        </td>
+    <% end %>
+    </tr>
+    <% job = @ingest.find_job(first.outgoing.first) %>
+    <% (@ingest.jobs.count-1 ).times do  %>
+      <% if job.succeeded?%>
+      <tr>
+        <td></td>
+        <td>
+          <%= job.name %><br />
+          <% if job.output_payload %>
+            &nbsp;&nbsp;<%= job.output_payload[:message] %>
+          <% end %>
+        </td>
+      </tr>
+      <% end %>
+      <% job = @ingest.find_job(job.outgoing.first) %>
+    <% end %>
+    <tr>
+      <td>Failed jobs:</td><td><%= @ingest.jobs.select(&:failed?).count %></td>
+    </tr>
+    <% @ingest.jobs.select(&:failed?).each do | job | %>
+      <tr>
+        <td></td>
+        <td>
+          <%= job.name %><br />
+          <% if job.output_payload %>
+            &nbsp;&nbsp;<%= job.output_payload[:event] %><br />
+            &nbsp;&nbsp;<%= job.output_payload[:message] %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<br />
+<%= link_to 'Back', ingests_path %>

@@ -5,6 +5,10 @@ production:
   :verbose: false
   :pidfile: <%= File.join(ENV.fetch('PIDS_PATH', 'tmp'),'sidekiq.pid') %>
   :logfile: <%= File.join(ENV.fetch('LOGS_PATH','log'), 'sidekiq.log') %>
+development:
+  :verbose: true
 :queues:
   - default
   - crosswalk
+  - gush
+  - workflow_monitor

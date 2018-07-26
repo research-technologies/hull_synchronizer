@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180531002852) do
+ActiveRecord::Schema.define(version: 20180710144140) do
 
   create_table "data_mappers", force: :cascade do |t|
     t.string "title"
@@ -29,6 +29,11 @@ ActiveRecord::Schema.define(version: 20180531002852) do
     t.string "mapped_file_content_type"
     t.integer "mapped_file_file_size"
     t.datetime "mapped_file_updated_at"
+  end
+
+  create_table "ingests", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
 end
