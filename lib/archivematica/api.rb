@@ -62,20 +62,24 @@ module Archivematica
 
     # Interface for the start_transfer api call
     class StartTransfer
-      include ApiBase
+      include Archivematica::Api::ApiBase
       include ArchivematicaConnection
       # POST /api/transfer/start_transfer/
-      # params must contain [:name] and [:path]
+      # params must contain [:path]
       #   path is the transfer_source_path for the transfer in archivemaica
-      # params may contain [:accession] and [:type]
+      # params may contain [:name], [:accession] and [:type]
+      #   the default type is 'unzipped bag'
+      #   other valid options are: standard, unzipped bag, dspace
       # @return [FaradayResponse] response
       def request
-        raise 'name and path are required' if params[:name].blank? || params[:path].blank?
+        raise 'path (a String) is required' if params[:path].blank?
         raise 'AM_TS environment variable is not set' if ENV['AM_TS'].blank?
         type = params[:type] || 'unzipped bag'
+        name = params[:name] || params[:path].split('/').last
         connection.post '/api/transfer/start_transfer/',
-                        name: params[:name],
-                        type: type, accession: params[:accession],
+                        name: name,
+                        type: type,
+                        accession: params[:accession],
                         paths: [Base64.encode64("#{ENV['AM_TS']}:#{params[:path]}")]
       rescue StandardError => e
         response_for(error: e)
@@ -84,16 +88,19 @@ module Archivematica
 
     # Interface for the transfer/approve api call
     class ApproveTransfer
-      include ApiBase
+      include Archivematica::Api::ApiBase
       include ArchivematicaConnection
       # POST /api/transfer/approve/
       # params must contain [:directory]
       #   directory is the transfer directory name, not the full path
       # params may contain [:type]
+      #   the default type is 'zipped bag'
+      #   other valid options are: standard, unzipped bag, dspace
       # @return [FaradayResponse] response
       def request
         raise 'directory is required' if params[:directory].blank?
         type = params[:type] || 'unzipped bag'
+
         connection.post '/api/transfer/approve',
                         directory: params[:directory],
                         type: type
@@ -104,7 +111,7 @@ module Archivematica
 
     # Interface for the transfer/unapproved api call
     class UnapprovedTransfers
-      include ApiBase
+      include Archivematica::Api::ApiBase
       include ArchivematicaConnection
       # GET /api/transfer/unapproved
       # @return [FaradayResponse] response
@@ -117,7 +124,7 @@ module Archivematica
 
     # Interface for the transfer/status api call
     class TransferStatus
-      include ApiBase
+      include Archivematica::Api::ApiBase
       include ArchivematicaConnection
       # GET /transfer/status/<UUID>/
       # params must contain [:uuid] - transfer uuid
@@ -132,7 +139,7 @@ module Archivematica
 
     # Interface for the ingest/status api call
     class IngestStatus
-      include ApiBase
+      include Archivematica::Api::ApiBase
       include ArchivematicaConnection
       # GET /ingest/status/<UUID>/
       # params must contain [:uuid] - sip/aip uuid
@@ -147,7 +154,7 @@ module Archivematica
 
     # Interface for the package details api call
     class PackageDetails
-      include ApiBase
+      include Archivematica::Api::ApiBase
       include StorageServiceConnection
       # GET /api/v2/file/<UUID>/
       # @param uuid [String] sip/aip uuid

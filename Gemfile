@@ -57,8 +57,9 @@ gem 'faraday'
 gem 'jquery-rails'
 gem 'paperclip', '~> 5.0.0'
 gem 'sidekiq'
-# gem 'sidekiq-scheduler' # we might not need this
 gem 'gush', '~> 1.0.0'
+# used for bagit and zip
+gem 'willow_sword', git: 'https://github.com/CottageLabs/willow_sword.git' 
 
 group :development, :test do
   gem 'bixby'
