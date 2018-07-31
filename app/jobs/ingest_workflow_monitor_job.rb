@@ -48,6 +48,7 @@ class IngestWorkflowMonitorJob < ActiveJob::Base
   end
 
   def log_failure
+    flow.mark_as_stopped
     error = flow.jobs.find { |job| job.output_payload && job.output_payload[:event] == 'failed' }
     Rails.logger.error "ERROR in #{error.name}: #{error.output_payload[:message]}"
   end
@@ -64,6 +65,6 @@ class IngestWorkflowMonitorJob < ActiveJob::Base
   #  @todo consider whether we should limit the number of retries
   #    if so, this method could raise an error and use Sidekiq's retry functionality instead
   def retry_later
-    IngestWorkflowMonitorJob.set(wait: 15.minutes).perform_later(workflow_id: flow.id)
+    IngestWorkflowMonitorJob.set(wait: 15.minutes).perform_later(flow.id)
   end
 end

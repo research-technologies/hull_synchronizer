@@ -48,7 +48,7 @@ module Archivematica
           output(
             event: 'success', message: message_text,
             dip_location: metadata[:dip_current_full_path],
-            metadata: metadata
+            package_metadata: metadata
           )
         else
           output(event: 'retry', message: message_text)
