@@ -10,11 +10,12 @@
       <th>Finished at</th>
       <th>Status</th>
       <th>Failure info</th>
+      <th>Delete</th>
     </tr>
   </thead>
 
   <tbody>
-    <% @ingests.each do | ingest | %>
+    <% jobs_in_order.each do | ingest | %>
       
       <tr>
         <td>
@@ -25,14 +26,23 @@
         <td><%= Time.at(ingest.finished_at) unless ingest.finished_at.blank? %></td>
         <td><%= ingest.status %></td>
         <td>
-          <% failed = ingest.jobs.select(&:failed?) %>
-          <% failed.each do | job | %>
-            <%= job.name %><br />
-            <%= Time.at(job.failed_at) %><br />
-            <%= job.output_payload[:event] if job.output_payload%><br />
-            <%= job.output_payload[:message] if job.output_payload %><br />
+          <% ingest.jobs.select(&:failed?).sort_by(&:failed_at).each do | job | %>
+            Job: <%= job.name %><br />
+            &nbsp;&nbsp;Failed at: <%= Time.at(job.failed_at) %><br />
+            &nbsp;&nbsp;Message: <%= job.output_payload[:message] if job.output_payload %>
+            <% if job.output_payload && job.output_payload[:event] == 'retry' %>
+            <br /><br />
+            Event state: <%= job.output_payload[:event] %><br />
+            <% end %>
           <% end %>
         </td>
+        <td>
+          <%= link_to 'Delete', 
+             ingest_path(ingest.id), 
+             method: :delete, 
+             data: { confirm: 'Are you sure you want to delete this ingest?' } %>
+        </td>
+        
       </tr>
     <% end %>
   </tbody>

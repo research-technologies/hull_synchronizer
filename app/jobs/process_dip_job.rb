@@ -15,22 +15,21 @@ class ProcessDIPJob < Gush::Job
     processor.process
     build_output
   rescue StandardError => e
-    @message_text = e.message
-    @event_code = 'failed'
-    processor.cleanup
-    build_output
+    processor.cleanup unless processor.blank?
+    output(
+        event: 'failed',
+        message: e.message,
+        package: payloads.first[:output][:package],
+        works: payloads.first[:output][:works]
+        )
     fail!
   end
 
   private
 
-    def event
-      event_code.blank? ? 'success' : event_code
-    end
-
     def build_output
       output(
-        event: event,
+        event: 'success',
         message: message_text,
         package: package_payload,
         works: works_payload

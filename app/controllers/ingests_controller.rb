@@ -5,7 +5,6 @@ class IngestsController < ApplicationController
   # GET /ingests
   # GET /ingests.json
   def index
-    # @ingests = Ingest.all
     @client = Gush::Client.new
     @ingests = client.all_workflows
   end
@@ -14,6 +13,16 @@ class IngestsController < ApplicationController
   # GET /ingests/1.json
   def show
     @ingest = IngestWorkflow.find(params[:id])
+  end
+  
+  def retry
+    @ingest = IngestWorkflow.find(params[:id])
+    @ingest.continue
+    @ingest.reload
+    respond_to do |format|
+      format.html { redirect_to ingest_path, notice: "Ingest #{params[:id]} was sent for a retry." }
+      format.json { head :no_content }
+    end
   end
 
   # GET /ingests/new
@@ -44,26 +53,18 @@ class IngestsController < ApplicationController
   # PATCH/PUT /ingests/1
   # PATCH/PUT /ingests/1.json
   # def update
-  #   respond_to do |format|
-  #     if @ingest.update(ingest_params)
-  #       format.html { redirect_to @ingest, notice: 'Ingest was successfully updated.' }
-  #       format.json { render :show, status: :ok, location: @ingest }
-  #     else
-  #       format.html { render :edit }
-  #       format.json { render json: @ingest.errors, status: :unprocessable_entity }
-  #     end
-  #   end
   # end
 
   # DELETE /ingests/1
   # DELETE /ingests/1.json
-  # def destroy
-  #   @ingest.destroy
-  #   respond_to do |format|
-  #     format.html { redirect_to ingests_url, notice: 'Ingest was successfully destroyed.' }
-  #     format.json { head :no_content }
-  #   end
-  # end
+  def destroy
+    client = Gush::Client.new
+    client.destroy_workflow(client.find_workflow(params[:id]))
+    respond_to do |format|
+      format.html { redirect_to ingests_path, notice: "Ingest #{params[:id]} was successfully deleted." }
+      format.json { head :no_content }
+    end
+  end
 
   private
 

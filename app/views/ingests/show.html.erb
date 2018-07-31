@@ -1,74 +1,66 @@
 <p id="notice"><%= notice %></p>
 
-
 <table>
 
   <tbody>
     <tr>
-      <td>ID:</td><td><%= @ingest.id%></td>
+      <td>ID:</td><td><%= @ingest.id %></td>
     </tr>
     <tr>
       <td>Name:</td><td><%= @ingest.class.to_s %></td>
     </tr>
     <tr>
-      <td>Started at:</td><td><%= Time.at(@ingest.started_at) %></td>
-    </tr>
-    <tr>
       <td>Status</td><td><%= @ingest.status %></td>
     </tr>
     <tr>
-      <td>Jobs:</td><td><%= @ingest.jobs.count %></td>
+      <td>Started at:</td><td><%= Time.at(@ingest.started_at) unless @ingest.started_at.blank? %></td>
     </tr>
     <tr>
-      <td>Enqueued jobs:</td><td><%= @ingest.jobs.select(&:enqueued?).count %></td>
+      <td>Finished at:</td><td><%= Time.at(@ingest.finished_at) unless @ingest.finished_at.blank? %></td>
     </tr>
     <tr>
-      <td>Running jobs:</td><td><%= @ingest.jobs.select(&:running?).count %></td>
+      <td>Total Jobs:</td><td><%= @ingest.jobs.count %></td>
     </tr>
     <tr>
-      <td>Remaining jobs:</td><td><%= @ingest.jobs.count{|j| [j.finished?, j.failed?, j.enqueued?].none? } %></td>
+      <td>Enqueued jobs:</td><td><%= count('enqueued') %></td>
     </tr>
     <tr>
-      <td>Succeeded jobs:</td><td><%= @ingest.jobs.select(&:succeeded?).count %></td>
+      <td>&nbsp;&nbsp;Running jobs:</td><td><%= count('running') %></td>
     </tr>
     <tr>
-    <% first = @ingest.initial_jobs.first %>
-    <% if first.succeeded? %>
-        <td></td>
-        <td>
-          <%= first.name %><br />
-          <% if first.output_payload %>
-            &nbsp;&nbsp;<%= first.output_payload[:message] %>
-          <% end %>
-        </td>
-    <% end %>
+      <td>&nbsp;&nbsp;Remaining jobs:</td><td><%= count('remaining') %></td>
     </tr>
-    <% job = @ingest.find_job(first.outgoing.first) %>
-    <% (@ingest.jobs.count-1 ).times do  %>
-      <% if job.succeeded?%>
+    <tr>
+      <td>&nbsp;&nbsp;Succeeded jobs:</td><td><%= count('succeeded') %></td>
+    </tr>
+    <tr>
+      <td>Number of Works:</td><td><%= @ingest.number_of_works %> (plus 1 Package)</td>
+    </tr>
+    <% succeeded_jobs_in_order.each do | job |  %>
       <tr>
         <td></td>
         <td>
           <%= job.name %><br />
           <% if job.output_payload %>
-            &nbsp;&nbsp;<%= job.output_payload[:message] %>
+            <% job.output_payload.each do | key,value | %>
+              &nbsp;&nbsp;<%= "#{key}: #{value}" %><br />
+            <% end %>
           <% end %>
         </td>
       </tr>
-      <% end %>
-      <% job = @ingest.find_job(job.outgoing.first) %>
     <% end %>
     <tr>
       <td>Failed jobs:</td><td><%= @ingest.jobs.select(&:failed?).count %></td>
     </tr>
-    <% @ingest.jobs.select(&:failed?).each do | job | %>
+    <% failed_jobs_in_order.each do | job | %>
       <tr>
         <td></td>
         <td>
           <%= job.name %><br />
           <% if job.output_payload %>
-            &nbsp;&nbsp;<%= job.output_payload[:event] %><br />
-            &nbsp;&nbsp;<%= job.output_payload[:message] %>
+            <% job.output_payload.each do | key,value | %>
+              &nbsp;&nbsp;<%= "#{key}: #{value}" %><br />
+            <% end %>
           <% end %>
         </td>
       </tr>
@@ -76,4 +68,14 @@
   </tbody>
 </table>
 <br />
+
+<%= link_to 'Refresh', ingest_path %> | 
+<% unless @ingest.finished? %>
+  <%= link_to 'Retry', retry_path(@ingest.id) %> | 
+<% end %>
+<%= link_to 'Delete', 
+             ingest_path(@ingest.id), 
+             method: :delete, 
+             data: { confirm: 'Are you sure you want to delete this ingest?' } %> | 
 <%= link_to 'Back', ingests_path %>
+

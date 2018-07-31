@@ -38,7 +38,7 @@ class IngestWorkflowMonitorJob < ActiveJob::Base
 
   def failed?
     flow.failed? && job_event.include?('failed')
-    flow.mark_as_stopped
+    
   end
 
   def done?
@@ -48,9 +48,9 @@ class IngestWorkflowMonitorJob < ActiveJob::Base
   end
 
   def log_failure
+    errored_job = flow.jobs.find { |job| job.output_payload && job.output_payload[:event] == 'failed' }
+    Rails.logger.error "ERROR in #{errored_job.name}: #{errored_job.output_payload[:message]}"
     flow.mark_as_stopped
-    error = flow.jobs.find { |job| job.output_payload && job.output_payload[:event] == 'failed' }
-    Rails.logger.error "ERROR in #{error.name}: #{error.output_payload[:message]}"
   end
 
   # @return [Array] list of event parameters from the payload
