@@ -1,5 +1,7 @@
 @ECHO OFF
 
+:: https://ss64.com/nt/color.html
+
 :start
 SET /P DIRECTORY=Enter full path to directory (eg. C:\Users\julie.allinson\Desktop): 
 
@@ -23,7 +25,7 @@ IF %ERRORLEVEL% EQU 1 (
 ECHO NOTE ABOUT CHECKSUMS
 ECHO   Checksums require CertUtil be installed - modern versions (Windows 7 and up) should have it
 ECHO   You can check it's installed in a cmd prompt with CertUtil -?.
-ECHO   Checkums are optional and can take a long time to run on large or many files.
+ECHO   Checksums are optional and can take a long time to run on large or many files.
 CHOICE /M "Create Checksums"
 
 IF %ERRORLEVEL% EQU 1 (
@@ -46,8 +48,7 @@ CALL :strlen result %1
 IF NOT %1=="%DIRECTORY%\transfer_files.csv" (
 	ECHO |set /p="%1"
 	
-	for %%f in (%DIRECTORY%) DO ECHO |set /p=,"%%~nxf"
-	
+	ECHO |set /p=,"%~nx1"
 	
 	IF %result% LEQ 260  (ECHO |set /p=,%~z1)
 	IF %result% GTR 260 (ECHO |set /p=,path_too_long)
