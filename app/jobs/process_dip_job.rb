@@ -1,8 +1,6 @@
 # Unpack the DIP to prepare multiple deposits and calm metadata
 class ProcessDIPJob < Gush::Job
   require 'dip_processor'
-  require 'dip_reader'
-  require 'willow_sword'
   
   attr_reader :event_code, :processor, :message_text
   

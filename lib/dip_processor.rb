@@ -1,4 +1,6 @@
 class DIPProcessor
+  require 'dip_reader'
+  require 'willow_sword'
   attr_reader :params, :dip, :dip_id, :bag_key, :package_payload, :works_payload
 
   # Processes a DIP from Archivematica and creates a zip
@@ -25,7 +27,7 @@ class DIPProcessor
 
   def cleanup
     FileUtils.rm_r(src) if Dir.exist?(src)
-    # FileUtils.rm_r(dst) if Dir.exist?(dst)
+    FileUtils.rm_r(dst) if Dir.exist?(dst)
   end
 
   private
@@ -33,7 +35,7 @@ class DIPProcessor
     def process_package
       make_src
       build_package
-      # build_bag
+      build_bag
       build_zip
       package_payload[:file] = { path: "#{dst}.zip", content_type: 'application/zip' }
       package_payload[:hyrax_work_model] = 'Package'
@@ -54,7 +56,7 @@ class DIPProcessor
         @bag_key = "#{dip_id}_#{key}"
         make_src
         build_work(value)
-        # build_bag
+        build_bag
         build_zip
         works_payload <<
           {
@@ -79,8 +81,8 @@ class DIPProcessor
     end
 
     def build_zip
-      WillowSword::ZipPackage.new(src, "#{dst}.zip").create_zip
-      # WillowSword::ZipPackage.new(dst, "#{dst}.zip").create_zip
+      # WillowSword::ZipPackage.new(src, "#{dst}.zip").create_zip
+      WillowSword::ZipPackage.new(dst, "#{dst}.zip").create_zip
     end
 
     def build_bag
@@ -102,6 +104,7 @@ class DIPProcessor
 
     def make_src
       FileUtils.mkdir(src) unless Dir.exist?(src)
+      FileUtils.mkdir(dst) unless Dir.exist?(dst)
     end
 
     def write_json
