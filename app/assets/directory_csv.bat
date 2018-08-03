@@ -35,11 +35,11 @@ SET CHK=no & goto :loop
 )
 
 :loop
-CD "%DIRECTORY%"
+PUSHD "%DIRECTORY%"
 type NUL > "%DIRECTORY%/transfer_files.csv"
 ECHO original_path,primary_folder,file_size,checksum >> "%DIRECTORY%/transfer_files.csv"
 FOR /R %%G IN (*) DO CALL :sub "%%G" >> "%DIRECTORY%/transfer_files.csv"
-ECHO File written to "%DIRECTORY%/transfer_files.csv"
+ECHO File written to "%DIRECTORY%\transfer_files.csv"
 goto :end
 
 :sub
@@ -105,7 +105,3 @@ ELSE (
 )
 
 :eof
-
-
-
-
