@@ -1,7 +1,7 @@
-module Archivematica
-  # BaseJob for all Archivematica jobs.
+  # BaseJob for all Archivematica and SWORD jobs.
   class BaseJob < Gush::Job
     require 'archivematica/api'
+    require 'sword/api'
     attr_reader :response
 
     def perform
@@ -20,9 +20,9 @@ module Archivematica
         ''
       end
 
-      # If response code is 200, continue
+      # If response code is 200 or 201, continue
       def act_on_status
-        if status == 200
+        if status.between?(200,201) 
           act_on_ok
         else
           output(event: 'failed', message: message_text)
@@ -40,4 +40,3 @@ module Archivematica
         end
       end
   end
-end

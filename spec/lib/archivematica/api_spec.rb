@@ -31,7 +31,7 @@ RSpec.describe Archivematica::Api do
       let(:start_transfer) { described_class::StartTransfer.new(params: {}) }
 
       it 'responds with a Faraday::Response containing a warning header' do
-        expect(start_transfer.request.reason_phrase).to eq('name and path are required')
+        expect(start_transfer.request.reason_phrase).to eq('path (a String) is required')
       end
     end
 

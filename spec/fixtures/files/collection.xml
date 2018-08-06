@@ -1,0 +1,8 @@
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Default collection</title>
+  <link rel="edit" href="http://test.host/sword/collections/default/works"/>
+  <entry>
+    <content rel="src" href="http://test.host/sword/collections/default/works/hh63sv88v"/>
+    <link rel="edit" href="http://test.host/sword/collections/default/works/hh63sv88v/file_sets"/>
+  </entry>
+</feed>
