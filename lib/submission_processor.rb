@@ -207,7 +207,7 @@ class SubmissionProcessor
     dirname = data_path(row.fetch(@dm.filename))
     if File.file?(dirname)
       # replace file name with file count
-      dirname = "item#{row_count}"
+      dirname = "work#{row_count}"
     elsif is_remote_file?(row.fetch(@dm.filename))
       # remove remote dir name
       dirname = dirname.sub(remote_dir, '')
