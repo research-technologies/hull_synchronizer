@@ -7,6 +7,7 @@ class DataMapper < ApplicationRecord
   # validations
   validates :file_type, inclusion: { in: FILE_TYPE_OPTIONS }
   validates :status, inclusion: { in: STATUS, allow_nil: true }
-  validates_attachment :original_file, content_type: { content_type: ['text/plain', 'text/csv', 'application/vnd.ms-excel'] }, message: 'is not in CSV format'
-  validates_attachment :mapped_file, content_type: { content_type: ['text/plain', 'text/csv', 'application/vnd.ms-excel'] }, message: 'is not in CSV format'
+  # TODO support 'application/vnd.ms-excel'
+  validates_attachment :original_file, content_type: { content_type: ['text/plain', 'text/csv'] }, message: 'is not in CSV format'
+  validates_attachment :mapped_file, content_type: { content_type: ['text/plain', 'text/csv'] }, message: 'is not in CSV format'
 end
