@@ -5,7 +5,7 @@ module Archivematica
     # payloads.first[:output] [Hash] required params
     # @todo params will be supplied by payloads.first[:output]
     def perform
-      @response = Archivematica::Api::StartTransfer.new(params: params).request
+      @response = Archivematica::Api::StartTransfer.new(params: payloads.first[:output]).request
       # @response = Archivematica::Api::StartTransfer.new(params: payloads.first[:output]).request
       act_on_status
     end
