@@ -60,6 +60,7 @@ gem 'sidekiq'
 gem 'gush', '~> 1.0.0'
 # used for bagit and zip
 gem 'willow_sword', git: 'https://github.com/CottageLabs/willow_sword.git' 
+gem 'boxr'
 
 group :development, :test do
   gem 'bixby'
