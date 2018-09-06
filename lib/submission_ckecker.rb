@@ -7,7 +7,7 @@ require 'synchronizer_file_locations'
 
 class SubmissionChecker
   include SynchronizerFileLocations
-  attr_reader :params, :source_dir, :row_count, :errors
+  attr_reader :params, :source_dir, :row_count, :errors, :status
 
   # Class to check data for transfer to archivematica
   # The file layout is as follows. The source directory contains
@@ -40,11 +40,11 @@ class SubmissionChecker
   end
 
   def check_submission
-    raise 'Required files and directory are missing' unless has_required_files?
-    raise 'File transfer error' unless has_listed_files?
-    raise 'metadata error' unless has_valid_metadata?
-    raise 'extra files error' if has_extra_files?
-    true
+    @status = true
+    @status = false unless has_required_files?
+    @status = false unless has_listed_files?
+    @status = false unless has_valid_metadata?
+    @status = false if has_extra_files?
   end
 
   private
