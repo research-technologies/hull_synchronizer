@@ -6,7 +6,8 @@ Rails.application.routes.draw do
   resources :retry do
     get ":id", to: "ingests#retry", on: :collection
   end
-  
+  resources :notifications
+
   require 'sidekiq/web'
   mount Sidekiq::Web => '/sidekiq'
 end
