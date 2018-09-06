@@ -1,0 +1,14 @@
+# BOX app credentials for jwt auth
+JWT_SECRET_KEY_PATH=pem_file_containing_the_key
+JWT_SECRET_KEY_PASSWORD=
+PUBLIC_KEY_ID=
+CLIENT_ID=
+CLIENT_SECRET=
+ENTERPRISE_ID=
+USER_ID=287086621
+
+# box app user login email
+APP_USER_EMAIL=
+
+# Key for the webhook created using the app ui
+WEBHOOK_KEY=
