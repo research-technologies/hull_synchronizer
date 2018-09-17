@@ -3,9 +3,11 @@ class ReceivePackageWorkflow < Gush::Workflow
 
   # @params params [Hash] supply any params needed to start the first job
   def configure(params)
-    run ReceivePackageJob, params: params
-    run CheckSubmissionJob, after: ReceivePackageJob
+    # run ReceivePackageJob, params: params
+    # run CheckSubmissionJob, after: ReceivePackageJob
+    run CheckSubmissionJob, params: params
     run InformUserJob, after: CheckSubmissionJob
+    # run startIngestWorklowJob, after: InformUserJob
   end
 
 end

@@ -12,8 +12,8 @@ class InformUserJob < Gush::Job
     @params = payloads.first[:output]
     @path = params[:path]
     @number_of_works = params[:number_of_works]
-    @processor = Box::Api.new(params: @params)
-    @processor.inform_user(@params[:status], @params[:message_text])
+    @processor = Box::Api.new(@params)
+    @processor.inform_user
     build_output
   # Need to decide when to retry. See ingest_status as example
   rescue StandardError => e

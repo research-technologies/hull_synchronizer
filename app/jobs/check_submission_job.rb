@@ -9,7 +9,8 @@ class CheckSubmissionJob < Gush::Job
   # Processes the submission package
   def perform
     # params contain source_dir and item_id
-    @params = payloads.first[:output]
+    # @params = payloads.first[:output]
+    @params = params
     @processor = SubmissionChecker.new(params: @params)
     @processor.check_submission
     @message_text = @processor.errors
@@ -28,7 +29,7 @@ class CheckSubmissionJob < Gush::Job
   private
 
     def build_output
-      if @processor.status
+      if @processor.status == true
         msg = 'Checked submission package. It is ready to be processed'
       else
         msg = 'Checked submission package. It has errors'

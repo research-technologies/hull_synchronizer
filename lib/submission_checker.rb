@@ -1,7 +1,7 @@
 require 'fileutils'
 require 'csv'
 require 'json'
-require 'willow_sword'
+require 'digest/md5'
 require 'data_crosswalks/data_archive_model'
 require 'synchronizer_file_locations'
 
@@ -32,11 +32,13 @@ class SubmissionChecker
     # Need source dir
     @params = params
     @source_dir = params.fetch(:source_dir, nil)
-    @source_dir = @source_dir.chomp(File::SEPARATOR) unless @source_dir.blank?
+    raise "Source diectory not provided" if @source_dir.blank?
+    @source_dir = File.join(@source_dir.split(File::SEPARATOR), File::SEPARATOR)
     @dm = ::DataCrosswalks::DataArchiveModel.new
     @errors = []
     @src_files = []
-    @checked_files = []
+    @checked_files_in_metadata = []
+    @checked_files_in_file = []
   end
 
   def check_submission
@@ -45,6 +47,22 @@ class SubmissionChecker
     @status = false unless has_listed_files?
     @status = false unless has_valid_metadata?
     @status = false if has_extra_files?
+  end
+
+  def generate_files_file
+    # Convenience method for generating the list of files
+    list_files_in_source
+    csv_file = CSV.open(files_file_path, "wb")
+    csv_file << %w(path filename file_size checksum)
+    @src_files.each do |filepath|
+      next if metadata_files.include? filepath
+      relative_path = filepath.sub(@source_dir, '').chomp(File::SEPARATOR)
+      size = File.size(filepath)
+      md5_hash = get_hash(filepath)
+      filename = File.basename(filepath)
+      csv_file << [relative_path, filename, size, md5_hash]
+    end
+    csv_file.close
   end
 
   private
@@ -88,25 +106,44 @@ class SubmissionChecker
 
   # Sanity check to ensure files were transferred
   def has_listed_files?
-    @src_files = Dir.glob(File.join(@source_dir, '**', '*'))
-    # TODO: Parse FILES.csv
-    # All files listed in FILES.csv should exist
-    # File size or checksum should match
-    true
+    list_files_in_source
+    file_count = 0
+    # All files listed in FILES.csv should be valid
+    all_valid = true
+    ::CSV.foreach(files_file_path, headers: true).each do |row|
+      file_count += 1
+      # has valid row
+      all_valid = all_valid and has_valid_file?(row, file_count)
+    end
+    # FILES.csv should have atleast 1 row
+    unless file_count > 0
+      @errors << "Metadata file #{files_file_path} has no rows"
+      all_valid = false
+    end
+    # There should be no unverified files
+    all_valid and has_unverified_files?
+  end
+
+  def list_files_in_source
+    # List all files in source and exclude directory entries
+    @src_files = Dir.glob(File.join(@source_dir, '**', '*')).
+      reject { |f| File.directory?(f) }
   end
 
   def has_valid_metadata?
-    # Should have 1 or more rows and each row should be valid
-    row_count = 0
+    @row_count = 0
     # All rows should be valid
     all_valid = true
     ::CSV.foreach(metadata_file_path, headers: true).each do |row|
-      row_count += 1
+      @row_count += 1
       # has valid row
-      all_valid = all_valid and has_valid_row?(row, row_count)
+      all_valid = all_valid and has_valid_row?(row, @row_count)
     end
-    @errors << "metadata file #{metadata_file_path} has no rows" unless row_count > 0
-    return false unless row_count > 0
+    # Should have 1 or more rows
+    unless @row_count > 0
+      @errors << "Metadata file #{metadata_file_path} has no rows"
+      all_valid = false
+    end
     all_valid
   end
 
@@ -137,9 +174,9 @@ class SubmissionChecker
   def add_checked_file(filename)
     unless is_remote_file?(filename)
       data_path = get_data_path(filename)
-      @checked_files << data_path
+      @checked_files_in_metadata << data_path
       if File.directory?(data_path)
-        @checked_files += Dir.glob(File.join(data_path, '**', '*'))
+        @checked_files_in_metadata += Dir.glob(File.join(data_path, '**', '*'))
       end
     end
   end
@@ -147,9 +184,8 @@ class SubmissionChecker
   def has_extra_files?
     extra_files = get_extra_files
     if extra_files.any?
-      msg = "There are extra files in the submission.\n"
-      msg += "  " + extra_files.join("\n  ")
-      @errors << msg
+      @errors << "There are extra files in the submission not listed in #{metadata_file_name}"
+      @errors += extra_files.map { |e| "  - #{e}" }
     end
     extra_files.any?
   end
@@ -171,18 +207,94 @@ class SubmissionChecker
   end
 
   def get_extra_files
-    (@src_files -
+    @src_files -
       # checked files are accounted for
-      @checked_files -
+      @checked_files_in_metadata -
       # metadata files
       metadata_files -
       # submission files
       Dir.glob(File.join(@source_dir, submission_files_dir, '**', '*')) -
       # metadata diectory files
-      Dir.glob(File.join(@source_dir, metadata_dir, '**', '*'))).
-      # Interested only in list of files, not directory entries
-      reject { |f| File.directory?(f) }
+      Dir.glob(File.join(@source_dir, metadata_dir, '**', '*'))
+  end
+
+  def has_valid_file?(row, row_index)
+    filepath = row.fetch('path', nil)
+    return false if filepath.blank?
+    filepath = File.join(@source_dir, filepath)
+    @checked_files_in_file << filepath
+    has_file = has_local_file?(filepath, row_index)
+    has_size = has_required_size?(row, row_index)
+    has_hash = has_required_hash?(row, row_index)
+    has_file and has_size and has_hash
+  end
+
+  def has_local_file?(filename, row_index)
+    @errors << "Local file from row #{row_index} is missing" unless filename
+    return false unless filename
+    has_file = File.exist?(get_data_path(filename))
+    @errors << "Local file #{filename} in row #{row_index} is missing" unless has_file
+    has_file
+  end
+
+  def has_required_size?(row, row_index)
+    filename = row.fetch('path', nil)
+    listed_size = row.fetch('file_size', nil).to_i
+    data_path = get_data_path(filename)
+    file_size = File.size(data_path)
+    has_size = false
+    # if (0.9*listed_size) <= file_size and file_size <= (1.1*listed_size)
+    #   has_size = true
+    # end
+    has_size = true if file_size == listed_size
+    @errors << "Local file #{filename} in row #{row_index} has file size mismatch with original" unless has_size
+    has_size
+  end
+
+  def has_required_hash?(row, row_index)
+    filename = row.fetch('path', nil)
+    original_hash = row.fetch('checksum', nil)
+    data_path = get_data_path(filename)
+    current_hash = get_hash(data_path)
+    has_hash = false
+    if original_hash == current_hash
+      has_hash = true
+    end
+    @errors << "Local file #{filename} in row #{row_index} has file hash mismatch with original" unless has_hash
+    has_hash
+  end
+
+  def has_unverified_files?
+    extra_files = get_unverified_files
+    if extra_files.any?
+      @errors << "There are extra files in the submission, not listed in #{files_file_name} and so not verified."
+      @errors += extra_files.map { |e| "  - #{e}" }
+    end
+    extra_files.any?
+  end
+
+  def get_unverified_files
+    @src_files -
+      # checked files are accounted for
+      @checked_files_in_file -
+      # metadata files
+      metadata_files -
+      # metadata diectory files
+      Dir.glob(File.join(@source_dir, metadata_dir, '**', '*'))
+  end
+
+  def get_hash(filepath)
+    md5 = Digest::MD5.new
+    open(filepath, "rb") do |f|
+      f.each_chunk { |chunk| md5.update(chunk) }
+    end
+    md5.hexdigest
   end
 
 end
 
+class File
+  def each_chunk(chunk_size = 16384)
+    yield read(chunk_size) until eof?
+  end
+end

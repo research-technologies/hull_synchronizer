@@ -39,6 +39,10 @@ module SynchronizerFileLocations
     File.join(@source_dir, '__processed_data')
   end
 
+  def package_dir
+    File.join(process_dir, 'package')
+  end
+
   def metadata_file_path
     if File.file?(File.join(@source_dir, metadata_dir, metadata_file_name))
       File.join(@source_dir, metadata_dir, metadata_file_name)
@@ -61,8 +65,8 @@ module SynchronizerFileLocations
 
   def archival_dirs
     [
-      File.join(@source_dir, metadata_dir),
-      File.join(@source_dir, submission_files_dir)
+      File.join(package_dir, metadata_dir),
+      File.join(package_dir, submission_files_dir)
     ]
   end
 

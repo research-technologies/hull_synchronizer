@@ -38,11 +38,13 @@ class SubmissionProcessor
   #       data dirs (one for each row)
   # 3. Create bag in transfer location
 
-  def initialize(params:)
+  def initialize(params)
     # Need source dir
     @params = params
     @source_dir = params.fetch(:source_dir, nil)
-    @source_dir = @source_dir.chomp(File::SEPARATOR) unless @source_dir.blank?
+    raise "Source diectory not provided" if @source_dir.blank?
+    @source_dir = sanitized_filename(@source_dir)
+    @source_dir = File.join(@source_dir, File::SEPARATOR)
     @dm = ::DataCrosswalks::DataArchiveModel.new
   end
 
@@ -78,14 +80,11 @@ class SubmissionProcessor
   end
 
   def assemble_archival_files
-    unless File.directory?(process_dir)
-      FileUtils.mkdir_p(process_dir)
-    end
-    move_files_file(process_dir)
-    move_metadata_file(process_dir)
-    move_submission_doc(process_dir)
-    move_metadata_dir(process_dir)
-    move_extra_files(process_dir)
+    move_files_file(package_dir)
+    move_metadata_file(package_dir)
+    move_submission_doc(package_dir)
+    move_metadata_dir(package_dir)
+    move_extra_files(package_dir)
   end
 
   def build_bag
