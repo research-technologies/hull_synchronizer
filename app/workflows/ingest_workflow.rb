@@ -5,10 +5,11 @@ class IngestWorkflow < Gush::Workflow
   #   params[number_of_works:] is required and must be an integer to indicate
   #   the number of individual works to be deposited (not including the package)
   def configure(params)
-    raise unless params[:number_of_works].is_a? Integer
-
-    @number_of_works = params[:number_of_works]
-
+    if params[:number_of_works] # && params[:number_of_works].is_a?(Integer)
+      @number_of_works = params[:number_of_works]
+    else
+      @number_of_works = 0
+    end
     # @todo: remove params from here and change StartTransferJob to use the payload once there is a preceding job
     run ProcessSubmissionJob, params: params
     run Archivematica::StartTransferJob, after: ProcessSubmissionJob
