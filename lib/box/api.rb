@@ -27,7 +27,9 @@ module Box
         upload_file(box_folder, file.path, '__package_status.txt')
         file.close
         file.unlink
+        remove_collaboration(box_folder)
       end
+      # TODO: If successful, copy folder and then remove collaborator
       rename_folder(box_folder, status=@params[:status])
     end
 
