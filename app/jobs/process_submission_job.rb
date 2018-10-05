@@ -26,14 +26,12 @@ class ProcessSubmissionJob < Gush::Job
     def build_output
       # needs path, accession, type
       # TODO:
-      #   What is params[:type] used in start transfer
       #   What should accession be?
       output(
         event: 'success',
         message: 'Processed submission package and built bag',
         path: @processor.current_transfer_dir,
-        accession: 'TODO',
-        type: 'TODO'
+        accession: 'TODO'
       )
     end
 end

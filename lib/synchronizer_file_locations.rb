@@ -4,8 +4,9 @@ module SynchronizerFileLocations
     '/data/source/'
   end
 
+  # @todo change to data, need to remap on archivematica too
   def transfer_dir
-    '/data/transfer/'
+    '/mnt/efs/TransferSource'
   end
 
   def new_transfer_dir

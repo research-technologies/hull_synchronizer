@@ -22,3 +22,10 @@
 /yarn-error.log
 
 .byebug_history
+
+# Ignore .rbenv-vars
+.rbenv-vars
+
+# Ignore any keys (pem files)
+*.pem
+
