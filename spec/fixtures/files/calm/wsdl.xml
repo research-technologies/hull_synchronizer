@@ -1,0 +1,1276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" targetNamespace="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/">
+      <s:element name="IsItemOrderable">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="itemRef" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsItemOrderableResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="IsItemOrderableResult" type="tns:OrderItemResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="OrderItemResponse">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:ApiResponse">
+            <s:sequence>
+              <s:element minOccurs="0" maxOccurs="1" name="OrderableItem" type="tns:OrderItem" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="ApiResponse">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Error" type="tns:Error" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Error">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Message" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="ErrorCode" type="tns:ErrorCode" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="ErrorCode">
+        <s:restriction base="s:string">
+          <s:enumeration value="Success" />
+          <s:enumeration value="NotFound" />
+          <s:enumeration value="MultipleRecordsFound" />
+          <s:enumeration value="Database" />
+          <s:enumeration value="NoSessionState" />
+          <s:enumeration value="MissingParameter" />
+          <s:enumeration value="ParameterOutOfRange" />
+          <s:enumeration value="BadParameter" />
+          <s:enumeration value="OtherError" />
+        </s:restriction>
+      </s:simpleType>
+      <s:complexType name="OrderItem">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="ItemRef" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="RefField" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="OrderRef" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="DeliveryMethod" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Status" type="tns:OrderabilityStatus" />
+          <s:element minOccurs="0" maxOccurs="1" name="LoanID" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:simpleType name="OrderabilityStatus">
+        <s:restriction base="s:string">
+          <s:enumeration value="Available" />
+          <s:enumeration value="Unorderable" />
+          <s:enumeration value="Conservation" />
+          <s:enumeration value="ItemStatus" />
+          <s:enumeration value="ExistingLoan" />
+          <s:enumeration value="OfficeClosed" />
+          <s:enumeration value="DailyLimitExceeded" />
+          <s:enumeration value="TotalLimitExceeded" />
+          <s:enumeration value="LocationLeadDays" />
+          <s:enumeration value="LocationTransitDays" />
+        </s:restriction>
+      </s:simpleType>
+      <s:element name="IsItemAvailable">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="itemref" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="date" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="IsItemAvailableResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="IsItemAvailableResult" type="tns:OrderItemResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PlaceOrder">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="userId" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="yyyymmdd" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="items" type="tns:ArrayOfOrderItemRequest" />
+            <s:element minOccurs="1" maxOccurs="1" name="maxItemsPerDay" type="s:int" />
+            <s:element minOccurs="1" maxOccurs="1" name="maxItemsTotal" type="s:int" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfOrderItemRequest">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="OrderItemRequest" nillable="true" type="tns:OrderItemRequest" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="OrderItemRequest">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Reference" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Quantity" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="PlaceOrderResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="PlaceOrderResult" type="tns:RaiseOrderResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="RaiseOrderResponse">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:ApiResponse">
+            <s:sequence>
+              <s:element minOccurs="1" maxOccurs="1" name="Processed" type="s:boolean" />
+              <s:element minOccurs="1" maxOccurs="1" name="Status" type="tns:OrderabilityStatus" />
+              <s:element minOccurs="0" maxOccurs="1" name="StatusParameter" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="OrderID" type="s:string" />
+              <s:element minOccurs="0" maxOccurs="1" name="OrderableItems" type="tns:ArrayOfOrderItem" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="ArrayOfOrderItem">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="OrderItem" nillable="true" type="tns:OrderItem" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetTreeByID">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="id" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="dataFields" type="tns:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfString">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetTreeByIDResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetTreeByIDResult" type="tns:TreeResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="TreeResponse">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:ApiResponse">
+            <s:sequence>
+              <s:element minOccurs="0" maxOccurs="1" name="Tree" type="tns:Tree" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="Tree">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:TreeNode">
+            <s:attribute name="Separator" type="s:string" />
+            <s:attribute name="Field" type="s:string" />
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="TreeNode">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Node" type="tns:TreeNode" />
+          <s:element minOccurs="0" maxOccurs="1" name="Data" type="tns:Record" />
+        </s:sequence>
+        <s:attribute name="Id" type="s:string" />
+        <s:attribute name="Name" type="s:string" />
+        <s:attribute default="false" name="ChildRecords" type="s:boolean" />
+        <s:attribute default="false" name="StartPoint" type="s:boolean" />
+      </s:complexType>
+      <s:complexType name="Record">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Fields" type="tns:ArrayOfField" />
+        </s:sequence>
+        <s:attribute name="type" type="s:string" />
+      </s:complexType>
+      <s:complexType name="ArrayOfField">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Field" nillable="true" type="tns:Field" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="Field">
+        <s:simpleContent>
+          <s:extension base="s:string">
+            <s:attribute name="name" type="s:string" />
+          </s:extension>
+        </s:simpleContent>
+      </s:complexType>
+      <s:element name="testPlaceOrder">
+        <s:complexType />
+      </s:element>
+      <s:element name="testPlaceOrderResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="testPlaceOrderResult" type="tns:RaiseOrderResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateRecord">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="type" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="fields" type="tns:ArrayOfField" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateRecordResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CreateRecordResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateChildRecord">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="recordType" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="parentID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="treeField" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="fields" type="tns:ArrayOfField" />
+            <s:element minOccurs="1" maxOccurs="1" name="conform" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CreateChildRecordResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CreateChildRecordResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetRecordByKey">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="keyValue" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetRecordByKeyResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetRecordByKeyResult" type="tns:RecordResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="RecordResponse">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:ApiResponse">
+            <s:sequence>
+              <s:element minOccurs="0" maxOccurs="1" name="Record" type="tns:Record" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:element name="GetPartialRecordByKey">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="keyValue" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="fields" type="tns:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPartialRecordByKeyResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetPartialRecordByKeyResult" type="tns:RecordResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetRecordById">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="id" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetRecordByIdResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetRecordByIdResult" type="tns:RecordResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPartialRecordById">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="id" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="fields" type="tns:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPartialRecordByIdResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetPartialRecordByIdResult" type="tns:RecordResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetRecordByField">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="fieldName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="value" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetRecordByFieldResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetRecordByFieldResult" type="tns:RecordResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPartialRecordByField">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="fieldName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="value" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="fields" type="tns:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPartialRecordByFieldResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetPartialRecordByFieldResult" type="tns:RecordResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetFilteredRecordById">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="id" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="user" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetFilteredRecordByIdResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetFilteredRecordByIdResult" type="tns:RecordResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpdateRecord">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="id" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="fieldsToAdd" type="tns:ArrayOfField" />
+            <s:element minOccurs="0" maxOccurs="1" name="fieldsToModify" type="tns:ArrayOfField" />
+            <s:element minOccurs="0" maxOccurs="1" name="fieldsToDelete" type="tns:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UpdateRecordResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="UpdateRecordResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckOutRecord">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="id" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="fields" type="tns:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckOutRecordResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="CheckOutRecordResult" type="tns:RecordResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckInRecord">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="id" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckInRecordResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="CheckInRecordResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTree">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="field" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="treeID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="dataFields" type="tns:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTreeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetTreeResult" type="tns:TreeResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetRecordContextTree">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="field" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="treeID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="dataFields" type="tns:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetRecordContextTreeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetRecordContextTreeResult" type="tns:TreeResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTreeBranch">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="field" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="treeID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="dataFields" type="tns:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetTreeBranchResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetTreeBranchResult" type="tns:TreeResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetRecordByPosition">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="position" type="s:unsignedInt" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetRecordByPositionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetRecordByPositionResult" type="tns:RecordResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPartialRecordByPosition">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="position" type="s:unsignedInt" />
+            <s:element minOccurs="0" maxOccurs="1" name="fields" type="tns:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPartialRecordByPositionResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetPartialRecordByPositionResult" type="tns:RecordResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Search">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="searchExpression" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SearchResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="SearchResult" type="tns:SearchSummaryResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="SearchSummaryResponse">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:ApiResponse">
+            <s:sequence>
+              <s:element minOccurs="0" maxOccurs="1" name="SearchSummary" type="tns:SearchSummary" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="SearchSummary">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Database" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Search" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="Count" type="s:int" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="Sort">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="fields" type="tns:ArrayOfString" />
+            <s:element minOccurs="1" maxOccurs="1" name="descending" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="SortResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="SortResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="Overview">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="fields" type="tns:ArrayOfString" />
+            <s:element minOccurs="1" maxOccurs="1" name="from" type="s:unsignedInt" />
+            <s:element minOccurs="1" maxOccurs="1" name="count" type="s:unsignedInt" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="OverviewResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="OverviewResult" type="tns:RecordListResponse" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="RecordListResponse">
+        <s:complexContent mixed="false">
+          <s:extension base="tns:ApiResponse">
+            <s:sequence>
+              <s:element minOccurs="0" maxOccurs="1" name="Records" type="tns:ArrayOfRecord" />
+            </s:sequence>
+          </s:extension>
+        </s:complexContent>
+      </s:complexType>
+      <s:complexType name="ArrayOfRecord">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="Record" nillable="true" type="tns:Record" />
+        </s:sequence>
+      </s:complexType>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="IsItemOrderableSoapIn">
+    <wsdl:part name="parameters" element="tns:IsItemOrderable" />
+  </wsdl:message>
+  <wsdl:message name="IsItemOrderableSoapOut">
+    <wsdl:part name="parameters" element="tns:IsItemOrderableResponse" />
+  </wsdl:message>
+  <wsdl:message name="IsItemAvailableSoapIn">
+    <wsdl:part name="parameters" element="tns:IsItemAvailable" />
+  </wsdl:message>
+  <wsdl:message name="IsItemAvailableSoapOut">
+    <wsdl:part name="parameters" element="tns:IsItemAvailableResponse" />
+  </wsdl:message>
+  <wsdl:message name="PlaceOrderSoapIn">
+    <wsdl:part name="parameters" element="tns:PlaceOrder" />
+  </wsdl:message>
+  <wsdl:message name="PlaceOrderSoapOut">
+    <wsdl:part name="parameters" element="tns:PlaceOrderResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetTreeByIDSoapIn">
+    <wsdl:part name="parameters" element="tns:GetTreeByID" />
+  </wsdl:message>
+  <wsdl:message name="GetTreeByIDSoapOut">
+    <wsdl:part name="parameters" element="tns:GetTreeByIDResponse" />
+  </wsdl:message>
+  <wsdl:message name="testPlaceOrderSoapIn">
+    <wsdl:part name="parameters" element="tns:testPlaceOrder" />
+  </wsdl:message>
+  <wsdl:message name="testPlaceOrderSoapOut">
+    <wsdl:part name="parameters" element="tns:testPlaceOrderResponse" />
+  </wsdl:message>
+  <wsdl:message name="CreateRecordSoapIn">
+    <wsdl:part name="parameters" element="tns:CreateRecord" />
+  </wsdl:message>
+  <wsdl:message name="CreateRecordSoapOut">
+    <wsdl:part name="parameters" element="tns:CreateRecordResponse" />
+  </wsdl:message>
+  <wsdl:message name="CreateChildRecordSoapIn">
+    <wsdl:part name="parameters" element="tns:CreateChildRecord" />
+  </wsdl:message>
+  <wsdl:message name="CreateChildRecordSoapOut">
+    <wsdl:part name="parameters" element="tns:CreateChildRecordResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetRecordByKeySoapIn">
+    <wsdl:part name="parameters" element="tns:GetRecordByKey" />
+  </wsdl:message>
+  <wsdl:message name="GetRecordByKeySoapOut">
+    <wsdl:part name="parameters" element="tns:GetRecordByKeyResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetPartialRecordByKeySoapIn">
+    <wsdl:part name="parameters" element="tns:GetPartialRecordByKey" />
+  </wsdl:message>
+  <wsdl:message name="GetPartialRecordByKeySoapOut">
+    <wsdl:part name="parameters" element="tns:GetPartialRecordByKeyResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetRecordByIdSoapIn">
+    <wsdl:part name="parameters" element="tns:GetRecordById" />
+  </wsdl:message>
+  <wsdl:message name="GetRecordByIdSoapOut">
+    <wsdl:part name="parameters" element="tns:GetRecordByIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetPartialRecordByIdSoapIn">
+    <wsdl:part name="parameters" element="tns:GetPartialRecordById" />
+  </wsdl:message>
+  <wsdl:message name="GetPartialRecordByIdSoapOut">
+    <wsdl:part name="parameters" element="tns:GetPartialRecordByIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetRecordByFieldSoapIn">
+    <wsdl:part name="parameters" element="tns:GetRecordByField" />
+  </wsdl:message>
+  <wsdl:message name="GetRecordByFieldSoapOut">
+    <wsdl:part name="parameters" element="tns:GetRecordByFieldResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetPartialRecordByFieldSoapIn">
+    <wsdl:part name="parameters" element="tns:GetPartialRecordByField" />
+  </wsdl:message>
+  <wsdl:message name="GetPartialRecordByFieldSoapOut">
+    <wsdl:part name="parameters" element="tns:GetPartialRecordByFieldResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetFilteredRecordByIdSoapIn">
+    <wsdl:part name="parameters" element="tns:GetFilteredRecordById" />
+  </wsdl:message>
+  <wsdl:message name="GetFilteredRecordByIdSoapOut">
+    <wsdl:part name="parameters" element="tns:GetFilteredRecordByIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="UpdateRecordSoapIn">
+    <wsdl:part name="parameters" element="tns:UpdateRecord" />
+  </wsdl:message>
+  <wsdl:message name="UpdateRecordSoapOut">
+    <wsdl:part name="parameters" element="tns:UpdateRecordResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckOutRecordSoapIn">
+    <wsdl:part name="parameters" element="tns:CheckOutRecord" />
+  </wsdl:message>
+  <wsdl:message name="CheckOutRecordSoapOut">
+    <wsdl:part name="parameters" element="tns:CheckOutRecordResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckInRecordSoapIn">
+    <wsdl:part name="parameters" element="tns:CheckInRecord" />
+  </wsdl:message>
+  <wsdl:message name="CheckInRecordSoapOut">
+    <wsdl:part name="parameters" element="tns:CheckInRecordResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetTreeSoapIn">
+    <wsdl:part name="parameters" element="tns:GetTree" />
+  </wsdl:message>
+  <wsdl:message name="GetTreeSoapOut">
+    <wsdl:part name="parameters" element="tns:GetTreeResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetRecordContextTreeSoapIn">
+    <wsdl:part name="parameters" element="tns:GetRecordContextTree" />
+  </wsdl:message>
+  <wsdl:message name="GetRecordContextTreeSoapOut">
+    <wsdl:part name="parameters" element="tns:GetRecordContextTreeResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetTreeBranchSoapIn">
+    <wsdl:part name="parameters" element="tns:GetTreeBranch" />
+  </wsdl:message>
+  <wsdl:message name="GetTreeBranchSoapOut">
+    <wsdl:part name="parameters" element="tns:GetTreeBranchResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetRecordByPositionSoapIn">
+    <wsdl:part name="parameters" element="tns:GetRecordByPosition" />
+  </wsdl:message>
+  <wsdl:message name="GetRecordByPositionSoapOut">
+    <wsdl:part name="parameters" element="tns:GetRecordByPositionResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetPartialRecordByPositionSoapIn">
+    <wsdl:part name="parameters" element="tns:GetPartialRecordByPosition" />
+  </wsdl:message>
+  <wsdl:message name="GetPartialRecordByPositionSoapOut">
+    <wsdl:part name="parameters" element="tns:GetPartialRecordByPositionResponse" />
+  </wsdl:message>
+  <wsdl:message name="SearchSoapIn">
+    <wsdl:part name="parameters" element="tns:Search" />
+  </wsdl:message>
+  <wsdl:message name="SearchSoapOut">
+    <wsdl:part name="parameters" element="tns:SearchResponse" />
+  </wsdl:message>
+  <wsdl:message name="SortSoapIn">
+    <wsdl:part name="parameters" element="tns:Sort" />
+  </wsdl:message>
+  <wsdl:message name="SortSoapOut">
+    <wsdl:part name="parameters" element="tns:SortResponse" />
+  </wsdl:message>
+  <wsdl:message name="OverviewSoapIn">
+    <wsdl:part name="parameters" element="tns:Overview" />
+  </wsdl:message>
+  <wsdl:message name="OverviewSoapOut">
+    <wsdl:part name="parameters" element="tns:OverviewResponse" />
+  </wsdl:message>
+  <wsdl:portType name="CatalogueSoap">
+    <wsdl:operation name="IsItemOrderable">
+      <wsdl:input message="tns:IsItemOrderableSoapIn" />
+      <wsdl:output message="tns:IsItemOrderableSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="IsItemAvailable">
+      <wsdl:input message="tns:IsItemAvailableSoapIn" />
+      <wsdl:output message="tns:IsItemAvailableSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="PlaceOrder">
+      <wsdl:input message="tns:PlaceOrderSoapIn" />
+      <wsdl:output message="tns:PlaceOrderSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTreeByID">
+      <wsdl:input message="tns:GetTreeByIDSoapIn" />
+      <wsdl:output message="tns:GetTreeByIDSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="testPlaceOrder">
+      <wsdl:input message="tns:testPlaceOrderSoapIn" />
+      <wsdl:output message="tns:testPlaceOrderSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateRecord">
+      <wsdl:input message="tns:CreateRecordSoapIn" />
+      <wsdl:output message="tns:CreateRecordSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CreateChildRecord">
+      <wsdl:input message="tns:CreateChildRecordSoapIn" />
+      <wsdl:output message="tns:CreateChildRecordSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetRecordByKey">
+      <wsdl:input message="tns:GetRecordByKeySoapIn" />
+      <wsdl:output message="tns:GetRecordByKeySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPartialRecordByKey">
+      <wsdl:input message="tns:GetPartialRecordByKeySoapIn" />
+      <wsdl:output message="tns:GetPartialRecordByKeySoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetRecordById">
+      <wsdl:input message="tns:GetRecordByIdSoapIn" />
+      <wsdl:output message="tns:GetRecordByIdSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPartialRecordById">
+      <wsdl:input message="tns:GetPartialRecordByIdSoapIn" />
+      <wsdl:output message="tns:GetPartialRecordByIdSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetRecordByField">
+      <wsdl:input message="tns:GetRecordByFieldSoapIn" />
+      <wsdl:output message="tns:GetRecordByFieldSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPartialRecordByField">
+      <wsdl:input message="tns:GetPartialRecordByFieldSoapIn" />
+      <wsdl:output message="tns:GetPartialRecordByFieldSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetFilteredRecordById">
+      <wsdl:input message="tns:GetFilteredRecordByIdSoapIn" />
+      <wsdl:output message="tns:GetFilteredRecordByIdSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="UpdateRecord">
+      <wsdl:input message="tns:UpdateRecordSoapIn" />
+      <wsdl:output message="tns:UpdateRecordSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckOutRecord">
+      <wsdl:input message="tns:CheckOutRecordSoapIn" />
+      <wsdl:output message="tns:CheckOutRecordSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckInRecord">
+      <wsdl:input message="tns:CheckInRecordSoapIn" />
+      <wsdl:output message="tns:CheckInRecordSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTree">
+      <wsdl:input message="tns:GetTreeSoapIn" />
+      <wsdl:output message="tns:GetTreeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetRecordContextTree">
+      <wsdl:input message="tns:GetRecordContextTreeSoapIn" />
+      <wsdl:output message="tns:GetRecordContextTreeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetTreeBranch">
+      <wsdl:input message="tns:GetTreeBranchSoapIn" />
+      <wsdl:output message="tns:GetTreeBranchSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetRecordByPosition">
+      <wsdl:input message="tns:GetRecordByPositionSoapIn" />
+      <wsdl:output message="tns:GetRecordByPositionSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetPartialRecordByPosition">
+      <wsdl:input message="tns:GetPartialRecordByPositionSoapIn" />
+      <wsdl:output message="tns:GetPartialRecordByPositionSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Search">
+      <wsdl:input message="tns:SearchSoapIn" />
+      <wsdl:output message="tns:SearchSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Sort">
+      <wsdl:input message="tns:SortSoapIn" />
+      <wsdl:output message="tns:SortSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Overview">
+      <wsdl:input message="tns:OverviewSoapIn" />
+      <wsdl:output message="tns:OverviewSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="CatalogueSoap" type="tns:CatalogueSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="IsItemOrderable">
+      <soap:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/IsItemOrderable" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsItemAvailable">
+      <soap:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/IsItemAvailable" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PlaceOrder">
+      <soap:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/PlaceOrder" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTreeByID">
+      <soap:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/GetTreeByID" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="testPlaceOrder">
+      <soap:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/testPlaceOrder" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateRecord">
+      <soap:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/CreateRecord" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateChildRecord">
+      <soap:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/CreateChildRecord" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRecordByKey">
+      <soap:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/GetRecordByKey" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPartialRecordByKey">
+      <soap:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/GetPartialRecordByKey" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRecordById">
+      <soap:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/GetRecordById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPartialRecordById">
+      <soap:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/GetPartialRecordById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRecordByField">
+      <soap:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/GetRecordByField" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPartialRecordByField">
+      <soap:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/GetPartialRecordByField" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFilteredRecordById">
+      <soap:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/GetFilteredRecordById" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateRecord">
+      <soap:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/UpdateRecord" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckOutRecord">
+      <soap:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/CheckOutRecord" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckInRecord">
+      <soap:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/CheckInRecord" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTree">
+      <soap:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/GetTree" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRecordContextTree">
+      <soap:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/GetRecordContextTree" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTreeBranch">
+      <soap:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/GetTreeBranch" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRecordByPosition">
+      <soap:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/GetRecordByPosition" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPartialRecordByPosition">
+      <soap:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/GetPartialRecordByPosition" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Search">
+      <soap:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/Search" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Sort">
+      <soap:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/Sort" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Overview">
+      <soap:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/Overview" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="CatalogueSoap12" type="tns:CatalogueSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="IsItemOrderable">
+      <soap12:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/IsItemOrderable" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="IsItemAvailable">
+      <soap12:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/IsItemAvailable" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="PlaceOrder">
+      <soap12:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/PlaceOrder" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTreeByID">
+      <soap12:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/GetTreeByID" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="testPlaceOrder">
+      <soap12:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/testPlaceOrder" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateRecord">
+      <soap12:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/CreateRecord" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CreateChildRecord">
+      <soap12:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/CreateChildRecord" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRecordByKey">
+      <soap12:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/GetRecordByKey" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPartialRecordByKey">
+      <soap12:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/GetPartialRecordByKey" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRecordById">
+      <soap12:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/GetRecordById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPartialRecordById">
+      <soap12:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/GetPartialRecordById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRecordByField">
+      <soap12:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/GetRecordByField" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPartialRecordByField">
+      <soap12:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/GetPartialRecordByField" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetFilteredRecordById">
+      <soap12:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/GetFilteredRecordById" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="UpdateRecord">
+      <soap12:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/UpdateRecord" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckOutRecord">
+      <soap12:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/CheckOutRecord" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckInRecord">
+      <soap12:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/CheckInRecord" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTree">
+      <soap12:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/GetTree" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRecordContextTree">
+      <soap12:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/GetRecordContextTree" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetTreeBranch">
+      <soap12:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/GetTreeBranch" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetRecordByPosition">
+      <soap12:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/GetRecordByPosition" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetPartialRecordByPosition">
+      <soap12:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/GetPartialRecordByPosition" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Search">
+      <soap12:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/Search" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Sort">
+      <soap12:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/Sort" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="Overview">
+      <soap12:operation soapAction="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/Overview" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="Catalogue">
+    <wsdl:port name="CatalogueSoap" binding="tns:CatalogueSoap">
+      <soap:address location="http://www.calmhosting01.com/CalmAPI-HullUni/archive/catalogue.asmx" />
+    </wsdl:port>
+    <wsdl:port name="CatalogueSoap12" binding="tns:CatalogueSoap12">
+      <soap12:address location="http://www.calmhosting01.com/CalmAPI-HullUni/archive/catalogue.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

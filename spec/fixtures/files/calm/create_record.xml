@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope
+  xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <soap:Body>
+    <CreateRecordResponse xmlns="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/">
+      <CreateRecordResult>2253ce08-7106-43ba-857f-eac0c86b0021</CreateRecordResult>
+    </CreateRecordResponse>
+  </soap:Body>
+</soap:Envelope>
