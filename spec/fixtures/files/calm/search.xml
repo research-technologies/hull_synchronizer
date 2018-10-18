@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope
+  xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <soap:Body>
+    <SearchResponse xmlns="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/">
+      <SearchResult>
+        <SearchSummary>
+          <Database>Catalog</Database>
+          <Search>RefNo=Q DAB</Search>
+          <Count>114</Count>
+        </SearchSummary>
+      </SearchResult>
+    </SearchResponse>
+  </soap:Body>
+</soap:Envelope>

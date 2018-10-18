@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope
+  xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <soap:Body>
+    <GetRecordByFieldResponse xmlns="http://www.axiell.co.uk/WebServices/CalmApi/Archive/Catalogue/">
+      <GetRecordByFieldResult>
+        <Record type="Component">
+          <Fields>
+            <Field name="BarCode">1232423467</Field>
+            <Field name="Level">Collection</Field>
+            <Field name="Repository">Museum</Field>
+            <Field name="RefNo">Q DAB</Field>
+            <Field name="Extent">2.13 linear meters</Field>
+            <Field name="Title">A 2nd new collection</Field>
+            <Field name="Date" />
+            <Field name="Description">Creating a new parent with reference P DAB</Field>
+            <Field name="Format" />
+            <Field name="Category" />
+            <Field name="NormalLocation" />
+            <Field name="CurrentLocation" />
+            <Field name="Location" />
+            <Field name="ClosedUntil" />
+            <Field name="AccessConditions" />
+            <Field name="AccessStatus">Open</Field>
+            <Field name="PhysicalDescription" />
+            <Field name="Condition" />
+            <Field name="ConservationPriority" />
+            <Field name="RelatedMaterial" />
+            <Field name="CatalogueStatus">Catalogued</Field>
+            <Field name="Creator">admin</Field>
+            <Field name="Created">11/10/2018</Field>
+            <Field name="Modifier">admin</Field>
+            <Field name="Modified">11/10/2018</Field>
+            <Field name="RCN">R12</Field>
+            <Field name="RecordID">2253ce08-7106-43ba-857f-eac0c86b0021</Field>
+          </Fields>
+        </Record>
+      </GetRecordByFieldResult>
+    </GetRecordByFieldResponse>
+  </soap:Body>
+</soap:Envelope>
