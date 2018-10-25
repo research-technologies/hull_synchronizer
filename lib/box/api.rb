@@ -1,8 +1,10 @@
 require 'boxr'
 require 'tempfile'
+require 'synchronizer_file_locations'
 
 module Box
   class Api
+    include SynchronizerFileLocations
     attr_reader :client
     # ENV file should be filled.
 
@@ -14,6 +16,7 @@ module Box
     def list_folder(folder_id, path: nil, base_path: nil)
       items = {}
       folder = client.folder_from_id(folder_id)
+      s_id = get_status_folder(folder_id)
       if path
         current_path = File.join(path, folder.name)
       elsif base_path
@@ -24,7 +27,7 @@ module Box
       folder.item_collection.entries.each do |f|
         if f.type == 'file'
           items[f.id] = File.join(current_path, f.name)
-        else
+        elsif f.id != s_id
           items = items.merge(list_folder(f.id, path: current_path))
         end
       end
@@ -36,15 +39,16 @@ module Box
     end
 
     def inform_user(folder_id, folder_name, status, message, unlink: false)
+      s_id = create_status_folder(folder_id)
       box_folder = @client.folder_from_id(folder_id)
       file = Tempfile.new('__package_status.txt')
       file.write(Array(message).join("\n\n"))
       file.rewind
-      @client.upload_file(file.path, box_folder, name: "__status__#{Time.now.strftime('%FT%H-%M-%S-%N')}.txt")
+      @client.upload_file(file.path, s_id, name: "__status__#{Time.now.strftime('%FT%H-%M-%S-%N')}.txt")
       file.close
       file.unlink
-      remove_collaboration(box_folder) if unlink
       rename_folder(box_folder, folder_name, status)
+      remove_collaboration(box_folder) if unlink
     end
 
     def rename_folder(box_folder, folder_name, status)
@@ -59,6 +63,23 @@ module Box
           @client.remove_collaboration(collaboration)
         end
       end
+    end
+
+    def get_status_folder(folder_id)
+      folder = client.folder_from_id(folder_id)
+      folder.item_collection.entries.each do |f|
+        if f.type == 'folder' and f.name == box_status_dir
+          return f.id
+        end
+      end
+      nil
+    end
+
+    def create_status_folder(folder_id)
+      s_id = get_status_folder(folder_id)
+      return s_id unless s_id.nil?
+      f = client.create_folder(box_status_dir, folder_id)
+      f.id
     end
 
     private
