@@ -30,8 +30,13 @@ class StartIngestJob < Gush::Job
       output(
         event: 'success',
         message: 'Started ingest workflow manager to manage ingest worklow and monitor it',
-        package: package_payload,
-        works: works_payload
+        # TODO: What should the output contain here?
+        # package: package_payload,
+        # works: works_payload
+        item_id: params[:item_id],
+        item_name: params[:item_name],
+        source_dir: params[:source_dir],
+        number_of_works: params[:number_of_works]
       )
     end
 end
