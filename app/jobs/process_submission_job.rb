@@ -2,9 +2,7 @@
 class ProcessSubmissionJob < Gush::Job
   require 'submission_processor'
 
-  attr_reader :event_code, :processor, :message_text
-
-  delegate :package_payload, :works_payload, to: :processor
+  attr_reader :processor
 
   # Processes the submission package
   def perform

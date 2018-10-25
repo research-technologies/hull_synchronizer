@@ -9,7 +9,7 @@ class SubmissionProcessor
   include SynchronizerFileLocations
   attr_reader :params, :source_dir, :row_count, :current_transfer_dir
 
-  # Class to check, assemble and prepare data for transfer to archivematica
+  # Class to assemble and prepare data for transfer to archivematica
   # The file layout is as follows. The source directory contains
   #   FILE.csv
   #     maybe placed within Metadata dir
@@ -52,7 +52,7 @@ class SubmissionProcessor
     assemble_data
     assemble_archival_files
     build_bag
-    cleanup(@source_dir, check_empty=false)
+    cleanup(@source_dir, check_empty: false)
   end
 
   private
@@ -205,7 +205,7 @@ class SubmissionProcessor
     end
   end
 
-  def cleanup(src_dir, check_empty=true)
+  def cleanup(src_dir, check_empty: true)
     if check_empty
       Dir.rmdir src_dir if Dir.empty?(src_dir)
     else

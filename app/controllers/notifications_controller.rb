@@ -1,4 +1,5 @@
 class NotificationsController < ApplicationController
+  protect_from_forgery with: :null_session
   def index
     logger.info("---------------------------")
     logger.info("BOX NOTIFICATION RECEIVED")
@@ -7,9 +8,8 @@ class NotificationsController < ApplicationController
     logger.info("Item Type:\t#{params[:item_type]}")
     logger.info("Item Id:\t#{params[:item_id]}")
     if params[:event_type] == 'added_collaborator'
-      @flow = ReceivePackageWorkflow.create(params)
-      flow.start!
+      TransferWorkflowManager.new(params: params)
     end
-    render json:{'note': "Box Notification Received", 'params': params}
+    render json:{'note': "Box Notification Received"}
   end
 end
