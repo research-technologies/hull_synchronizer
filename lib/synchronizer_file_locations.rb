@@ -1,20 +1,19 @@
 module SynchronizerFileLocations
 
   def local_box_dir
-    '/data/box'
+    ENV['LOCAL_BOX_DIR']
+  end
+
+  def remote_dir
+    ENV['LOCAL_EFS_DATA_DIR']
+  end
+
+  def transfer_dir
+    ENV['LOCAL_EFS_TRANSFER_DIR']
   end
 
   def box_status_dir
     '__status'
-  end
-
-  def remote_dir
-    '/data/source/'
-  end
-
-  # @todo change to data, need to remap on archivematica too
-  def transfer_dir
-    '/mnt/efs/TransferSource'
   end
 
   def new_transfer_dir
