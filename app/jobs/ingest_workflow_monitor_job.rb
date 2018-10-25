@@ -42,9 +42,13 @@ class IngestWorkflowMonitorJob < ActiveJob::Base
   end
 
   def done?
-    return false unless flow.finished? || failed?
-    log_failure if failed?
-    true
+    return true if flow.finished?
+    if failed?
+      log_failure
+      true
+    else
+      false
+    end
   end
 
   def log_failure
