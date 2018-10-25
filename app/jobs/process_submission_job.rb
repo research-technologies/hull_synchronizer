@@ -14,7 +14,7 @@ class ProcessSubmissionJob < Gush::Job
     # processor.cleanup unless processor.blank?
     output(
         event: 'failed',
-        message: e.message
+        message: "#{e.message}\n\n#{e.backtrace.join('\n')}"
         )
     fail!
   end

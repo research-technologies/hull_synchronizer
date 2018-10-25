@@ -10,12 +10,12 @@ class StartIngestJob < Gush::Job
       source_dir: payloads.first[:output][:source_dir],
       number_of_works: payloads.first[:output][:number_of_works]
     }
-    IngestWorkflowManager.new(params)
+    IngestWorkflowManager.new(params: params)
     build_output
   rescue StandardError => e
     output(
         event: 'failed',
-        message: e.message,
+        message: "#{e.message}\n\n#{e.backtrace.join('\n')}",
         item_id: params[:item_id],
         item_name: params[:item_name],
         source_dir: params[:source_dir],
