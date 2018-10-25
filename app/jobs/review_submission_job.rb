@@ -11,16 +11,16 @@ class ReviewSubmissionJob < Gush::Job
     @params = params
     @processor = SubmissionChecker.new(params: params)
     @processor.check_submission
-    @message_text = @processor.errors
     @number_of_works = @processor.row_count
+    inform_user
     build_output
-    fail! if @processor.status == false
+    fail! if @processor.status == false and @processor.errors.any?
   # Need to decide when to retry. See ingest_status as example
   rescue StandardError => e
     # processor.cleanup unless processor.blank?
     output(
         event: 'failed',
-        message: e.message
+        message: "#{e.message}\n\n#{e.backtrace.join('\n')}"
         )
     fail!
   end
@@ -28,18 +28,16 @@ class ReviewSubmissionJob < Gush::Job
   private
 
     def build_output
-      if @processor.status == true
-        msg = 'Successfully reviewed submission package. It is ready to be processed'
-        event = 'success'
-      else
+      if @processor.status == false and @processor.errors.any?
         msg = 'Submission package has errors'
         event = 'failed'
+      else
+        msg = 'Successfully reviewed submission package. It is ready to be processed'
+        event = 'success'
       end
-      inform_user
       output(
         event: event,
-        message: msg,
-        message_text: @processor.errors,
+        message: Array(msg) + Array(@processor.errors),
         source_dir: params[:source_dir],
         number_of_works: @number_of_works,
         status: @processor.status,
@@ -55,12 +53,12 @@ class ReviewSubmissionJob < Gush::Job
         item_name: params[:item_name],
         unlink: true # remove collaborator link
       }
-      if @processor.status
-        u_params[:status] = 'processing'
-        u_params[:message] = 'Successfully reviewed submission package. It is ready to be processed for archiving'
-      else
+      if @processor.status == false and @processor.errors.any?
         u_params[:status] = 'review_failed'
         u_params[:message] = @processor.errors
+      else
+        u_params[:status] = 'processing'
+        u_params[:message] = 'Successfully reviewed submission package. It is ready to be processed for archiving'
       end
       Box::InformUserJob.perform_now(u_params)
     end
