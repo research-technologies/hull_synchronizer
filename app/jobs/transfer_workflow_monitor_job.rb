@@ -16,11 +16,10 @@ class TransferWorkflowMonitorJob < ActiveJob::Base
   #   If the event is retry, and the workflow started more then 24 hours ago
   #     we mark the workflow as having stopped and schedule no more jobs.
 
-  def perform(workflow_id, params)
+  def perform(params)
     @params = params
-    @flow = TransferWorkflow.find(workflow_id)
+    @flow = TransferWorkflow.find(params[:workflow_id])
     inform_user if done?
-    return if done?
     next_workflow if flow.finished?
     continue if retry?
     retry_later if retry?
@@ -94,6 +93,8 @@ class TransferWorkflowMonitorJob < ActiveJob::Base
   #  @todo consider whether we should limit the number of retries
   #    if so, this method could raise an error and use Sidekiq's retry functionality instead
   def retry_later
-    TransferWorkflowMonitorJob.set(wait: 3.minutes).perform_later(flow.id)
+    # sleep(60)
+    # TransferWorkflowMonitorJob.perform_now(params)
+    TransferWorkflowMonitorJob.set(wait: 1.minutes).perform_later(params)
   end
 end
