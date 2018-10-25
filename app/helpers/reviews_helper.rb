@@ -1,3 +1,3 @@
-module IngestsHelper
+module ReviewsHelper
     include WorkflowsHelper
 end

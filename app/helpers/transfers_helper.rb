@@ -1,3 +1,3 @@
-module IngestsHelper
+module TransfersHelper
     include WorkflowsHelper
 end
