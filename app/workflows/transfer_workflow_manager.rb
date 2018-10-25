@@ -9,20 +9,23 @@ class TransferWorkflowManager
   def initialize(params: {})
     @params = params
     @base_path = "#{params[:item_name]}__#{Time.now.strftime('%FT%H-%M-%S-%N')}"
-    @workflow_params = get_workflow_params
     inform_user
-    @flow = TransferWorkflow.create(workflow_params)
-    flow.start!
+    start_transfer_workflow
     monitor
   end
 
-  def get_workflow_params
-    {
+  private
+
+  def start_transfer_workflow
+    @workflow_params = {
       item_name: params[:item_name],
       item_id: params[:item_id],
       item_list: list_files,
       source_dir: File.join(local_box_dir, @base_path)
     }
+    @flow = TransferWorkflow.create(workflow_params)
+    flow.start!
+    @workflow_params[:workflow_id] = flow.id
   end
 
   def list_files
@@ -34,7 +37,9 @@ class TransferWorkflowManager
   # Monitor the workflow for retry events
   #  delay start to give the start and approve jobs time to run
   def monitor
-    TransferWorkflowMonitorJob.set(wait: 5.minute).perform_later(flow.id, workflow_params)
+    # sleep(60)
+    # TransferWorkflowMonitorJob.perform_now(workflow_params)
+    TransferWorkflowMonitorJob.set(wait: 1.minute).perform_later(workflow_params)
   end
 
   def inform_user
@@ -45,4 +50,5 @@ class TransferWorkflowManager
     u_params[:message] = 'Starting file transfer'
     Box::InformUserJob.perform_now(u_params)
   end
+
 end
