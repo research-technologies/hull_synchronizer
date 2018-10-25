@@ -22,6 +22,7 @@ module Archivematica
             type: params[:type]
           )
         else
+          Rails.logger.error("Job was failed with: #{message_text}")
           output(event: 'failed', message: message_text)
           fail!
         end

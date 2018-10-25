@@ -25,6 +25,7 @@
         if status.between?(200,201) 
           act_on_ok
         else
+          Rails.logger.error("Job failed with: #{message_text}")
           output(event: 'failed', message: message_text)
           fail!
         end

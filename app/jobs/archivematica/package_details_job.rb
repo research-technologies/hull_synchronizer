@@ -51,6 +51,7 @@ module Archivematica
             package_metadata: metadata
           )
         else
+          Rails.logger.error("Job was sent for a retry with: #{message_text}")
           output(event: 'retry', message: message_text)
           fail!
         end
