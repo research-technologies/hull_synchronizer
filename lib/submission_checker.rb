@@ -43,7 +43,10 @@ class SubmissionChecker
 
   def check_submission
     @status = true
-    @status = false unless has_required_files?
+    unless has_required_files?
+      @status = false
+      return
+    end
     @status = false unless has_listed_files?
     @status = false unless has_valid_metadata?
     @status = false if has_extra_files?
