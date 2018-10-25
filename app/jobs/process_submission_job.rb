@@ -2,9 +2,7 @@
 class ProcessSubmissionJob < Gush::Job
   require 'submission_processor'
 
-  attr_reader :event_code, :processor, :message_text
-
-  delegate :package_payload, :works_payload, to: :processor
+  attr_reader :processor
 
   # Processes the submission package
   def perform
@@ -16,7 +14,7 @@ class ProcessSubmissionJob < Gush::Job
     # processor.cleanup unless processor.blank?
     output(
         event: 'failed',
-        message: e.message
+        message: "#{e.message}\n\n#{e.backtrace.join('\n')}"
         )
     fail!
   end

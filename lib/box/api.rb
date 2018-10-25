@@ -1,37 +1,88 @@
 require 'boxr'
 require 'tempfile'
+require 'synchronizer_file_locations'
 
 module Box
   class Api
+    include SynchronizerFileLocations
     attr_reader :client
     # ENV file should be filled.
 
-    def initialize(params)
+    def initialize
       get_enterprise_token
       initialize_client
-      @params = params
     end
 
-    def receive_package
-      folder = folder_from_id(@params[:item_id])
-      @original_name = folder.name
-      # package should be available in davfs mount of box with the same name
-    end
-
-    def inform_user
-      box_folder = folder_from_id(@params[:item_id])
-      unless @params[:status]
-        file = Tempfile.new('__package_status.txt')
-        file.write(@params[:message_text].join("\n\n"))
-        file.rewind
-        upload_file(box_folder, file.path, '__package_status.txt')
-        file.close
-        file.unlink
-        remove_collaboration(box_folder)
+    def list_folder(folder_id, path: nil, base_path: nil)
+      items = {}
+      folder = client.folder_from_id(folder_id)
+      s_id = get_status_folder(folder_id)
+      if path
+        current_path = File.join(path, folder.name)
+      elsif base_path
+        current_path = base_path
+      else
+        current_path = folder.name
       end
-      # TODO: If successful, copy folder and then remove collaborator
-      rename_folder(box_folder, status=@params[:status])
+      folder.item_collection.entries.each do |f|
+        if f.type == 'file'
+          items[f.id] = File.join(current_path, f.name)
+        elsif f.id != s_id
+          items = items.merge(list_folder(f.id, path: current_path))
+        end
+      end
+      items
     end
+
+    def file_url(file_id)
+      @client.download_file(file_id, follow_redirect: false)
+    end
+
+    def inform_user(folder_id, folder_name, status, message, unlink: false)
+      s_id = create_status_folder(folder_id)
+      box_folder = @client.folder_from_id(folder_id)
+      file = Tempfile.new('__package_status.txt')
+      file.write(Array(message).join("\n\n"))
+      file.rewind
+      @client.upload_file(file.path, s_id, name: "__status__#{Time.now.strftime('%FT%H-%M-%S-%N')}.txt")
+      file.close
+      file.unlink
+      rename_folder(box_folder, folder_name, status)
+      remove_collaboration(box_folder) if unlink
+    end
+
+    def rename_folder(box_folder, folder_name, status)
+      new_name = "#{folder_name}___#{status}"
+      @client.update_folder(box_folder, name: new_name)
+    end
+
+    def remove_collaboration(folder)
+      collaborations = @client.folder_collaborations(folder)
+      collaborations.each do |collaboration|
+        if collaboration.type == 'collaboration' && collaboration.accessible_by.login == ENV['APP_USER_EMAIL']
+          @client.remove_collaboration(collaboration)
+        end
+      end
+    end
+
+    def get_status_folder(folder_id)
+      folder = client.folder_from_id(folder_id)
+      folder.item_collection.entries.each do |f|
+        if f.type == 'folder' and f.name == box_status_dir
+          return f.id
+        end
+      end
+      nil
+    end
+
+    def create_status_folder(folder_id)
+      s_id = get_status_folder(folder_id)
+      return s_id unless s_id.nil?
+      f = client.create_folder(box_status_dir, folder_id)
+      f.id
+    end
+
+    private
 
     def get_enterprise_token
       @tokens = Boxr::get_enterprise_token(
@@ -46,52 +97,6 @@ module Box
 
     def initialize_client
       @client = Boxr::Client.new(@tokens.access_token)
-    end
-
-    def folder_contents(path=nil)
-      (not path) ? @client.folder_items(Boxr::ROOT) : @client.folder_items(path)
-    end
-
-    def folder_from_id(folder_id)
-      @client.folder_from_id(folder_id)
-    end
-
-    def rename_folder(box_folder, status)
-      if status
-        human_status = 'check_passed'
-      else
-        human_status = 'check_failed'
-      end
-      new_name = "#{box_folder.name}___#{human_status}"
-      puts new_name
-      @client.update_folder(box_folder, name: new_name)
-    end
-
-    def remove_collaboration(folder)
-      collaborations = @client.folder_collaborations(folder)
-      collaborations.each do |collaboration|
-        if collaboration.type == 'collaboration' && collaboration.accessible_by.login == ENV['APP_USER_EMAIL']
-          @client.remove_collaboration(collaboration)
-        end
-      end
-    end
-
-    def user_id
-      # for jwt to get id when initialized with oauth
-      @client.current_user.id
-    end
-
-    def copy_folder(src_box_folder, dest_box_folder)
-      dest_folder_name = "#{src_box_folder.name}-#{Time.now.strftime('%FT%H-%M-%S-%N')}"
-      @client.copy_folder(
-        src_box_folder,
-        dest_box_folder,
-        name: dest_folder_name)
-      dest_folder_name
-    end
-
-    def upload_file(box_folder, file, name)
-      @client.upload_file(file, box_folder, name: name)
     end
 
   end

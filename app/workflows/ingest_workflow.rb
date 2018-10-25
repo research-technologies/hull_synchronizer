@@ -10,7 +10,6 @@ class IngestWorkflow < Gush::Workflow
     else
       @number_of_works = 0
     end
-    # @todo: remove params from here and change StartTransferJob to use the payload once there is a preceding job
     run ProcessSubmissionJob, params: params
     run Archivematica::StartTransferJob, after: ProcessSubmissionJob
     run Archivematica::ApproveTransferJob, after: Archivematica::StartTransferJob

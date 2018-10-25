@@ -1,5 +1,13 @@
 module SynchronizerFileLocations
 
+  def local_box_dir
+    '/data/box'
+  end
+
+  def box_status_dir
+    '__status'
+  end
+
   def remote_dir
     '/data/source/'
   end
