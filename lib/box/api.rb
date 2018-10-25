@@ -52,7 +52,7 @@ module Box
     end
 
     def rename_folder(box_folder, folder_name, status)
-      new_name = "#{folder_name}___#{status}"
+      new_name = "#{folder_name}__#{status}"
       @client.update_folder(box_folder, name: new_name)
     end
 
