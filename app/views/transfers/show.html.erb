@@ -34,7 +34,7 @@
       <td>&nbsp;&nbsp;Succeeded jobs:</td><td><%= count(@transfer, 'succeeded') %></td>
     </tr>
     <tr>
-      <td>Number of Works:</td><td><%= @transfer.number_of_works %> (plus 1 Package)</td>
+      <td>Number of files:</td><td><%= @transfer.number_of_files %> </td>
     </tr>
     <% succeeded_jobs_in_order(@transfer).each do | job |  %>
       <tr>
@@ -69,13 +69,13 @@
 </table>
 <br />
 
-<%= link_to 'Refresh', transfer_path %> | 
+<%= link_to 'Refresh', transfer_path %> |
 <% unless @transfer.finished? %>
-  <%= link_to 'Retry', retry_transfer_path(@transfer.id) %> | 
+  <%= link_to 'Retry', retry_transfer_path(@transfer.id) %> |
 <% end %>
-<%= link_to 'Delete', 
-             transfer_path(@transfer.id), 
-             method: :delete, 
-             data: { confirm: 'Are you sure you want to delete this transfer?' } %> | 
+<%= link_to 'Delete',
+             transfer_path(@transfer.id),
+             method: :delete,
+             data: { confirm: 'Are you sure you want to delete this transfer?' } %> |
 <%= link_to 'Back', transfers_path %>
 
