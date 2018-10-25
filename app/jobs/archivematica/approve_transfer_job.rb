@@ -21,6 +21,7 @@ module Archivematica
             uuid: body['uuid']
           )
         else
+          Rails.logger.error("Job failed with: #{message_text}")
           output(event: 'failed', message: message_text)
           fail!
         end
