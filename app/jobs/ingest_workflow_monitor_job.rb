@@ -20,7 +20,7 @@ class IngestWorkflowMonitorJob < ActiveJob::Base
     @flow = IngestWorkflow.find(workflow_id)
     return if done?
     continue if retry?
-    retry_later if retry?
+    retry_later if retry? or flow.running?
   end
 
   # Continue a failed transfer

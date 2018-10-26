@@ -22,7 +22,7 @@ class TransferWorkflowMonitorJob < ActiveJob::Base
     inform_user if done?
     next_workflow if flow.finished?
     continue if retry?
-    retry_later if retry?
+    retry_later if retry? or flow.running?
   end
 
   def next_workflow
