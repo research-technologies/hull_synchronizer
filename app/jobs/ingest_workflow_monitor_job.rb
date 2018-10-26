@@ -29,7 +29,7 @@ class IngestWorkflowMonitorJob < ActiveJob::Base
   def continue
     flow.continue
     sleep(5)
-    flow.reload
+    @flow = flow.reload
   end
 
   def retry?
