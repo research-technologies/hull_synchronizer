@@ -1,5 +1,5 @@
 class TransferWorkflowMonitorJob < ActiveJob::Base
-  queue_as :transfer_workflow_monitor
+  queue_as :workflow_monitor
   attr_accessor :flow, :params
   # Params contain item_name, item_id, item_list and source_dir
 

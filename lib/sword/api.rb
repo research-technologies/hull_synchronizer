@@ -33,10 +33,10 @@ module Sword
           faraday.headers['Authorization'] = auth unless auth.nil?
           faraday.headers['Content-Type'] = 'application/xml' unless conn_for == 'Sword::Api::Work'
           faraday.adapter :net_http
-          if Rails.env == 'development' && ENV['SWORD_ENDPOINT'].include?('https')
-            faraday.ssl[:verify] = false
-            faraday.ssl[:verify_mode] = OpenSSL::SSL::VERIFY_NONE
-          end
+          # @todo REMOVE ONCE SSL IN PLACE if Rails.env == 'development' && ENV['SWORD_ENDPOINT'].include?('https')
+          faraday.ssl[:verify] = false
+          faraday.ssl[:verify_mode] = OpenSSL::SSL::VERIFY_NONE
+          # end
         end
       end
 
