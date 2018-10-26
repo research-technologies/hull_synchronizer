@@ -22,7 +22,7 @@
 
       # If response code is 200 or 201, continue
       def act_on_status
-        if status.between?(200,201) 
+        if status and status.between?(200,201) 
           act_on_ok
         else
           Rails.logger.error("Job failed with: #{message_text}")
