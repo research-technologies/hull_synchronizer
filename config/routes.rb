@@ -7,13 +7,13 @@ Rails.application.routes.draw do
   resources :transfers, only: [:index, :show, :destroy, :update]
   resources :reviews, only: [:index, :show, :destroy, :update]
   resources :retry_ingest do
-    get ":id", to: "ingests#retry", on: :collection
+    get ":id", to: "ingests#retry_ingest", on: :collection
   end
   resources :retry_transfer do
-    get ":id", to: "transfers#retry", on: :collection
+    get ":id", to: "transfers#retry_transfer", on: :collection
   end
   resources :retry_review do
-    get ":id", to: "reviews#retry", on: :collection
+    get ":id", to: "reviews#retry_review", on: :collection
   end
   resources :notifications
 

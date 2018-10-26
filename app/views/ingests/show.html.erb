@@ -71,7 +71,7 @@
 
 <%= link_to 'Refresh', review_path %> | 
 <% unless @ingest.finished? %>
-  <%= link_to 'Retry', retry_review_path(@ingest.id) %> | 
+  <%= link_to 'Retry', retry_ingest_path(@ingest.id) %> | 
 <% end %>
 <%= link_to 'Delete', 
              review_path(@ingest.id), 
