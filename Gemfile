@@ -58,9 +58,11 @@ gem 'jquery-rails'
 gem 'paperclip', '~> 5.0.0'
 gem 'sidekiq'
 gem 'gush', '~> 1.0.0'
+
 # used for bagit and zip
 gem 'willow_sword', git: 'https://github.com/CottageLabs/willow_sword.git' 
 gem 'boxr'
+gem 'savon', '~> 2.12.0'
 
 group :development, :test do
   gem 'bixby'
