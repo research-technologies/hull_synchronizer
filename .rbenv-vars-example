@@ -5,25 +5,25 @@ PUBLIC_KEY_ID=
 CLIENT_ID=
 CLIENT_SECRET=
 ENTERPRISE_ID=
-USER_ID=287086621
+USER_ID=
 
 # box app user login email
 APP_USER_EMAIL=
 
-# Key for the webhook created using the app ui
+# Key for the box webhook created using the app ui
 WEBHOOK_KEY=
 
 # Archivematica server settings
-AM_URL=http://52.50.38.5
+AM_URL=
 AM_USER=
 AM_KEY=
 AM_TS=
-SS_URL=http://52.50.38.5:8000
-SS_USER=julie
-SS_KEY=af93ade52c6fa0387503f8384392a1bbbabd2c8e
+SS_URL=
+SS_USER=
+SS_KEY=
 
 # Sword server settings
-SWORD_ENDPOINT=https://34.246.66.229
+SWORD_ENDPOINT=
 
 # Data locations and mount points
 LOCAL_BOX_DIR=
