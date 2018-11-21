@@ -13,5 +13,7 @@
  *= require_self
  *= require_tree .
  */
+@import 'local';
 @import 'bootstrap-sprockets';
 @import 'bootstrap';
+
