@@ -47,7 +47,7 @@ class DIPProcessor
       dip.package.each do |file|
         FileUtils.cp_r(file, src)
       end
-      write_json
+      write_json(params[:package_metadata])
       write_dc
     end
 
@@ -68,11 +68,17 @@ class DIPProcessor
       end
     end
 
+    # Build each work:
+    #   copy files to destination for zipping
+    #   add 'packaged_by_package_name' to metadata.json
+    #   write metadata.json to destination
     def build_work(work_files)
       work_files.each do |file|
         next if file.blank?
         if file.end_with? '-metadata.json'
-          FileUtils.cp_r(file, File.join(src, 'metadata.json'))
+          metadata = JSON.parse(File.open(file))
+          metadata[:packaged_by_package_name] = dip_id
+          write_json(metadata)
         else
           FileUtils.cp_r(file, src)
         end
@@ -81,7 +87,6 @@ class DIPProcessor
     end
 
     def build_zip
-      # WillowSword::ZipPackage.new(src, "#{dst}.zip").create_zip
       WillowSword::ZipPackage.new(dst, "#{dst}.zip").create_zip
     end
 
@@ -107,10 +112,10 @@ class DIPProcessor
       FileUtils.mkdir(dst) unless Dir.exist?(dst)
     end
 
-    def write_json
+    def write_json(json_data)
       # Without the line ending, there is a checksum mismatch when the bag is unzipped
       File.open(File.join(src, 'metadata.json'), "w:UTF-8") do |f|
-        f.write "#{JSON.pretty_generate(params[:package_metadata])}\n"
+        f.write "#{JSON.pretty_generate(json_data)}\n"
       end
     end
 
