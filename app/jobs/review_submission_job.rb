@@ -47,20 +47,21 @@ class ReviewSubmissionJob < Gush::Job
     end
 
     def inform_user
-      # params need to cointain item_id, item_name, status, message, unlink
+      # params need to contain item_id, item_name, status, message, unlink
       u_params = {
         item_id: params[:item_id],
-        item_name: params[:item_name],
-        unlink: true # remove collaborator link
+        item_name: params[:item_name]
       }
       if @processor.status == false and @processor.errors.any?
         u_params[:status] = 'review_failed'
         u_params[:message] = @processor.errors
+        u_params[:unlink] = true # remove collaborator link
       else
         u_params[:status] = 'processing'
         u_params[:message] = 'Successfully reviewed submission package. It is ready to be processed for archiving'
+        u_params[:unlink] = false # do not remove collaborator link
       end
-      Box::InformUserJob.perform_now(u_params)
+      Box::InformUserJob.perform_later(u_params)
     end
 end
 
