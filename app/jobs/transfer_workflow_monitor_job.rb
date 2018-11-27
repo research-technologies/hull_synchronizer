@@ -43,7 +43,7 @@ class TransferWorkflowMonitorJob < ActiveJob::Base
       u_params[:unlink] = true # remove collaborator link
       u_params[:message] = log_failure
     end
-    Box::InformUserJob.perform_now(u_params)
+    Box::InformUserJob.perform_later(u_params)
   end
 
   # Continue a failed transfer

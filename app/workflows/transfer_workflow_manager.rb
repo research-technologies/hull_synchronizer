@@ -48,7 +48,7 @@ class TransferWorkflowManager
     u_params[:status] = 'transfering'
     u_params[:unlink] = false # do not remove collaborator link
     u_params[:message] = 'Starting file transfer'
-    Box::InformUserJob.perform_now(u_params)
+    Box::InformUserJob.perform_later(u_params)
   end
 
 end
