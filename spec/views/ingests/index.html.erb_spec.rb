@@ -9,7 +9,7 @@ RSpec.describe "ingests/index", type: :view do
   end
 
   it "renders a list of ingests" do
-    skip ('@todo add tests')
+    skip '@todo add tests'
     render
   end
 end

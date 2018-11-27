@@ -7,7 +7,7 @@ RSpec.describe IngestsController, type: :routing do
     end
 
     it "routes to #new" do
-      skip ('This route is disabled')
+      skip 'This route is disabled'
       expect(get: "/ingests/new").to route_to("ingests#new")
     end
 
@@ -16,12 +16,12 @@ RSpec.describe IngestsController, type: :routing do
     end
 
     it "routes to #edit" do
-      skip ('This route is disabled')
+      skip 'This route is disabled'
       expect(get: "/ingests/1/edit").to route_to("ingests#edit", id: "1")
     end
 
     it "routes to #create" do
-      skip ('This route is disabled')
+      skip 'This route is disabled'
       expect(post: "/ingests").to route_to("ingests#create")
     end
 
