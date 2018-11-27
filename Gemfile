@@ -68,4 +68,5 @@ group :development, :test do
   gem 'bixby'
   gem 'rspec-rails', '~> 3.7'
   gem 'webmock'
+  gem 'coveralls'
 end
