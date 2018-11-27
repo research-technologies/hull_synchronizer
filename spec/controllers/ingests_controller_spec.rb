@@ -57,10 +57,11 @@ RSpec.describe IngestsController, type: :controller do
   end
 
   describe "GET #new" do
-    it "returns a success response" do
-      get :new, params: {}, session: valid_session
-      expect(response).to be_success
-    end
+    skip("Test routing for new does not exist")
+    # it "rejects routing for new" do
+    #   expect(get :new, params: {}, session: valid_session).to raise_error
+    #   expect(get :new, params: {}, session: valid_session).not_to be_routable
+    # end
   end
 
   describe "GET #edit" do

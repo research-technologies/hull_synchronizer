@@ -1,0 +1,13 @@
+language: ruby
+sudo: false
+cache: bundler
+rvm:
+  - 2.4.1
+script:
+  - bin/rake db:migrate RAILS_ENV=test
+  - bin/rake
+services:
+- redis-server
+env:
+  global:
+    - NOKOGIRI_USE_SYSTEM_LIBRARIES=true

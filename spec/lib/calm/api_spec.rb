@@ -4,23 +4,23 @@ RSpec.describe Calm::Api do
   # include the helper module
   include Savon::SpecHelper
   # set Savon in and out of mock mode
-  before(:all) {
+  before(:all) do
     savon.mock!
-    @calm_api = Calm::Api.new
-  }
-  before(:each) do
+    @calm_api = described_class.new
+  end
+  before do
     wsdl = 'http://www.calmhosting01.com/CalmAPI-HullUni/archive/catalogue.asmx?WSDL'
     fixture = File.read("spec/fixtures/files/calm/wsdl.xml")
     stub_request(:get, wsdl).to_return(status: 200, body: fixture)
   end
-  after(:all)  { savon.unmock! }
+  after(:all) { savon.unmock! }
 
   describe "#get_record_by_id" do
     it "returns the record with given ID" do
       # parameters
       id = '2253ce08-7106-43ba-857f-eac0c86b0021'
       # set up an expectation
-      message = {id: id}
+      message = { id: id }
       message[:cookies] = @calm_api.cookies if @calm_api.cookies.any?
       fixture = File.read("spec/fixtures/files/calm/get_record_by_id.xml")
       savon.expects(:get_record_by_id).with(message: message).returns(fixture)
@@ -67,7 +67,7 @@ RSpec.describe Calm::Api do
       # set up an expectation
       message = {
         type: 'Component',
-        fields: { Field: fields.values, :attributes! => {Field: {'name' => fields.keys}}},
+        fields: { Field: fields.values, attributes!: { Field: { 'name' => fields.keys } } }
       }
       message[:cookies] = @calm_api.cookies if @calm_api.cookies.any?
       fixture = File.read("spec/fixtures/files/calm/create_record.xml")
@@ -99,7 +99,7 @@ RSpec.describe Calm::Api do
         recordType: type,
         parentID: parentID,
         treeField: treeField,
-        fields: { Field: fields.values, :attributes! => { Field: { name: fields.keys } } },
+        fields: { Field: fields.values, attributes!: { Field: { name: fields.keys } } },
         conform: conform
       }
       message[:cookies] = @calm_api.cookies if @calm_api.cookies.any?
@@ -134,5 +134,4 @@ RSpec.describe Calm::Api do
       expect(body).to eq(response_hash)
     end
   end
-
 end
