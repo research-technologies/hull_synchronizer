@@ -46,7 +46,7 @@ class DIPReader
     objects = []
     objects << File.join(@dip_folder, "processingMCP.xml")
     objects << Dir.glob(File.join(@dip_folder, "METS.*.xml")).first
-    find_paths('package').each { |file| objects << file }
+    find_paths('package').each { |file| objects << file unless file.nil? }
     objects
   end
 
@@ -61,8 +61,11 @@ class DIPReader
   def find_paths(directory)
     div = @content_struct.at_xpath("mets:div[@LABEL='#{directory}']")
     return [] if div.blank?
-    div.xpath("mets:div").select { |item| item.at_xpath("mets:fptr/@FILEID") }.map do |i|
-      find_file_by_uuid(i.at_xpath("mets:fptr/@FILEID"))
+    nodes = []
+      div.xpath("mets:div").each do | item | item.traverse { | i | 
+        nodes << find_file_by_uuid(i.at_xpath(".//mets:fptr/@FILEID"))
+      }
     end
+    nodes.uniq!
   end
 end

@@ -3,10 +3,8 @@ module Archivematica
   class StartTransferJob < BaseJob
     # Start transfer
     # payloads.first[:output] [Hash] required params
-    # @todo params will be supplied by payloads.first[:output]
     def perform
-      @response = Archivematica::Api::StartTransfer.new(params: params).request
-      # @response = Archivematica::Api::StartTransfer.new(params: payloads.first[:output]).request
+      @response = Archivematica::Api::StartTransfer.new(params: payloads.first[:output]).request
       act_on_status
     end
 
@@ -22,6 +20,7 @@ module Archivematica
             type: params[:type]
           )
         else
+          Rails.logger.error("Job was failed with: #{message_text}")
           output(event: 'failed', message: message_text)
           fail!
         end

@@ -1,0 +1,81 @@
+<p id="notice"><%= notice %></p>
+
+<table>
+
+  <tbody>
+    <tr>
+      <td>ID:</td><td><%= @transfer.id %></td>
+    </tr>
+    <tr>
+      <td>Name:</td><td><%= @transfer.class.to_s %></td>
+    </tr>
+    <tr>
+      <td>Status</td><td><%= @transfer.status %></td>
+    </tr>
+    <tr>
+      <td>Started at:</td><td><%= Time.at(@transfer.started_at) unless @transfer.started_at.blank? %></td>
+    </tr>
+    <tr>
+      <td>Finished at:</td><td><%= Time.at(@transfer.finished_at) unless @transfer.finished_at.blank? %></td>
+    </tr>
+    <tr>
+      <td>Total Jobs:</td><td><%= @transfer.jobs.count %></td>
+    </tr>
+    <tr>
+      <td>Enqueued jobs:</td><td><%= count(@transfer, 'enqueued') %></td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;Running jobs:</td><td><%= count(@transfer, 'running') %></td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;Remaining jobs:</td><td><%= count(@transfer, 'remaining') %></td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;Succeeded jobs:</td><td><%= count(@transfer, 'succeeded') %></td>
+    </tr>
+    <tr>
+      <td>Number of files:</td><td><%= @transfer.number_of_files %> </td>
+    </tr>
+    <% succeeded_jobs_in_order(@transfer).each do | job |  %>
+      <tr>
+        <td></td>
+        <td>
+          <%= job.name %><br />
+          <% if job.output_payload %>
+            <% job.output_payload.each do | key,value | %>
+              &nbsp;&nbsp;<%= "#{key}: #{value}" %><br />
+            <% end %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+    <tr>
+      <td>Failed jobs:</td><td><%= @transfer.jobs.select(&:failed?).count %></td>
+    </tr>
+    <% failed_jobs_in_order(@transfer).each do | job | %>
+      <tr>
+        <td></td>
+        <td>
+          <%= job.name %><br />
+          <% if job.output_payload %>
+            <% job.output_payload.each do | key,value | %>
+              &nbsp;&nbsp;<%= "#{key}: #{value}" %><br />
+            <% end %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<br />
+
+<%= link_to 'Refresh', transfer_path %> |
+<% unless @transfer.finished? %>
+  <%= link_to 'Retry', retry_transfer_path(@transfer.id) %> |
+<% end %>
+<%= link_to 'Delete',
+             transfer_path(@transfer.id),
+             method: :delete,
+             data: { confirm: 'Are you sure you want to delete this transfer?' } %> |
+<%= link_to 'Back', transfers_path %>
+

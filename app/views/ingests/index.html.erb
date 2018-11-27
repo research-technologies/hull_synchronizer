@@ -15,7 +15,7 @@
   </thead>
 
   <tbody>
-    <% jobs_in_order.each do | ingest | %>
+    <% jobs_in_order(@ingests).each do | ingest | %>
       
       <tr>
         <td>
@@ -49,5 +49,3 @@
 </table>
 
 <br>
-
-<%#= link_to 'New Ingest', new_ingest_path %>

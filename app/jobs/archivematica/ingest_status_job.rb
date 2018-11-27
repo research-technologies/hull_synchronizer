@@ -20,12 +20,15 @@ module Archivematica
           output(event: 'success', message: message_text, uuid: body['uuid'])
         when 'PROCESSING'
           output(event: 'retry', message: message_text)
+          Rails.logger.error("Job was sent for a retry with: #{message_text}")
           fail!
         when 'USER_INPUT'
-          # send email
+          # @todo send email
+          Rails.logger.error("Job was sent for a retry with: #{message_text}")
           output(event: 'retry', message: message_text)
           fail!
         else
+          Rails.logger.error("Job failed with: #{message_text}")
           output(event: 'failed', message: message_text)
           fail!
         end

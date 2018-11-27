@@ -6,7 +6,7 @@ class IngestsController < ApplicationController
   # GET /ingests.json
   def index
     @client = Gush::Client.new
-    @ingests = client.all_workflows
+    @ingests = client.all_workflows.select {|wf| wf.class == IngestWorkflow }
   end
 
   # GET /ingests/1
@@ -15,7 +15,7 @@ class IngestsController < ApplicationController
     @ingest = IngestWorkflow.find(params[:id])
   end
   
-  def retry
+  def retry_ingest
     @ingest = IngestWorkflow.find(params[:id])
     @ingest.continue
     @ingest.reload

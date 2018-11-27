@@ -1,6 +1,12 @@
 RSpec.describe IngestWorkflowMonitorJob do
   let(:workflow) { double }
-  let(:ingest_wf_monitor) { described_class.new('id') }
+  let(:params) {{
+    item_id: 'item_id',
+    item_name: 'test_dir',
+    source_dir: 'test_dir',
+    number_of_works: 10
+  }}
+  let(:ingest_wf_monitor) { described_class.new('id', params) }
 
   describe 'workflow' do
     before do
@@ -14,6 +20,7 @@ RSpec.describe IngestWorkflowMonitorJob do
         allow(workflow).to receive(:mark_as_stopped)
 
         allow(ingest_wf_monitor).to receive(:log_failure)
+        allow(ingest_wf_monitor).to receive(:inform_user)
         allow(ingest_wf_monitor).to receive(:failed?).and_return(true)
       end
       it 'returns without running continue or retry' do
@@ -28,9 +35,10 @@ RSpec.describe IngestWorkflowMonitorJob do
         allow(workflow).to receive(:failed?).and_return(true)
         allow(workflow).to receive(:finished?).and_return(false)
         allow(workflow).to receive(:mark_as_stopped)
-
         allow(ingest_wf_monitor).to receive(:log_failure)
+        allow(ingest_wf_monitor).to receive(:inform_user)
         allow(ingest_wf_monitor).to receive(:failed?).and_return(true)
+
       end
       it 'returns without running continue or retry' do
         expect(ingest_wf_monitor).not_to receive(:continue)
