@@ -1,4 +1,6 @@
 language: ruby
+sudo: false
+cache: bundler
 rvm:
   - 2.4.1
 script:
@@ -6,3 +8,6 @@ script:
   - bin/rake
 services:
 - redis-server
+env:
+  global:
+    - NOKOGIRI_USE_SYSTEM_LIBRARIES=true
