@@ -12,7 +12,7 @@ RSpec.describe IngestWorkflowManager do
     it 'sets up the workflow' do
       expect(IngestWorkflow).to receive(:create).with({})
       expect(IngestWorkflowMonitorJob).to receive(:set).with(wait: 1.minute)
-      expect(IngestWorkflowMonitorJob).to receive(:perform_later).with(workflow_id: 'id')
+      expect(IngestWorkflowMonitorJob).to receive(:perform_later).with('id')
       described_class.new(params: {})
     end
   end
