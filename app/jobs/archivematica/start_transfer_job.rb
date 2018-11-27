@@ -17,7 +17,8 @@ module Archivematica
             event: 'success',
             message: message_text,
             directory: body['path'].split('/').last,
-            type: params[:type]
+            type: payloads.first[:output][:type],
+            accession: payloads.first[:output][:accession]
           )
         else
           Rails.logger.error("Job was failed with: #{message_text}")

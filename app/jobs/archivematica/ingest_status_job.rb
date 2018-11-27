@@ -17,7 +17,10 @@ module Archivematica
       def act_on_ok
         case ingest_status
         when 'COMPLETE'
-          output(event: 'success', message: message_text, uuid: body['uuid'])
+          output(event: 'success',
+                 message: message_text,
+                 uuid: body['uuid'],
+                 accession: payloads.first[:output][:accession])
         when 'PROCESSING'
           output(event: 'retry', message: message_text)
           Rails.logger.error("Job was sent for a retry with: #{message_text}")

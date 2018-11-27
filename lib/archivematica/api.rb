@@ -76,10 +76,11 @@ module Archivematica
         raise 'AM_TS environment variable is not set' if ENV['AM_TS'].blank?
         type = params[:type] || 'unzipped bag'
         name = params[:name] || params[:path].split('/').last
+        accession = params[:accession] || 'deposit via Archivematica::Api::StartTransfer '
         connection.post '/api/transfer/start_transfer/',
                         name: name,
                         type: type,
-                        accession: params[:accession],
+                        accession: accession,
                         paths: [Base64.encode64("#{ENV['AM_TS']}:#{params[:path]}")]
       rescue StandardError => e
         response_for(error: e)

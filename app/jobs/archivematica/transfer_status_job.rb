@@ -19,7 +19,12 @@ module Archivematica
       def act_on_ok
         case transfer_status
         when 'COMPLETE'
-          output(event: 'success', message: message_text, uuid: body['sip_uuid'])
+          output(
+            event: 'success',
+            message: message_text,
+            uuid: body['sip_uuid'],
+            accession: payloads.first[:output][:accession]
+          )
         when 'PROCESSING'
           output(event: 'retry', message: message_text)
           fail!
