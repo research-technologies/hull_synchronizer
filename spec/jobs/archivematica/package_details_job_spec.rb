@@ -54,7 +54,7 @@ RSpec.describe Archivematica::PackageDetailsJob do
           event: 'success',
           message: '',
           dip_location: '/var/archivematica/sharedDirectory/www/DIPsStore/dip_uuid.7z',
-          metadata: { aip_current_full_path: '/var/archivematica/sharedDirectory/www/AIPsStore/aip_uuid.7z',
+          package_metadata: { aip_current_full_path: '/var/archivematica/sharedDirectory/www/AIPsStore/aip_uuid.7z',
                       aip_current_location: '/api/v2/location/aip_uuid/',
                       aip_current_path: 'uuid.7z',
                       origin_pipeline: '/api/v2/pipeline/aa68b424-28d5-455c-b27b-f3081a2114a6/',
