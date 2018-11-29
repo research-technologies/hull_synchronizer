@@ -83,4 +83,15 @@ module SynchronizerFileLocations
       process_dir
     ]
   end
+  
+  # location of bags prior to submission to the repo
+  def bags_directory
+    ENV.fetch('BAGS_DIR', 'tmp')
+  end
+  
+  # location of bag contents prior to bagging
+  def temp_bags_directory
+    ENV.fetch('RAILS_TMP', 'tmp')
+  end
+  
 end

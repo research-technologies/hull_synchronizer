@@ -1,7 +1,11 @@
+require 'dip_reader'
+require 'willow_sword'
+require 'synchronizer_file_locations'
+
 class DIPProcessor
-  require 'dip_reader'
-  require 'willow_sword'
-  attr_reader :params, :dip, :dip_id, :bag_key, :package_payload, :works_payload, :work_metadata
+  include SynchronizerFileLocations
+  
+  attr_reader :params, :dip, :dip_id, :bag_key, :package_payload, :works_payload
 
   # Processes a DIP from Archivematica and creates a zip
   #   creates one zip per directory in the original deposit
@@ -54,7 +58,7 @@ class DIPProcessor
     def process_works
       dip.works.each do |key, value|
         @bag_key = "#{dip_id}_#{key}"
-        make_src
+        make_locations
         build_work(value)
         build_bag
         build_zip
@@ -95,14 +99,14 @@ class DIPProcessor
     end
 
     def src
-      File.join(ENV.fetch('RAILS_TMP', 'tmp'), "#{bag_key}_TMP")
+      File.join(temp_bags_directory, "#{bag_key}_TMP")
     end
 
     def dst
-      File.join(ENV.fetch('BAGS_DIR', 'tmp'), bag_key)
+      File.join(bags_directory, bag_key)
     end
 
-    def make_src
+    def make_locations
       FileUtils.mkdir(src) unless Dir.exist?(src)
       FileUtils.mkdir(dst) unless Dir.exist?(dst)
     end
