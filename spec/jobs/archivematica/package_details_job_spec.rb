@@ -39,7 +39,7 @@ RSpec.describe Archivematica::PackageDetailsJob do
 
   describe 'successful request' do
     before do
-      subject.payloads = [{ output: { uuid: 'uuid' } }]
+      subject.payloads = [{ output: { uuid: 'uuid', accession: 'accession' } }]
     end
 
     context 'UPLOADED (both)' do
@@ -62,6 +62,7 @@ RSpec.describe Archivematica::PackageDetailsJob do
                               aip_size: 3_335_521,
                               aip_status: 'UPLOADED',
                               aip_uuid: 'aip_uuid',
+                              accession: 'accession',
                               dip_current_full_path: '/var/archivematica/sharedDirectory/www/DIPsStore/dip_uuid.7z',
                               dip_current_location: '/api/v2/location/dip_uuid/',
                               dip_current_path: 'dip_uuid.7z',

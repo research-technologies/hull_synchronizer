@@ -28,3 +28,6 @@
 
 # Ignore any keys (pem files)
 *.pem
+
+# Ignore any coverage
+coverage

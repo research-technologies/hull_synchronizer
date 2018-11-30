@@ -10,10 +10,10 @@ RSpec.describe Archivematica::StartTransferJob do
     before do
       stub_request(:post, 'http://test.host/api/transfer/start_transfer/')
         .to_return(status: 200, body: { message: 'Copy successful.', path: 'path' }.to_json)
-      subject.payloads = [{ output: { name: 'name', path: 'path' } }]
+      subject.payloads = [{ output: { name: 'name', path: 'path', accession: 'accession' } }]
     end
     it 'performs the job and creates the output' do
-      expect(subject).to receive(:output).with(event: 'success', message: 'Copy successful.', directory: 'path', type: nil)
+      expect(subject).to receive(:output).with(event: 'success', message: 'Copy successful.', directory: 'path', type: nil, accession: 'accession')
       subject.perform
     end
   end
@@ -22,7 +22,7 @@ RSpec.describe Archivematica::StartTransferJob do
     before do
       stub_request(:post, 'http://test.host/api/transfer/start_transfer/')
         .to_return(status: 418, body: { message: 'Something went wrong' }.to_json)
-      subject.payloads = [{ output: { name: 'name', path: 'path' } }]
+      subject.payloads = [{ output: { name: 'name', path: 'path', accession: 'accession' } }]
     end
     it 'performs the job and sets the payload for the next job' do
       expect(subject).to receive(:output).with(event: 'failed', message: 'Something went wrong')

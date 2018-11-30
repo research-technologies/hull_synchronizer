@@ -7,7 +7,7 @@ require 'synchronizer_file_locations'
 
 class SubmissionProcessor
   include SynchronizerFileLocations
-  attr_reader :params, :source_dir, :row_count, :current_transfer_dir
+  attr_reader :params, :source_dir, :row_count, :current_transfer_dir, :accession
 
   # Class to assemble and prepare data for transfer to archivematica
   # The file layout is as follows. The source directory contains
@@ -152,6 +152,7 @@ class SubmissionProcessor
     File.open(File.join(dest_dir, 'metadata.json'),"w") do |f|
       row_hash =  {}
       row.headers.each {|k| row_hash[k] = row.fetch(k) }
+      @accession = row_hash[:accession_number]
       f.write(JSON.pretty_generate(row_hash))
     end
   end

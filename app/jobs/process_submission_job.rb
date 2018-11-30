@@ -28,8 +28,8 @@ class ProcessSubmissionJob < Gush::Job
       output(
         event: 'success',
         message: 'Processed submission package and built bag',
-        path: @processor.current_transfer_dir,
-        accession: 'TODO'
+        path: processor.current_transfer_dir,
+        accession: processor.accession
       )
     end
 end

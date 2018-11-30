@@ -8,7 +8,7 @@ RSpec.describe Archivematica::IngestStatusJob do
 
   describe 'successful job' do
     before do
-      subject.payloads = [{ output: { uuid: 'uuid' } }]
+      subject.payloads = [{ output: { uuid: 'uuid', accession: 'accession' } }]
     end
 
     context 'COMPLETE' do
@@ -17,7 +17,7 @@ RSpec.describe Archivematica::IngestStatusJob do
           .to_return(status: 200, body: { status: 'COMPLETE', uuid: 'uuid' }.to_json)
       end
       it 'performs the job and sets the payload for the next job' do
-        expect(subject).to receive(:output).with(event: 'success', message: '', uuid: 'uuid')
+        expect(subject).to receive(:output).with(event: 'success', message: '', uuid: 'uuid', accession: 'accession')
         subject.perform
       end
     end
@@ -59,7 +59,7 @@ RSpec.describe Archivematica::IngestStatusJob do
     before do
       stub_request(:get, 'http://test.host/api/ingest/status/uuid/')
         .to_return(status: 418, body: {}.to_json, headers: { warning: 'warning message' })
-      subject.payloads = [{ output: { uuid: 'uuid' } }]
+      subject.payloads = [{ output: { uuid: 'uuid', accession: 'accession' } }]
     end
     it 'performs the job and sets the payload for the next job' do
       expect(subject).to receive(:output).with(event: 'failed', message: '')

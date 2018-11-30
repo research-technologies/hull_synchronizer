@@ -20,8 +20,8 @@ class DIPProcessor
     @dip = DIPReader.new(params[:dip_location])
     @dip_id = params[:package_metadata][:dip_uuid]
     @bag_key = dip_id
-    rescue StandardError => e
-     raise e
+  rescue StandardError => e
+    raise e
   end
 
   def process
@@ -66,7 +66,7 @@ class DIPProcessor
           {
             file: { path: "#{dst}.zip", content_type: 'application/zip' },
             packaging: 'http://purl.org/net/sword/package/BagIt',
-            calm_metdata: build_calm_metadata
+            calm_metdata: work_metadata
           }
         cleanup
       end
@@ -80,9 +80,9 @@ class DIPProcessor
       work_files.each do |file|
         next if file.blank?
         if file.end_with? '-metadata.json'
-          metadata = JSON.parse(File.open(file))
-          metadata[:packaged_by_package_name] = dip_id
-          write_json(metadata)
+          @work_metadata = JSON.parse(File.open(file))
+          work_metadata[:packaged_by_package_name] = dip_id
+          write_json(work_metadata)
         else
           FileUtils.cp_r(file, src)
         end
@@ -96,11 +96,6 @@ class DIPProcessor
 
     def build_bag
       WillowSword::BagPackage.new(src, dst)
-    end
-
-    # @todo
-    def build_calm_metadata
-      {}
     end
 
     def src
