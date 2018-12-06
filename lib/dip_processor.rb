@@ -66,7 +66,7 @@ class DIPProcessor
           {
             file: { path: "#{dst}.zip", content_type: 'application/zip' },
             packaging: 'http://purl.org/net/sword/package/BagIt',
-            calm_metdata: work_metadata
+            calm_metadata: work_metadata
           }
         cleanup
       end
