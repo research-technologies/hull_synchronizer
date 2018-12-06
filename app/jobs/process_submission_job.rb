@@ -22,9 +22,6 @@ class ProcessSubmissionJob < Gush::Job
   private
 
     def build_output
-      # needs path, accession, type
-      # TODO:
-      #   What should accession be?
       output(
         event: 'success',
         message: 'Processed submission package and built bag',

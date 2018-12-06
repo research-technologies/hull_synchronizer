@@ -80,7 +80,7 @@ class DIPProcessor
       work_files.each do |file|
         next if file.blank?
         if file.end_with? '-metadata.json'
-          @work_metadata = JSON.parse(File.open(file))
+          @work_metadata = JSON.parse(File.read(file))
           work_metadata[:packaged_by_package_name] = dip_id
           write_json(work_metadata)
         else
