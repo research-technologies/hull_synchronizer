@@ -2,7 +2,7 @@ module Calm
   require 'calm'
   # CALM Create job
   class CalmJob < Gush::Job
-    attr_accessor :calm_metadata, :fields, :calm_api, :response
+    attr_accessor :calm_metadata, :fields, :calm_api, :response, :work_id
 
     SUPPORTED_FIELDS = [:accession_number,
                         :title,
@@ -17,6 +17,7 @@ module Calm
     def perform
       @calm_metadata = payloads.first[:output][:works][params][:calm_metadata]
       @fields = {}
+      @work_id = payloads.first[:output][:work_id]
       build_fields
       setup_calm
       @response = calm_api.create_child_record(fields, parent_id)
@@ -65,7 +66,7 @@ module Calm
           fields.compact!
         end
         # @todo replace with proper DAO field
-        fields['Location'] = payloads.first[:output][:work_id]
+        fields['Location'] = work_id
       end
 
       # Retrieve the CALM field name
