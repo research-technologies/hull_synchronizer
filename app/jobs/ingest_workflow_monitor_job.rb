@@ -74,7 +74,7 @@ class IngestWorkflowMonitorJob < ActiveJob::Base
   #  @todo consider whether we should limit the number of retries
   #    if so, this method could raise an error and use Sidekiq's retry functionality instead
   def retry_later
-    IngestWorkflowMonitorJob.set(wait: 15.minutes).perform_later(flow.id)
+    IngestWorkflowMonitorJob.set(wait: 15.minutes).perform_later(flow.id, @params)
   end
 
   def inform_user

@@ -1,12 +1,11 @@
 module Sword
   # SWORD package deposit job
   class DepositPackageJob < Sword::DepositJob
-    
     # Prepare and perform a SWORD package deposit
     def setup_sword
       @sword_api = Sword::Api::Work.new(params: payloads.first[:output][:package])
     end
-    
+
     def act_on_ok
         output(
           event: 'success',
