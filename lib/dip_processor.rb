@@ -37,7 +37,7 @@ class DIPProcessor
   private
 
     def process_package
-      make_src
+      make_locations
       build_package
       build_bag
       build_zip
