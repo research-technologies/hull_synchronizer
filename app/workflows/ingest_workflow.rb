@@ -21,7 +21,7 @@ class IngestWorkflow < Gush::Workflow
 
     number_of_works.times.each do |index|
       run Sword::DepositJob, after: Sword::DepositPackageJob, params: index
-      run Calm::CalmJob, after: Sword::DepositPackageJob, params: index
+      run Calm::CalmJob, after: Sword::DepositJob, params: index
     end
   end
 
