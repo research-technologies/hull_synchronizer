@@ -5,7 +5,7 @@ require 'synchronizer_file_locations'
 class DIPProcessor
   include SynchronizerFileLocations
   
-  attr_reader :params, :dip, :dip_id, :bag_key, :package_payload, :works_payload
+  attr_reader :params, :dip, :dip_id, :bag_key, :package_payload, :works_payload, :work_metadata
 
   # Processes a DIP from Archivematica and creates a zip
   #   creates one zip per directory in the original deposit
