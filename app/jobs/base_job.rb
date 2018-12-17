@@ -1,7 +1,8 @@
-  # BaseJob for all Archivematica and SWORD jobs.
+  # BaseJob for all API-based jobs (Archivematica, CALM and SWORD).
   class BaseJob < Gush::Job
     require 'archivematica/api'
     require 'sword/api'
+    require 'calm/api'
     attr_reader :response
 
     def perform
