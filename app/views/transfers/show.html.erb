@@ -43,6 +43,7 @@
           <%= job.name %><br />
           <% if job.output_payload %>
             <% job.output_payload.each do | key,value | %>
+              <% next if value.blank? %>
               &nbsp;&nbsp;<%= "#{key}: #{value}" %><br />
             <% end %>
           <% end %>
@@ -59,6 +60,7 @@
           <%= job.name %><br />
           <% if job.output_payload %>
             <% job.output_payload.each do | key,value | %>
+              <% next if value.blank? %>
               &nbsp;&nbsp;<%= "#{key}: #{value}" %><br />
             <% end %>
           <% end %>
