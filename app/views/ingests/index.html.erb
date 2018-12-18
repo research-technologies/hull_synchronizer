@@ -2,6 +2,13 @@
 
 <h1>Ingests</h1>
 
+<% if @ingests.length > 5 %>
+  <p>
+    <%= link_to 'Goto Transfers', transfers_path %><br />
+    <%= link_to 'Goto Reviews', reviews_path %>
+  </p>
+<% end %>
+
 <table>
   <thead>
     <tr>
@@ -47,5 +54,10 @@
     <% end %>
   </tbody>
 </table>
+<br />
+<p>
+  <%= link_to 'Goto Transfers', transfers_path %><br />
+  <%= link_to 'Goto Reviews', reviews_path %>
+</p>
 
 <br>

@@ -7,14 +7,14 @@ module WorkflowsHelper
     def jobs_in_order(flows)
         jobs = flows.reject {|j| j.started?} 
         if jobs.blank?
-            flows.select(&:started?).sort_by(&:started_at)
+            flows.select(&:started?).sort_by(&:started_at).reverse!
         else
-            flows.select(&:started?).sort_by(&:started_at).push(*jobs)
+            flows.select(&:started?).sort_by(&:started_at).push(*jobs).reverse!
         end
     end
     
     def failed_jobs_in_order(flow)
-        flow.jobs.select(&:failed?).sort_by(&:started_at)
+        flow.jobs.select(&:failed?).sort_by(&:started_at).reverse!
     end
     
     def count(flow, job_type)
