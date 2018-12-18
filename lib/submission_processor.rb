@@ -152,7 +152,7 @@ class SubmissionProcessor
     File.open(File.join(dest_dir, 'metadata.json'),"w") do |f|
       row_hash =  {}
       row.headers.each {|k| row_hash[k] = row.fetch(k) }
-      @accession = row_hash[:accession_number]
+      @accession = row_hash['accession_number']
       f.write(JSON.pretty_generate(row_hash))
     end
   end
