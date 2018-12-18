@@ -6,3 +6,13 @@
   <li><%= link_to 'Reviews', reviews_path %></li>
   <li><%= link_to 'Ingests', ingests_path %></li>
 </ul>
+<h1>Workflows in progress</h1>
+<ul>
+  <% @workflows.each do | wf | %>
+    <% wf_type = wf.class.to_s.gsub('Workflow','').singularize %>
+    <li>
+      <%=wf_type%>: <%= link_to wf.id, send("#{wf_type.downcase}_path",wf.id) %> 
+      <% unless wf.started_at.nil? %>(Started at: <%=Time.at(wf.started_at)%>)<% end %>
+    </li>
+  <% end %>
+</ul>
