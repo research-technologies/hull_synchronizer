@@ -35,18 +35,18 @@ RSpec.describe DIPProcessor do
     end
 
     context '#process' do
-      ENV['BAGS_DIR'] = 'spec/fixtures/files/dip/tmp'
+      ENV['BAGS_DIR'] = '/tmp'
       let(:params) { { dip_location: 'spec/fixtures/files/dip/2018-12-18T14-53-11-983442237-bff59767-3d3f-4032-914c-c7ebebf87aa7', package_metadata: { dip_uuid: 'b219c7dd-39a2-4d72-89a6-50cf3309e7a0' } } }
 
       it 'creates the zipped bags for the package and work' do
         processor_instance.process
-        expect(File.exist?('spec/fixtures/files/dip/tmp/b219c7dd-39a2-4d72-89a6-50cf3309e7a0.zip')).to be_truthy
-        expect(File.exist?('spec/fixtures/files/dip/tmp/b219c7dd-39a2-4d72-89a6-50cf3309e7a0_work1.zip')).to be_truthy
+        expect(File.exist?('/tmp/b219c7dd-39a2-4d72-89a6-50cf3309e7a0.zip')).to be_truthy
+        expect(File.exist?('/tmp/b219c7dd-39a2-4d72-89a6-50cf3309e7a0_work1.zip')).to be_truthy
       end
 
       after do
-        FileUtils.rm(File.join(Rails.root, 'spec/fixtures/files/dip/tmp/b219c7dd-39a2-4d72-89a6-50cf3309e7a0.zip'))
-        FileUtils.rm(File.join(Rails.root, 'spec/fixtures/files/dip/tmp/b219c7dd-39a2-4d72-89a6-50cf3309e7a0_work1.zip'))
+        FileUtils.rm('/tmp/b219c7dd-39a2-4d72-89a6-50cf3309e7a0.zip')
+        FileUtils.rm('/tmp/b219c7dd-39a2-4d72-89a6-50cf3309e7a0_work1.zip')
       end
     end
   end
