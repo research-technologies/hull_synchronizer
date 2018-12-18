@@ -3,6 +3,7 @@ RSpec.describe Sword::DepositJob do
   let(:subject) { described_class.new }
   let(:sword_api) { instance_double(Sword::Api::Work) }
   let(:reponse_body) { File.read('spec/fixtures/files/work.xml') }
+  let(:calm_job) {instance_double(Calm::CreateComponentJob)}
 
   describe 'successful job' do
     before do
@@ -20,7 +21,9 @@ RSpec.describe Sword::DepositJob do
       ]
     end
     it 'performs the job successfully, retains payload for next job' do
-      expect(subject).to receive(:output).with(event: 'success', message: 'hh63sv88v successfully deposited', package_id: nil, work_id: 'hh63sv88v', works: subject.payloads.first[:output][:works])
+      allow(Calm::CreateComponentJob).to receive(:new).and_return(calm_job)
+      allow(calm_job).to receive(:perform).and_return({ event: 'success', message: '' })
+      expect(subject).to receive(:output).with(event: 'success', message: 'hh63sv88v successfully deposited; ', package_id: nil, works: subject.payloads.first[:output][:works])
       subject.perform
     end
   end
