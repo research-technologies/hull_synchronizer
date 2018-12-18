@@ -4,7 +4,7 @@ RSpec.describe IngestWorkflow do
   let(:initial_jobs) { ingest_workflow.initial_jobs }
 
   describe 'Workflow' do
-    it 'sets up five jobs' do
+    it 'sets up jobs' do
       expect(ingest_workflow.jobs.length).to eq 8
     end
     it 'sets up process submission as the first job' do

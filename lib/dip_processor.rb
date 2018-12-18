@@ -14,6 +14,7 @@ class DIPProcessor
   #   params[:dip_location]
   #   params[:package_metadata][:dip_uuid]
   def initialize(params:)
+    raise('Missing required params: [:dip_location] and [:package_metadata][:dip_uuid] are required') unless params[:dip_location] && params[:package_metadata][:dip_uuid]
     @params = params
     @package_payload = {}
     @works_payload = []
@@ -28,7 +29,7 @@ class DIPProcessor
     process_package
     process_works
   end
-
+  
   def cleanup
     FileUtils.rm_r(src) if Dir.exist?(src)
     FileUtils.rm_r(dst) if Dir.exist?(dst)

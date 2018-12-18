@@ -10,7 +10,7 @@ module Sword
     def act_on_ok
         output(
           event: 'success',
-          message: message_text,
+          message: "#{sword_api.deposit[:content].split('/').last} successfully deposited",
           package_id: sword_api.deposit[:content].split('/').last,
           works: payloads.first[:output][:works]
         )

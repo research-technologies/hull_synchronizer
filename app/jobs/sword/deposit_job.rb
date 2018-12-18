@@ -17,10 +17,10 @@ module Sword
       end
 
       def act_on_ok
-        @message_text = "#{sword_api.deposit[:content].split('/').last} successfully deposited"
+        message = "#{sword_api.deposit[:content].split('/').last} successfully deposited"
         output(
           event: 'success',
-          message: message_text,
+          message: message,
           package_id: payloads.first[:output][:package_id],
           work_id: sword_api.deposit[:content].split('/').last,
           works: payloads.first[:output][:works]
