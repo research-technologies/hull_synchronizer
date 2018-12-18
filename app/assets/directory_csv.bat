@@ -37,7 +37,7 @@ SET CHK=no & goto :loop
 :loop
 PUSHD "%DIRECTORY%"
 type NUL > "%DIRECTORY%/FILES.csv"
-ECHO path,filename,file_size,checksum >> "%DIRECTORY%/FILES.csv"
+ECHO path,filename,file_size,checksum>> "%DIRECTORY%/FILES.csv"
 FOR /R %%G IN (*) DO CALL :sub "%%G" >> "%DIRECTORY%/FILES.csv"
 ECHO File written to "%DIRECTORY%\FILES.csv"
 goto :end
