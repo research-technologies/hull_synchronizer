@@ -1,8 +1,8 @@
 module Calm
   require 'calm'
   # CALM Create job
-  class CalmJob < Gush::Job
-    attr_accessor :calm_metadata, :fields, :calm_api, :response, :work_id
+  class CreateComponentJob < BaseJob
+    attr_accessor :calm_metadata, :calm_api, :response, :work_id
 
     SUPPORTED_FIELDS = [:accession_number,
                         :title,
@@ -15,13 +15,24 @@ module Calm
                         :language].freeze
 
     def perform
-      @calm_metadata = payloads.first[:output][:works][params][:calm_metadata]
-      @fields = {}
-      @work_id = payloads.first[:output][:work_id]
-      build_fields
+      @calm_metadata = params[:calm_metadata]
+      @work_id = params[:work_id]
       setup_calm
       @response = calm_api.create_child_record(fields, parent_id)
       act_on_status
+    end
+
+    # Build a hash of metadata to pass to CALM
+    def fields
+      fields = {}
+      SUPPORTED_FIELDS.each do |f|
+        name = field_name[f]
+        fields[name] = field_content(f, calm_metadata[f] || nil) unless name.nil?
+        fields.compact!
+      end
+      # @todo replace with proper DAO field
+      fields['Location'] = work_id
+      fields
     end
 
     private
@@ -37,17 +48,18 @@ module Calm
         else
           message_text = "Job failed with: #{response.last}"
           Rails.logger.error(message_text)
-          output(event: 'failed', message: message_text)
-          fail!
+          {
+            event: 'failed',
+            message: message_text
+          }
         end
       end
 
       def act_on_ok
-        output(
+        {
           event: 'success',
-          message: "#{response.last} successfully added to CALM",
-          works: payloads.first[:output][:works]
-        )
+          message: "#{response.last} successfully added to CALM"
+        }
       end
 
       # Get the RecordId for the Collection with the RefNo
@@ -56,17 +68,6 @@ module Calm
       def parent_id
         parent = calm_api.get_record_by_field('RefNo', calm_metadata[:reference])
         return parent.last['RecordID'].join unless parent.first == false
-      end
-
-      # Build a hash of metadata to pass to CALM
-      def build_fields
-        SUPPORTED_FIELDS.each do |f|
-          name = field_name[f]
-          fields[name] = field_content(f, calm_metadata[f] || nil) unless name.nil?
-          fields.compact!
-        end
-        # @todo replace with proper DAO field
-        fields['Location'] = work_id
       end
 
       # Retrieve the CALM field name
@@ -92,12 +93,7 @@ module Calm
       def field_content(field, value)
         case field
         when :description
-          desc = value
-          if calm_metadata[:user_description]
-            desc += "\n" unless value.nil?
-            desc += "User Description: #{value}"
-          end
-          desc
+          description(value)
         when :language
           value.nil? ? 'English' : value
         when :access_status
@@ -107,6 +103,15 @@ module Calm
         else
           value
         end
+      end
+
+      def description(value)
+        desc = value
+        if calm_metadata[:user_description]
+          desc += "\n" unless value.nil?
+          desc += "User Description: #{value}"
+        end
+        desc
       end
   end
 end
