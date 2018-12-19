@@ -163,9 +163,13 @@ class SubmissionChecker
   end
 
   def has_calm_collection?(row, row_index)
+    collection = nil
     has_collection = false
     reference = row.fetch(@dm.reference, nil)
-    collection = nil
+    if reference.blank?
+      @errors << "CALM collection reference is missing in row #{row_index}"
+      return has_collection
+    end
     calm_api = Calm::Api.new
     parent = calm_api.get_record_by_field('RefNo', reference)
     if parent.present? and parent.first != false
