@@ -1,53 +1,77 @@
 module DataCrosswalks
   class DataArchiveModel
-    # def fields
-    #   [
-    #     id,
-    #     title,
-    #     description,
-    #     keywords,
-    #     date_created,
-    #     date_added,
-    #     date_modified,
-    #     depositor,
-    #     last_modified_by,
-    #     orientation,
-    #     filename,
-    #     original_filename,
-    #     file_size,
-    #     file_location,
-    #     creation_status,
-    #     usage_rights,
-    #     access_levels,
-    #     photo_credit,
-    #     related_items,
-    #     data_classification,
-    #     ip_ownership
-    #   ]
-    # end
+
+    def calm_fields
+      [
+        filename,
+        accession_number,
+        reference,
+        title,
+        access_status,
+        copyright,
+        creator,
+        date,
+        user_description,
+        keywords,
+        language,
+        depositor
+      ]
+    end
+
+    def dao_fields
+      []
+    end
+
+    def required_fields
+      [
+        filename,
+        accession_number,
+        reference
+      ]
+    end
 
     def id
       'id'
     end
 
-    def title
-      'title'
+    def access_levels
+      'access_levels'
     end
 
-    def description
-      'description'
+    def access_status
+      'access_status'
     end
 
-    def keywords
-      'keywords'
+    def accession_number
+      'accession_number'
     end
 
-    def date_created
-      'date_created'
+    def copyright
+      'copyright'
+    end
+
+    def creator
+      'creator'
+    end
+
+    def creation_status
+      'creation_status'
+    end
+
+    def data_classification
+      'data_classification'
+    end
+
+    def date
+      'date'
     end
 
     def date_added
       'date_added'
+    end
+
+    def date_created
+      'date_created'
     end
 
     def date_modified
@@ -58,6 +82,30 @@ module DataCrosswalks
       'depositor'
     end
 
+    def description
+      'description'
+    end
+
+    def filename
+      'filename'
+    end
+
+    def file_location
+      'file_location'
+    end
+
+    def file_size
+      'file_size'
+    end
+
+    def keywords
+      'keywords'
+    end
+
+    def language
+      'language'
+    end
+
     def last_modified_by
       'last_modified_by'
     end
@@ -66,32 +114,12 @@ module DataCrosswalks
       'orientation'
     end
 
-    def filename
-      'filename'
-    end
-
     def original_filename
       'original_filename'
     end
 
-    def file_size
-      'file_size'
-    end
-
-    def file_location
-      'file_location'
-    end
-
-    def creation_status
-      'creation_status'
-    end
-
-    def usage_rights
-      'usage_rights'
-    end
-
-    def access_levels
-      'access_levels'
+    def ip_ownership
+      'ip_ownership'
     end
 
     def photo_credit
@@ -102,12 +130,21 @@ module DataCrosswalks
       'related_items'
     end
 
-    def ip_ownership
-      'ip_ownership'
+    def reference
+      'reference'
     end
 
-    def data_classification
-      'data_classification'
+    def title
+      'title'
     end
+
+    def usage_rights
+      'usage_rights'
+    end
+
+    def user_description
+      'user_description'
+    end
+
   end
 end

@@ -153,7 +153,9 @@ class SubmissionChecker
 
   def has_required_fields?(row, row_index)
     has_fields = true
-    #TODO: Add checks for required fields in row
+    @dm.required_fields.each do |field|
+      has_fields = has_fields and row.fetch(field, nil).present?
+    end
     @errors << "Required fields error from row #{row_index}" unless has_fields
     has_fields
   end
