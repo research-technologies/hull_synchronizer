@@ -3,10 +3,9 @@ require 'csv'
 require 'json'
 require 'digest/md5'
 require 'data_crosswalks/data_archive_model'
-require 'synchronizer_file_locations'
+require 'file_locations'
 
 class SubmissionChecker
-  include SynchronizerFileLocations
   attr_reader :params, :source_dir, :row_count, :errors, :status
 
   # Class to check data for transfer to archivematica
@@ -52,22 +51,6 @@ class SubmissionChecker
     @status = false if has_extra_files?
   end
 
-  def generate_files_file
-    # Convenience method for generating the list of files
-    list_files_in_source
-    csv_file = CSV.open(files_file_path, "wb")
-    csv_file << %w(path filename file_size checksum)
-    @src_files.each do |filepath|
-      next if metadata_files.include? filepath
-      relative_path = filepath.sub(@source_dir, '').chomp(File::SEPARATOR)
-      size = File.size(filepath)
-      md5_hash = get_hash(filepath)
-      filename = File.basename(filepath)
-      csv_file << [relative_path, filename, size, md5_hash]
-    end
-    csv_file.close
-  end
-
   private
 
   def has_required_files?
@@ -86,20 +69,20 @@ class SubmissionChecker
   end
 
   def has_remote_directory?
-    has_dir = File.directory?(remote_dir)
-    @errors << "Remote directory #{remote_dir} is missing" unless has_dir
+    has_dir = File.directory?(FileLocations.remote_dir)
+    @errors << "Remote directory #{FileLocations.remote_dir} is missing" unless has_dir
     has_dir
   end
 
   def has_transfer_directory?
-    has_dir = File.directory?(transfer_dir)
-    @errors << "Transfer directory #{transfer_dir} is missing" unless has_dir
+    has_dir = File.directory?(FileLocations.transfer_dir)
+    @errors << "Transfer directory #{FileLocations.transfer_dir} is missing" unless has_dir
     has_dir
   end
 
   def has_metadata_files?
     files_exist = true
-    metadata_files.each do |file_path|
+    FileLocations.metadata_files(@source_dir).each do |file_path|
       has_file = File.file?(file_path)
       @errors << "File #{file_path} is missing" unless has_file
       files_exist = files_exist && has_file
@@ -113,6 +96,7 @@ class SubmissionChecker
     file_count = 0
     # All files listed in FILES.csv should be valid
     all_valid = true
+    files_file_path = FileLocations.files_file_path(@source_dir)
     ::CSV.foreach(files_file_path, headers: true).each do |row|
       file_count += 1
       # has valid row
@@ -137,6 +121,7 @@ class SubmissionChecker
     @row_count = 0
     # All rows should be valid
     all_valid = true
+    metadata_file_path = FileLocations.metadata_file_path(@source_dir)
     ::CSV.foreach(metadata_file_path, headers: true).each do |row|
       @row_count += 1
       # has valid row
@@ -159,7 +144,6 @@ class SubmissionChecker
   end
 
   def has_data_file?(filename, row_index)
-    #TODO: Check checksum against FILES.csv
     @errors << "Filename from row #{row_index} is missing" unless filename
     return false unless filename
     has_file = File.exist?(get_data_path(filename))
@@ -187,7 +171,7 @@ class SubmissionChecker
   def has_extra_files?
     extra_files = get_extra_files
     if extra_files.any?
-      @errors << "There are extra files in the submission not listed in #{metadata_file_name}"
+      @errors << "There are extra files in the submission not listed in #{FileLocations.metadata_file_name}"
       @errors += extra_files.map { |e| "  - #{e}" }
     end
     extra_files.any?
@@ -202,7 +186,7 @@ class SubmissionChecker
   end
 
   def is_remote_file?(filename)
-    sanitized_filename(filename).start_with? remote_dir
+    sanitized_filename(filename).start_with? FileLocations.remote_dir
   end
 
   def sanitized_filename(filename)
@@ -214,11 +198,11 @@ class SubmissionChecker
       # checked files are accounted for
       @checked_files_in_metadata -
       # metadata files
-      metadata_files -
+      FileLocations.metadata_files(@source_dir) -
       # submission files
-      Dir.glob(File.join(@source_dir, submission_files_dir, '**', '*')) -
+      Dir.glob(File.join(@source_dir, FileLocations.submission_files_dir, '**', '*')) -
       # metadata diectory files
-      Dir.glob(File.join(@source_dir, metadata_dir, '**', '*'))
+      Dir.glob(File.join(@source_dir, FileLocations.metadata_dir, '**', '*'))
   end
 
   def has_valid_file?(row, row_index)
@@ -270,7 +254,7 @@ class SubmissionChecker
   def has_unverified_files?
     extra_files = get_unverified_files
     if extra_files.any?
-      @errors << "There are extra files in the submission, not listed in #{files_file_name} and so not verified."
+      @errors << "There are extra files in the submission, not listed in #{FileLocations.files_file_name} and so not verified."
       @errors += extra_files.map { |e| "  - #{e}" }
     end
     extra_files.any?
@@ -281,9 +265,9 @@ class SubmissionChecker
       # checked files are accounted for
       @checked_files_in_file -
       # metadata files
-      metadata_files -
+      FileLocations.metadata_files(@source_dir) -
       # metadata diectory files
-      Dir.glob(File.join(@source_dir, metadata_dir, '**', '*'))
+      Dir.glob(File.join(@source_dir, FileLocations.metadata_dir, '**', '*'))
   end
 
   def get_hash(filepath)

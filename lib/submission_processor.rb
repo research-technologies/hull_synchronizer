@@ -3,10 +3,9 @@ require 'csv'
 require 'json'
 require 'willow_sword'
 require 'data_crosswalks/data_archive_model'
-require 'synchronizer_file_locations'
+require 'file_locations'
 
 class SubmissionProcessor
-  include SynchronizerFileLocations
   attr_reader :params, :source_dir, :row_count, :current_transfer_dir, :accession
 
   # Class to assemble and prepare data for transfer to archivematica
@@ -59,6 +58,7 @@ class SubmissionProcessor
 
   def assemble_data
     @row_count = 0
+    metadata_file_path = FileLocations.metadata_file_path(@source_dir)
     ::CSV.foreach(metadata_file_path, headers: true).each do |row|
       if row.any?
         @row_count += 1
@@ -80,16 +80,16 @@ class SubmissionProcessor
   end
 
   def assemble_archival_files
-    move_files_file(package_dir)
-    move_metadata_file(package_dir)
-    move_submission_doc(package_dir)
-    move_metadata_dir(package_dir)
-    move_extra_files(package_dir)
+    move_files_file(FileLocations.package_dir(@source_dir))
+    move_metadata_file(FileLocations.package_dir(@source_dir))
+    move_submission_doc(FileLocations.package_dir(@source_dir))
+    move_metadata_dir(FileLocations.package_dir(@source_dir))
+    move_extra_files(FileLocations.package_dir(@source_dir))
   end
 
   def build_bag
-    @current_transfer_dir = new_transfer_dir
-    WillowSword::BagPackage.new(process_dir, @current_transfer_dir)
+    @current_transfer_dir = FileLocations.new_transfer_dir
+    WillowSword::BagPackage.new(FileLocations.process_dir(@source_dir), @current_transfer_dir)
   end
 
   def has_extra_files?
@@ -105,7 +105,7 @@ class SubmissionProcessor
   end
 
   def is_remote_file?(filename)
-    sanitized_filename(filename).start_with? remote_dir
+    sanitized_filename(filename).start_with? FileLocations.remote_dir
   end
 
   def sanitized_filename(filename)
@@ -135,7 +135,7 @@ class SubmissionProcessor
   def get_relative_path(data_path)
     if is_remote_file?(data_path)
       # remove remote dir name
-      relative_path = data_path.sub(remote_dir, '')
+      relative_path = data_path.sub(FileLocations.remote_dir, '')
     else
       relative_path = data_path.sub(@source_dir, '')
     end
@@ -143,7 +143,7 @@ class SubmissionProcessor
   end
 
   def create_data_dir(dirname)
-    dest_dir = File.join(process_dir, dirname)
+    dest_dir = File.join(FileLocations.process_dir(@source_dir), dirname)
     FileUtils.mkdir_p(dest_dir)
     dest_dir
   end
@@ -159,30 +159,30 @@ class SubmissionProcessor
 
   def move_files_file(dest_dir)
     # Move FILES.csv
-    dest_dir = File.join(dest_dir, metadata_dir)
+    dest_dir = File.join(dest_dir, FileLocations.metadata_dir)
     FileUtils.mkdir_p(dest_dir)
-    FileUtils.mv(files_file_path, dest_dir)
+    FileUtils.mv(FileLocations.files_file_path(@source_dir), dest_dir)
   end
 
   def move_metadata_file(dest_dir)
     # Move DESCRIPTIONS.csv
-    dest_dir = File.join(dest_dir, metadata_dir)
+    dest_dir = File.join(dest_dir, FileLocations.metadata_dir)
     FileUtils.mkdir_p(dest_dir)
-    FileUtils.mv(metadata_file_path, dest_dir)
+    FileUtils.mv(FileLocations.metadata_file_path(@source_dir), dest_dir)
   end
 
   def move_submission_doc(dest_dir)
     # Move submission documentation dir
-    src_dir = File.join(@source_dir, submission_files_dir)
+    src_dir = File.join(@source_dir, FileLocations.submission_files_dir)
     FileUtils.mkdir_p(dest_dir)
     FileUtils.mv(src_dir, dest_dir)
   end
 
   def move_metadata_dir(dest_dir)
     # Move files from metadata dir
-    src_dir = File.join(@source_dir, metadata_dir)
+    src_dir = File.join(@source_dir, FileLocations.metadata_dir)
     if File.directory?(src_dir) and !Dir.empty?(src_dir)
-      dest_dir = File.join(dest_dir, metadata_dir)
+      dest_dir = File.join(dest_dir, FileLocations.metadata_dir)
       FileUtils.mkdir_p(dest_dir)
       FileUtils.mv(Dir.glob(File.join(src_dir, '**', '*')), dest_dir)
       cleanup(src_dir)
@@ -191,13 +191,13 @@ class SubmissionProcessor
 
   def extra_files
     (Dir.glob(File.join(@source_dir, '*')) -
-      working_dirs - archival_dirs)
+      FileLocations.working_dirs(@source_dir) - FileLocations.archival_dirs(@source_dir))
   end
 
   def move_extra_files(dest_dir)
     # get relative path
     # create directories and move files to extras dir
-    dest_dir = File.join(dest_dir, extras_dir)
+    dest_dir = File.join(dest_dir, FileLocations.extras_dir)
     extra_files.each do |fn|
       relative_path = get_relative_path(fn)
       dest = File.join(dest_dir, relative_path)

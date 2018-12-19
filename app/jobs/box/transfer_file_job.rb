@@ -2,12 +2,11 @@
 require 'fileutils'
 require 'box/api'
 require 'box/download_file'
-require 'synchronizer_file_locations'
+require 'file_locations'
 
 module Box
   class TransferFileJob < Gush::Job
     include Box::DownloadFile
-    include SynchronizerFileLocations
     attr_reader :file_path
 
     # Download a file
@@ -29,7 +28,7 @@ module Box
     private
 
       def setup_paths
-        @file_path = File.join(local_box_dir, params[:relative_path])
+        @file_path = File.join(FileLocations.local_box_dir, params[:relative_path])
         @file_dir = File.dirname(@file_path)
       end
 

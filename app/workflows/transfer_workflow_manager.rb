@@ -1,10 +1,9 @@
 require 'box'
-require 'synchronizer_file_locations'
+require 'file_locations'
 
 class TransferWorkflowManager
   attr_accessor :flow
   attr_reader :params, :workflow_params
-  include SynchronizerFileLocations
 
   def initialize(params: {})
     @params = params
@@ -21,7 +20,7 @@ class TransferWorkflowManager
       item_name: params[:item_name],
       item_id: params[:item_id],
       item_list: list_files,
-      source_dir: File.join(local_box_dir, @base_path)
+      source_dir: File.join(FileLocations.local_box_dir, @base_path)
     }
     @flow = TransferWorkflow.create(workflow_params)
     flow.start!

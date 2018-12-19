@@ -1,10 +1,9 @@
 require 'dip_reader'
 require 'willow_sword'
-require 'synchronizer_file_locations'
+require 'file_locations'
 
 class DIPProcessor
-  include SynchronizerFileLocations
-  
+
   attr_reader :params, :dip, :dip_id, :bag_key, :package_payload, :works_payload, :work_metadata
 
   # Processes a DIP from Archivematica and creates a zip
@@ -100,11 +99,11 @@ class DIPProcessor
     end
 
     def src
-      File.join(temp_bags_directory, "#{bag_key}_TMP")
+      File.join(FileLocations.temp_bags_directory, "#{bag_key}_TMP")
     end
 
     def dst
-      File.join(bags_directory, bag_key)
+      File.join(FileLocations.bags_directory, bag_key)
     end
 
     def make_locations
