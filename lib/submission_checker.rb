@@ -207,6 +207,8 @@ class SubmissionChecker
   end
 
   def has_valid_file?(row, row_index)
+    # Strip spaces from each field
+    row = row.map(&:strip)
     filepath = row.fetch('path', nil)
     return false if filepath.blank?
     filepath = File.join(@source_dir, filepath)
