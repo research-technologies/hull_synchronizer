@@ -80,11 +80,12 @@ class SubmissionProcessor
   end
 
   def assemble_archival_files
-    move_files_file(FileLocations.package_dir(@source_dir))
-    move_metadata_file(FileLocations.package_dir(@source_dir))
-    move_submission_doc(FileLocations.package_dir(@source_dir))
-    move_metadata_dir(FileLocations.package_dir(@source_dir))
-    move_extra_files(FileLocations.package_dir(@source_dir))
+    package_dir = FileLocations.package_dir(@source_dir)
+    move_files_file(package_dir)
+    move_metadata_file(package_dir)
+    move_submission_doc(package_dir)
+    move_metadata_dir(package_dir)
+    move_extra_files(package_dir)
   end
 
   def build_bag
