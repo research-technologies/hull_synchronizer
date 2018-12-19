@@ -4,6 +4,7 @@ require 'json'
 require 'digest/md5'
 require 'data_crosswalks/data_archive_model'
 require 'file_locations'
+require 'calm/calm_api'
 
 class SubmissionChecker
   attr_reader :params, :source_dir, :row_count, :errors, :status
@@ -139,8 +140,9 @@ class SubmissionChecker
     filename = row.fetch(@dm.filename, nil)
     has_file = has_data_file?(filename, row_index)
     has_fields = has_required_fields?(row, row_index)
+    has_calm_collection = has_calm_collection?(row, row_index)
     add_checked_file(filename)
-    has_file and has_fields
+    has_file and has_fields and has_calm_collection
   end
 
   def has_data_file?(filename, row_index)
@@ -158,6 +160,23 @@ class SubmissionChecker
     end
     @errors << "Required fields error from row #{row_index}" unless has_fields
     has_fields
+  end
+
+  def has_calm_collection?(row, row_index)
+    has_collection = false
+    reference = row.fetch(@dm.reference, nil)
+    collection = nil
+    calm_api = Calm::Api.new
+    parent = calm_api.get_record_by_field('RefNo', reference)
+    if parent.present? and parent.first != false
+      collection = parent.last['RecordID'].join
+    end
+    unless collection.blank?
+      has_collection = true
+    else
+      @errors << "CALM collection with reference #{reference} from row #{row_index} is missing in CALM"
+    end
+    has_collection
   end
 
   def add_checked_file(filename)
