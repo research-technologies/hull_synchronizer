@@ -1,21 +1,20 @@
 require 'file_locations'
 RSpec.describe FileLocations do
-  ENV['LOCAL_BOX_DIR'] = '/data/box'
-  ENV['LOCAL_EFS_DATA_DIR'] = '/data/efs'
-  ENV['LOCAL_EFS_TRANSFER_DIR'] = '/data/transfer'
-  ENV['BAGS_DIR'] = '/data/bag'
-  ENV['RAILS_TMP'] = '/test/tmp'
 
   it 'defines the local mount point for the box dir' do
-    expect(FileLocations.local_box_dir).to eq ENV['LOCAL_BOX_DIR']
+    allow(ENV).to receive(:[]).with('LOCAL_BOX_DIR').and_return('/data_dir/box')
+    allow(File).to receive(:file?).with('tmp/DESCRIPTION.csv').and_return(false)
+    expect(FileLocations.local_box_dir).to eq '/data_dir/box'
   end
 
   it 'defines the local mount point for the aws efs data dir' do
-    expect(FileLocations.remote_dir).to eq ENV['LOCAL_EFS_DATA_DIR']
+    allow(ENV).to receive(:[]).with('LOCAL_EFS_DATA_DIR').and_return('/data_dir/efs')
+    expect(FileLocations.remote_dir).to eq '/data_dir/efs'
   end
 
   it 'defines the local mount point of the aws efs archivematica transfer dir' do
-    expect(FileLocations.transfer_dir).to eq ENV['LOCAL_EFS_TRANSFER_DIR']
+    allow(ENV).to receive(:[]).with('LOCAL_EFS_TRANSFER_DIR').and_return('/data_dir/transfer')
+    expect(FileLocations.transfer_dir).to eq '/data_dir/transfer'
   end
 
   it 'defines the name of the status dir used in box' do
@@ -23,6 +22,7 @@ RSpec.describe FileLocations do
   end
 
   it 'defines the name of the new transfer directory' do
+    allow(ENV).to receive(:[]).with('LOCAL_EFS_TRANSFER_DIR').and_return('/data/transfer')
     expect(FileLocations.new_transfer_dir).to include("/data/transfer/#{Time.now.strftime('%FT%H-%M-%S')}")
   end
 
@@ -145,10 +145,12 @@ RSpec.describe FileLocations do
   end
 
   it 'returns the bags directory' do
-    expect(FileLocations.bags_directory).to eq ('/data/bag')
+    allow(ENV).to receive(:fetch).with('BAGS_DIR', 'tmp').and_return('/data_dir/bag')
+    expect(FileLocations.bags_directory).to eq ('/data_dir/bag')
   end
 
   it 'returns the temp bags directory' do
-    expect(FileLocations.temp_bags_directory).to eq ('/test/tmp')
+    allow(ENV).to receive(:fetch).with('RAILS_TMP', 'tmp').and_return('/temp')
+    expect(FileLocations.temp_bags_directory).to eq ('/temp')
   end
 end
