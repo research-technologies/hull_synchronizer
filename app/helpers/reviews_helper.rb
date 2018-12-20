@@ -1,3 +1,3 @@
 module ReviewsHelper
-    include WorkflowsHelper
+  include WorkflowsHelper
 end

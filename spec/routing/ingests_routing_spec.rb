@@ -8,7 +8,7 @@ RSpec.describe IngestsController, type: :routing do
 
     it "routes to #new" do
       skip 'This route is disabled'
-      expect(get: "/ingests/new").to route_to("ingests#new")
+      expect(get: "/ingests/new").not_to be_routable
     end
 
     it "routes to #show" do
@@ -17,24 +17,28 @@ RSpec.describe IngestsController, type: :routing do
 
     it "routes to #edit" do
       skip 'This route is disabled'
-      expect(get: "/ingests/1/edit").to route_to("ingests#edit", id: "1")
+      expect(get: "/ingests/1/edit").not_to be_routable
     end
 
     it "routes to #create" do
       skip 'This route is disabled'
-      expect(post: "/ingests").to route_to("ingests#create")
+      expect(post: "/ingests").not_to be_routable
     end
 
     it "routes to #update via PUT" do
-      expect(put: "/ingests/1").to route_to("ingests#update", id: "1")
+      expect(put: "/ingests/1").not_to be_routable
     end
 
     it "routes to #update via PATCH" do
-      expect(patch: "/ingests/1").to route_to("ingests#update", id: "1")
+      expect(patch: "/ingests/1").not_to be_routable
     end
 
     it "routes to #destroy" do
       expect(delete: "/ingests/1").to route_to("ingests#destroy", id: "1")
+    end
+
+    it "routes to #retry_ingests" do
+      expect(get: "/retry_ingest/1").to route_to("ingests#retry_ingest", id: "1")
     end
   end
 end

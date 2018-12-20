@@ -3,18 +3,17 @@ class ReviewsController < ApplicationController
   attr_reader :client
 
   # GET /reviews
-  # GET /reviews.json
   def index
     @client = Gush::Client.new
-    @reviews = client.all_workflows.select {|wf| wf.class == ReviewWorkflow }
+    @reviews = client.all_workflows.select { |wf| wf.class == ReviewWorkflow }
   end
 
   # GET /reviews/1
-  # GET /reviews/1.json
   def show
     @review = ReviewWorkflow.find(params[:id])
   end
-  
+
+  # GET /retry_review/1
   def retry_review
     @review = ReviewWorkflow.find(params[:id])
     @review.continue
@@ -26,9 +25,8 @@ class ReviewsController < ApplicationController
   end
 
   # DELETE /reviews/1
-  # DELETE /reviews/1.json
   def destroy
-    client = Gush::Client.new
+    @client ||= Gush::Client.new
     client.destroy_workflow(client.find_workflow(params[:id]))
     respond_to do |format|
       format.html { redirect_to reviews_path, notice: "Review #{params[:id]} was successfully deleted." }
