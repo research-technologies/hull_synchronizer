@@ -263,6 +263,7 @@ RSpec.describe SubmissionChecker do
         {"path"=>"FILES.csv", "filename"=>"FILES.csv", "file_size"=>"6798", "checksum"=>"2885e7"},
         {"path"=>"new_file.txt", "filename"=>"new_file.txt", "file_size"=>"67658", "checksum"=>"2885e7"}
       ]
+      allow(ENV).to receive(:[]).with('LOCAL_EFS_DATA_DIR').and_return('/data_dir/efs')
     end
     it 'returns true if file is FILES.csv without doing checks' do
       expect(@sc.send(:has_valid_file?, @rows[0], 1)).to eq true
@@ -312,6 +313,7 @@ RSpec.describe SubmissionChecker do
         {"filename"=>"README.txt", "accession_number"=>"", "reference"=>"U TEST"},
         {"filename"=>"NoFile.txt", "accession_number"=>"20181218/2", "reference"=>"U TEST"},
       ]
+      allow(ENV).to receive(:[]).with('LOCAL_EFS_DATA_DIR').and_return('/data_dir/efs')
     end
     it 'returns true if the metadata row has the file, the required fields and the calm collection' do
       allow(@sc).to receive(:has_calm_collection?).with(@rows[0], 1).and_return true
