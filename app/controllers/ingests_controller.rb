@@ -1,6 +1,6 @@
 class IngestsController < ApplicationController
-  before_action :set_ingest, only: [:show]
-  attr_reader :client
+  before_action :set_ingest, only: [:show, :retry_ingest]
+  attr_reader :client, :ingest
 
   # GET /ingests
   def index
@@ -9,15 +9,12 @@ class IngestsController < ApplicationController
   end
 
   # GET /ingests/1
-  def show
-    @ingest = IngestWorkflow.find(params[:id])
-  end
+  def show; end
 
   # GET /retry_ingest/1
   def retry_ingest
-    @ingest = IngestWorkflow.find(params[:id])
-    @ingest.continue
-    @ingest.reload
+    ingest.continue
+    ingest.reload
     respond_to do |format|
       format.html { redirect_to ingest_path, notice: "Ingest #{params[:id]} was sent for a retry." }
       format.json { head :no_content }

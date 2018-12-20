@@ -1,6 +1,6 @@
 class TransfersController < ApplicationController
-  before_action :set_transfer, only: [:show] # , :edit, :update, :destroy]
-  attr_reader :client
+  before_action :set_transfer, only: [:show, :retry_transfer]
+  attr_reader :client, :transfer
 
   # GET /transfers
   def index
@@ -9,15 +9,12 @@ class TransfersController < ApplicationController
   end
 
   # GET /transfers/1
-  def show
-    @transfer = TransferWorkflow.find(params[:id])
-  end
+  def show; end
 
   # GET /retry_transfer/1
   def retry_transfer
-    @transfer = TransferWorkflow.find(params[:id])
-    @transfer.continue
-    @transfer.reload
+    transfer.continue
+    transfer.reload
     respond_to do |format|
       format.html { redirect_to transfer_path, notice: "Transfer #{params[:id]} was sent for a retry." }
       format.json { head :no_content }
