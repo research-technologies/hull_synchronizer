@@ -1,10 +1,9 @@
 require 'boxr'
 require 'tempfile'
-require 'synchronizer_file_locations'
+require 'file_locations'
 
 module Box
   class Api
-    include SynchronizerFileLocations
     attr_reader :client
     # ENV file should be filled.
 
@@ -68,7 +67,7 @@ module Box
     def get_status_folder(folder_id)
       folder = client.folder_from_id(folder_id)
       folder.item_collection.entries.each do |f|
-        if f.type == 'folder' and f.name == box_status_dir
+        if f.type == 'folder' and f.name == FileLocations.box_status_dir
           return f.id
         end
       end
@@ -78,7 +77,7 @@ module Box
     def create_status_folder(folder_id)
       s_id = get_status_folder(folder_id)
       return s_id unless s_id.nil?
-      f = client.create_folder(box_status_dir, folder_id)
+      f = client.create_folder(FileLocations.box_status_dir, folder_id)
       f.id
     end
 
