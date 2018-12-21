@@ -1,3 +1,3 @@
 module TransfersHelper
-    include WorkflowsHelper
+  include WorkflowsHelper
 end

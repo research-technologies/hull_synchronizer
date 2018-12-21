@@ -1,24 +1,20 @@
 class TransfersController < ApplicationController
-  before_action :set_transfer, only: [:show] # , :edit, :update, :destroy]
-  attr_reader :client
+  before_action :set_transfer, only: [:show, :retry_transfer]
+  attr_reader :client, :transfer
 
   # GET /transfers
-  # GET /transfers.json
   def index
     @client = Gush::Client.new
-    @transfers = client.all_workflows.select {|wf| wf.class == TransferWorkflow }
+    @transfers = client.all_workflows.select { |wf| wf.class == TransferWorkflow }
   end
 
   # GET /transfers/1
-  # GET /transfers/1.json
-  def show
-    @transfer = TransferWorkflow.find(params[:id])
-  end
-  
+  def show; end
+
+  # GET /retry_transfer/1
   def retry_transfer
-    @transfer = TransferWorkflow.find(params[:id])
-    @transfer.continue
-    @transfer.reload
+    transfer.continue
+    transfer.reload
     respond_to do |format|
       format.html { redirect_to transfer_path, notice: "Transfer #{params[:id]} was sent for a retry." }
       format.json { head :no_content }
@@ -26,9 +22,8 @@ class TransfersController < ApplicationController
   end
 
   # DELETE /transfers/1
-  # DELETE /transfers/1.json
   def destroy
-    client = Gush::Client.new
+    @client ||= Gush::Client.new
     client.destroy_workflow(client.find_workflow(params[:id]))
     respond_to do |format|
       format.html { redirect_to transfers_path, notice: "Transfer #{params[:id]} was successfully deleted." }

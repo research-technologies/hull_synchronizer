@@ -1,3 +1,3 @@
 module IngestsHelper
-    include WorkflowsHelper
+  include WorkflowsHelper
 end

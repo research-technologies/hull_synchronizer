@@ -29,7 +29,7 @@ class DataMappersController < ApplicationController
     @data_mapper = DataMapper.find(params[:id])
   end
 
-  #Destroy action for deleting an already uploaded file
+  # Destroy action for deleting an already uploaded file
   def destroy
     @data_mapper = DataMapper.find(params[:id])
     if @data_mapper.destroy
@@ -42,9 +42,8 @@ class DataMappersController < ApplicationController
 
   private
 
-  #Permitted parameters when uploading a file. This is used for security reasons.
-  def data_mapper_params
-    params.require(:data_mapper).permit(:title, :file_type, :original_file)
-  end
-
+    # Permitted parameters when uploading a file. This is used for security reasons.
+    def data_mapper_params
+      params.require(:data_mapper).permit(:title, :file_type, :original_file)
+    end
 end
