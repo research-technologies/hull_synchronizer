@@ -165,11 +165,11 @@ class SubmissionChecker
   def has_file?(filepath, row_index)
     files_file_path = FileLocations.files_file_path(@source_dir)
     if filepath.blank?
-      @errors << "No filename in row #{row_index} in #{files_file_path}"
+      @errors << "No filename in #{files_file_path}, row #{row_index}"
       return false
     end
     has_file = File.exist?(filepath)
-    @errors << "File #{filepath} in row #{row_index} is missing in #{files_file_path}" unless has_file
+    @errors << "File #{filepath} in #{files_file_path}, row #{row_index} is missing" unless has_file
     has_file
   end
 
@@ -182,7 +182,7 @@ class SubmissionChecker
     # end
     has_size = true if file_size == listed_size
     files_file_path = FileLocations.files_file_path(@source_dir)
-    @errors << "File #{filepath} in row #{row_index} has file size mismatch with original in #{files_file_path}" unless has_size
+    @errors << "File #{filepath} in #{files_file_path}, row #{row_index} has file size mismatch with original" unless has_size
     has_size
   end
 
@@ -192,45 +192,46 @@ class SubmissionChecker
     has_hash = false
     has_hash = true if listed_hash == current_hash
     files_file_path = FileLocations.files_file_path(@source_dir)
-    @errors << "File #{filepath} in row #{row_index} has file hash mismatch with original in #{files_file_path}" unless has_hash
+    @errors << "File #{filepath} in #{files_file_path}, row #{row_index} has file hash mismatch with original" unless has_hash
     has_hash
   end
 
   def has_data_file?(filename, row_index)
     metadata_file_path = FileLocations.metadata_file_path(@source_dir)
-    @errors << "Filename from row #{row_index} is missing in metadata_file_path" unless filename
-    return false unless filename
+    @errors << "No filename in #{metadata_file_path}, row #{row_index}" if filename.blank?
+    return false if filename.blank?
     has_file = File.exist?(get_data_path(filename))
-    @errors << "File #{filename} in row #{row_index} is missing in metadata_file_path" unless has_file
+    @errors << "File #{filename} in #{metadata_file_path}, row #{row_index} is missing" unless has_file
     has_file
   end
 
   def has_required_fields?(row, row_index)
+    metadata_file_path = FileLocations.metadata_file_path(@source_dir)
     has_fields = true
     @dm.required_fields.each do |field|
       has_fields = has_fields && row.fetch(field, nil).present?
     end
-    @errors << "Required fields error from row #{row_index}" unless has_fields
+    @errors << "Required fields error in #{metadata_file_path}, row #{row_index}" unless has_fields
     has_fields
   end
 
   def has_calm_collection?(row, row_index)
+    metadata_file_path = FileLocations.metadata_file_path(@source_dir)
     collection = nil
     has_collection = false
     reference = row.fetch(@dm.reference, nil)
     if reference.blank?
-      @errors << "CALM collection reference is missing in row #{row_index}"
+      @errors << "CALM collection reference is missing in #{metadata_file_path}, row #{row_index}"
       return has_collection
     end
-    calm_api = Calm::Api.new
-    parent = calm_api.get_record_by_field('RefNo', reference)
+    parent = Calm::Api.new.get_record_by_field('RefNo', reference)
     if parent.present? and parent.first != false
       collection = parent.last['RecordID'].join
     end
     unless collection.blank?
       has_collection = true
     else
-      @errors << "CALM collection with reference #{reference} from row #{row_index} is missing in CALM"
+      @errors << "CALM collection with reference #{reference} in #{metadata_file_path}, row #{row_index} is missing in CALM"
     end
     has_collection
   end
@@ -254,7 +255,7 @@ class SubmissionChecker
     if unverified_files.any?
       files_file_path = FileLocations.files_file_path(@source_dir)
       @errors << "There are files in the submission not listed in #{files_file_path} and so not verified."
-      @errors += extra_files.map { |e| "  - #{e}" }
+      @errors += unverified_files.map { |e| "  - #{e}" }
     end
     unverified_files.any?
   end
@@ -266,7 +267,7 @@ class SubmissionChecker
     if unused_files.any?
       metadata_file_path = FileLocations.metadata_file_path(@source_dir)
       @errors << "There are files in the submission not listed in #{metadata_file_path} and so not used."
-      @errors += extra_files.map { |e| "  - #{e}" }
+      @errors += unused_files.map { |e| "  - #{e}" }
     end
     unused_files.any?
   end
@@ -279,7 +280,7 @@ class SubmissionChecker
 
   def get_data_path(filepath)
     return if filepath.blank?
-    if is_remote_file?(filepath) or filepath.start_with?(@source_dir)
+    if is_remote_file?(filepath) or is_local_file?(filepath)
       sanitized_filepath(filepath).chomp(File::SEPARATOR)
     else
       File.join(@source_dir, sanitized_filepath(filepath)).chomp(File::SEPARATOR)
@@ -287,7 +288,11 @@ class SubmissionChecker
   end
 
   def is_remote_file?(filename)
-    sanitized_filepath(filename).start_with? FileLocations.remote_dir
+    sanitized_filepath(filename).start_with? File.join(FileLocations.remote_dir, File::SEPARATOR)
+  end
+
+  def is_local_file?(filename)
+    sanitized_filepath(filename).start_with? File.join(@source_dir, File::SEPARATOR)
   end
 
   def sanitized_filepath(filename)
@@ -301,7 +306,7 @@ class SubmissionChecker
       reject { |f| File.directory?(f) }
   end
 
-  def submitted_data_files(src_files)
+  def submitted_data_files
     submitted_files -
       # Metadata files are accounted for
       FileLocations.metadata_files(@source_dir) -
