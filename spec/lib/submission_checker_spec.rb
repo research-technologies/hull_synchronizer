@@ -414,6 +414,7 @@ RSpec.describe SubmissionChecker do
 
   describe 'has_data_file?' do
     before(:each) do
+      allow(ENV).to receive(:[]).with('LOCAL_EFS_DATA_DIR').and_return('/data_dir/efs')
       @sc = SubmissionChecker.new({ params: {source_dir: 'spec/fixtures/files/submission'} })
     end
     it 'returns true if the file exists' do
