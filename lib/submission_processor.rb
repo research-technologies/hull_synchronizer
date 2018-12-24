@@ -42,8 +42,7 @@ class SubmissionProcessor
     @params = params
     @source_dir = params.fetch(:source_dir, nil)
     raise "Source diectory not provided" if @source_dir.blank?
-    @source_dir = sanitized_filename(@source_dir)
-    @source_dir = File.join(@source_dir, File::SEPARATOR)
+    @source_dir = File.join(sanitized_filename(@source_dir), File::SEPARATOR)
     @dm = ::DataCrosswalks::DataArchiveModel.new
   end
 
@@ -110,7 +109,8 @@ class SubmissionProcessor
   end
 
   def sanitized_filename(filename)
-    File.join(filename.split(File::SEPARATOR))
+    # File name could contain either forward slash or back slash
+    File.join(filename.split /[\\\/]/)
   end
 
   def get_dirname(data_path, row_count)
