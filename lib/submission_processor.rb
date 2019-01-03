@@ -136,11 +136,8 @@ class SubmissionProcessor
 
   def write_metadata(row, dest_dir)
     File.open(File.join(dest_dir, 'metadata.json'),"w") do |f|
-      # TODO: Use row now that row is stripped csv row
-      row_hash =  {}
-      row.headers.each {|k| row_hash[k] = row.fetch(k) }
-      @accession = row_hash['accession_number']
-      f.write(JSON.pretty_generate(row_hash))
+      @accession = row['accession_number']
+      f.write(JSON.pretty_generate(row))
     end
   end
 
