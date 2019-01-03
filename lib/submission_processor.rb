@@ -4,8 +4,10 @@ require 'json'
 require 'willow_sword'
 require 'data_crosswalks/data_archive_model'
 require 'file_locations'
+require 'submission_helper'
 
 class SubmissionProcessor
+  include SubmissionHelper
   attr_reader :params, :source_dir, :row_count, :current_transfer_dir, :accession
 
   # Class to assemble and prepare data for transfer to archivematica
@@ -37,12 +39,12 @@ class SubmissionProcessor
   #       data dirs (one for each row)
   # 3. Create bag in transfer location
 
-  def initialize(params)
+  def initialize(params:)
     # Need source dir
     @params = params
     @source_dir = params.fetch(:source_dir, nil)
-    raise "Source diectory not provided" if @source_dir.blank?
-    @source_dir = File.join(sanitized_filename(@source_dir), File::SEPARATOR)
+    raise "Source directory not provided" if @source_dir.blank?
+    @source_dir = File.join(sanitized_filepath(@source_dir), File::SEPARATOR)
     @dm = ::DataCrosswalks::DataArchiveModel.new
   end
 
@@ -58,23 +60,23 @@ class SubmissionProcessor
   def assemble_data
     @row_count = 0
     metadata_file_path = FileLocations.metadata_file_path(@source_dir)
-    ::CSV.foreach(metadata_file_path, headers: true).each do |row|
-      if row.any?
-        @row_count += 1
-        filename = row.fetch(@dm.filename)
-        data_path = get_data_path(filename)
-        # create dir
-        dirname = get_dirname(data_path, row_count)
-        dest_dir = create_data_dir(dirname)
-        if is_remote_file?(data_path)
-          FileUtils.cp_r(data_path, dest_dir)
-        else
-          # Move files
-          FileUtils.mv(data_path, dest_dir)
-        end
-        # write metadata
-        write_metadata(row, dest_dir)
+    ::CSV.foreach(metadata_file_path, headers: true).each do |csv_row|
+      next if csv_row.blank?
+      row = strip_csv_row(csv_row)
+      @row_count += 1
+      filename = row.fetch(@dm.filename)
+      data_path = get_data_path(filename)
+      # create dir
+      dirname = get_dirname(data_path, row_count)
+      dest_dir = create_data_dir(dirname)
+      if is_remote_file?(data_path)
+        FileUtils.cp_r(data_path, dest_dir)
+      else
+        # Move files
+        FileUtils.mv(data_path, dest_dir)
       end
+      # write metadata
+      write_metadata(row, dest_dir)
     end
   end
 
@@ -94,23 +96,6 @@ class SubmissionProcessor
 
   def has_extra_files?
     extra_files.any?
-  end
-
-  def get_data_path(filename)
-    if is_remote_file?(filename) or filename.start_with?(@source_dir)
-      sanitized_filename(filename)
-    else
-      File.join(@source_dir, sanitized_filename(filename))
-    end
-  end
-
-  def is_remote_file?(filename)
-    sanitized_filename(filename).start_with? FileLocations.remote_dir
-  end
-
-  def sanitized_filename(filename)
-    # File name could contain either forward slash or back slash
-    File.join(filename.split /[\\\/]/)
   end
 
   def get_dirname(data_path, row_count)
@@ -151,6 +136,7 @@ class SubmissionProcessor
 
   def write_metadata(row, dest_dir)
     File.open(File.join(dest_dir, 'metadata.json'),"w") do |f|
+      # TODO: Use row now that row is stripped csv row
       row_hash =  {}
       row.headers.each {|k| row_hash[k] = row.fetch(k) }
       @accession = row_hash['accession_number']

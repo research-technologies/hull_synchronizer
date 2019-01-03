@@ -4,7 +4,10 @@ module SubmissionHelper
 
   def strip_csv_row(unstriped_row)
     row = {}
-    unstriped_row.each{|k, v| row[k.strip] = v.strip}
+    unstriped_row.each do |k, v|
+      row[k.strip] = v
+      row[k.strip] = v.strip unless v.blank?
+    end
     row
   end
 

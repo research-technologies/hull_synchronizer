@@ -105,6 +105,7 @@ class SubmissionChecker
     all_valid = true
     files_file_path = FileLocations.files_file_path(@source_dir)
     ::CSV.foreach(files_file_path, headers: true).each do |csv_row|
+      next if csv_row.blank?
       # Each file listed in FILES.csv should be valid
       row = strip_csv_row(csv_row)
       file_count += 1
@@ -125,6 +126,7 @@ class SubmissionChecker
     all_valid = true
     metadata_file_path = FileLocations.metadata_file_path(@source_dir)
     ::CSV.foreach(metadata_file_path, headers: true).each do |csv_row|
+      next if csv_row.blank?
       # Each row of metadata listed in DESCRIPTION.csv should be valid
       row = strip_csv_row(csv_row)
       @row_count += 1
