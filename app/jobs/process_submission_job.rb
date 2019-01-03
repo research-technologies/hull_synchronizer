@@ -6,7 +6,7 @@ class ProcessSubmissionJob < Gush::Job
 
   # Processes the submission package
   def perform
-    @processor = SubmissionProcessor.new(params)
+    @processor = SubmissionProcessor.new(params: params)
     processor.process_submission
     build_output
   # Need to decide when to retry. See ingest_status as example
