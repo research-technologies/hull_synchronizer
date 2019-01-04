@@ -158,8 +158,10 @@ class SubmissionProcessor
   def move_submission_doc(dest_dir)
     # Move submission documentation dir
     src_dir = File.join(@source_dir, FileLocations.submission_files_dir)
-    FileUtils.mkdir_p(dest_dir)
-    FileUtils.mv(src_dir, dest_dir)
+    if File.directory?(src_dir) and !Dir.empty?(src_dir)
+      FileUtils.mkdir_p(dest_dir)
+      FileUtils.mv(src_dir, dest_dir)
+    end
   end
 
   def move_metadata_dir(dest_dir)
