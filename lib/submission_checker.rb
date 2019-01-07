@@ -144,7 +144,7 @@ class SubmissionChecker
   def has_valid_file?(row, row_index)
     # Ignore FILES.csv
     filepath = get_data_path(row.fetch('path'))
-    return true if filepath.end_with?(FileLocations.files_file_name)
+    return true if filepath == FileLocations.files_file_path(@source_dir)
     # the file exists on disk
     return false unless has_file?(filepath, row_index)
     # The file size matches

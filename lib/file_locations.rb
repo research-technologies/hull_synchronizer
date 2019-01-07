@@ -52,18 +52,18 @@ module FileLocations
     end
 
     def metadata_file_path(source_dir)
-      if File.file?(File.join(source_dir, metadata_dir, metadata_file_name))
-        File.join(source_dir, metadata_dir, metadata_file_name)
+      if File.exist?(File.join(source_dir, metadata_dir, metadata_file_name)) || File.exist?(File.join(source_dir, metadata_dir, metadata_file_name.downcase))
+        correct_case(File.join(source_dir, metadata_dir, metadata_file_name))
       else
-        File.join(source_dir, metadata_file_name)
+        correct_case(File.join(source_dir, metadata_file_name))
       end
     end
 
     def files_file_path(source_dir)
-      if File.file?(File.join(source_dir, metadata_dir, files_file_name))
-        File.join(source_dir, metadata_dir, files_file_name)
+      if File.exist?(File.join(source_dir, metadata_dir, files_file_name)) || File.exist?(File.join(source_dir, metadata_dir, files_file_name.downcase))
+        correct_case(File.join(source_dir, metadata_dir, files_file_name))
       else
-        File.join(source_dir, files_file_name)
+        correct_case(File.join(source_dir, files_file_name))
       end
     end
 
@@ -92,6 +92,14 @@ module FileLocations
     # location of bag contents prior to bagging
     def temp_bags_directory
       ENV.fetch('RAILS_TMP', 'tmp')
+    end
+    
+    def correct_case(path)
+      if File.exist?(path.downcase)
+        path.downcase
+      else
+        path
+      end
     end
   end
 
