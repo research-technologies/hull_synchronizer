@@ -52,18 +52,42 @@ module FileLocations
     end
 
     def metadata_file_path(source_dir)
-      if File.file?(File.join(source_dir, metadata_dir, metadata_file_name))
-        File.join(source_dir, metadata_dir, metadata_file_name)
+      # match in metadata directory within source directory
+      mdir = File.join(source_dir, metadata_dir, '*')
+      f_in_mdir = File.join(source_dir, metadata_dir, metadata_file_name)
+      match_in_mdir = Dir.glob(mdir).find { |f| f.downcase == f_in_mdir.downcase }
+      # match in source directory
+      dir = File.join(source_dir, '*')
+      f_in_dir = File.join(source_dir, metadata_file_name)
+      match_in_dir = Dir.glob(dir).find { |f| f.downcase == f_in_dir.downcase }
+      # return default value
+      default = File.join(source_dir, metadata_file_name)
+      if match_in_mdir
+        match_in_mdir
+      elsif match_in_dir
+        match_in_dir
       else
-        File.join(source_dir, metadata_file_name)
+        default
       end
     end
 
     def files_file_path(source_dir)
-      if File.file?(File.join(source_dir, metadata_dir, files_file_name))
-        File.join(source_dir, metadata_dir, files_file_name)
+      # match in metadata directory within source directory
+      mdir = File.join(source_dir, metadata_dir, '*')
+      f_in_mdir = File.join(source_dir, metadata_dir, files_file_name)
+      match_in_mdir = Dir.glob(mdir).find { |f| f.downcase == f_in_mdir.downcase }
+      # match in source directory
+      dir = File.join(source_dir, '*')
+      f_in_dir = File.join(source_dir, files_file_name)
+      match_in_dir = Dir.glob(dir).find { |f| f.downcase == f_in_dir.downcase }
+      # return default value
+      default = File.join(source_dir, files_file_name)
+      if match_in_mdir
+        match_in_mdir
+      elsif match_in_dir
+        match_in_dir
       else
-        File.join(source_dir, files_file_name)
+        default
       end
     end
 

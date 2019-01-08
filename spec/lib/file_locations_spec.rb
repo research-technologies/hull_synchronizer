@@ -55,88 +55,165 @@ RSpec.describe FileLocations do
   end
 
   describe 'metadata file path' do
-    it 'returns the default metadata file location' do
-      allow(File).to receive(:file?).with('tmp/DESCRIPTION.csv').and_return(false)
-      allow(File).to receive(:file?).with('tmp/metadata/DESCRIPTION.csv').and_return(false)
-      expect(FileLocations.metadata_file_path('tmp')).to eq ('tmp/DESCRIPTION.csv')
-    end
-
     it 'returns the metadata file path from the metadata directory' do
-      allow(File).to receive(:file?).with('tmp/metadata/DESCRIPTION.csv').and_return(true)
-      allow(File).to receive(:file?).with('tmp/DESCRIPTION.csv').and_return(false)
+      allow(Dir).to receive(:glob).with('tmp/metadata/*').and_return(
+        ['tmp/metadata/a.txt', 'tmp/metadata/DESCRIPTION.csv'])
+      allow(Dir).to receive(:glob).with('tmp/*').and_return(
+        ['tmp/a.txt'])
       expect(FileLocations.metadata_file_path('tmp')).to eq ('tmp/metadata/DESCRIPTION.csv')
     end
 
-    it 'returns the default metadata file location' do
-      allow(File).to receive(:file?).with('tmp/DESCRIPTION.csv').and_return(true)
-      allow(File).to receive(:file?).with('tmp/metadata/DESCRIPTION.csv').and_return(false)
+    it 'returns the metadata file path from the metadata directory in mixed case' do
+      allow(Dir).to receive(:glob).with('tmp/metadata/*').and_return(
+        ['tmp/metadata/a.txt', 'tmp/metadata/Description.csv'])
+      allow(Dir).to receive(:glob).with('tmp/*').and_return(
+        ['tmp/a.txt'])
+      expect(FileLocations.metadata_file_path('tmp')).to eq ('tmp/metadata/Description.csv')
+    end
+
+    it 'returns the metadata file path from the metadata directory in lower case' do
+      allow(Dir).to receive(:glob).with('tmp/metadata/*').and_return(
+        ['tmp/metadata/a.txt', 'tmp/metadata/description.csv'])
+      allow(Dir).to receive(:glob).with('tmp/*').and_return(
+        ['tmp/a.txt'])
+      expect(FileLocations.metadata_file_path('tmp')).to eq ('tmp/metadata/description.csv')
+    end
+
+    it 'returns the metadata file path from the source directory' do
+      allow(Dir).to receive(:glob).with('tmp/metadata/*').and_return(
+        ['tmp/metadata/a.txt'])
+      allow(Dir).to receive(:glob).with('tmp/*').and_return(
+        ['tmp/a.txt', 'tmp/DESCRIPTION.csv'])
       expect(FileLocations.metadata_file_path('tmp')).to eq ('tmp/DESCRIPTION.csv')
     end
 
-    it 'returns file from the metadata dir if both are vailable' do
-      allow(File).to receive(:file?).with('tmp/DESCRIPTION.csv').and_return(true)
-      allow(File).to receive(:file?).with('tmp/metadata/DESCRIPTION.csv').and_return(true)
-      expect(FileLocations.metadata_file_path('tmp')).to eq ('tmp/metadata/DESCRIPTION.csv')
+    it 'returns the metadata file path from the source directory in mixed case' do
+      allow(Dir).to receive(:glob).with('tmp/metadata/*').and_return(
+        ['tmp/metadata/a.txt'])
+      allow(Dir).to receive(:glob).with('tmp/*').and_return(
+        ['tmp/a.txt', 'tmp/Description.csv'])
+      expect(FileLocations.metadata_file_path('tmp')).to eq ('tmp/Description.csv')
+    end
+
+    it 'returns the metadata file path from the source directory in lower case' do
+      allow(Dir).to receive(:glob).with('tmp/metadata/*').and_return(
+        ['tmp/metadata/a.txt'])
+      allow(Dir).to receive(:glob).with('tmp/*').and_return(
+        ['tmp/a.txt', 'tmp/description.csv'])
+      expect(FileLocations.metadata_file_path('tmp')).to eq ('tmp/description.csv')
+    end
+
+    it 'returns the metadata file path from the metadata dir if both are available' do
+      allow(Dir).to receive(:glob).with('tmp/metadata/*').and_return(
+        ['tmp/metadata/a.txt', 'tmp/metadata/Description.csv'])
+      allow(Dir).to receive(:glob).with('tmp/*').and_return(
+        ['tmp/a.txt', 'tmp/description.csv'])
+      expect(FileLocations.metadata_file_path('tmp')).to eq ('tmp/metadata/Description.csv')
+    end
+
+    it 'returns the default metadata file path if no metadata file is found' do
+      allow(Dir).to receive(:glob).with('tmp/metadata/*').and_return(
+        ['tmp/metadata/a.txt'])
+      allow(Dir).to receive(:glob).with('tmp/*').and_return(
+        ['tmp/a.txt',])
+      expect(FileLocations.metadata_file_path('tmp')).to eq ('tmp/DESCRIPTION.csv')
     end
   end
 
   describe 'Files file path' do
-    it 'returns the default location for FILES.csv' do
-      allow(File).to receive(:file?).with('tmp/FILES.csv').and_return(false)
-      allow(File).to receive(:file?).with('tmp/metadata/FILES.csv').and_return(false)
-      expect(FileLocations.files_file_path('tmp')).to eq ('tmp/FILES.csv')
-    end
-
     it 'returns the FILES.csv file path from the metadata directory' do
-      allow(File).to receive(:file?).with('tmp/metadata/FILES.csv').and_return(true)
-      allow(File).to receive(:file?).with('tmp/FILES.csv').and_return(false)
+      allow(Dir).to receive(:glob).with('tmp/metadata/*').and_return(
+        ['tmp/metadata/a.txt', 'tmp/metadata/FILES.csv'])
+      allow(Dir).to receive(:glob).with('tmp/*').and_return(
+        ['tmp/a.txt'])
       expect(FileLocations.files_file_path('tmp')).to eq ('tmp/metadata/FILES.csv')
     end
 
-    it 'returns the default FILES.csv file path' do
-      allow(File).to receive(:file?).with('tmp/FILES.csv').and_return(true)
-      allow(File).to receive(:file?).with('tmp/metadata/FILES.csv').and_return(false)
+    it 'returns the FILES.csv file path from the metadata directory in mixed case' do
+      allow(Dir).to receive(:glob).with('tmp/metadata/*').and_return(
+        ['tmp/metadata/a.txt', 'tmp/metadata/Files.csv'])
+      allow(Dir).to receive(:glob).with('tmp/*').and_return(
+        ['tmp/a.txt'])
+      expect(FileLocations.files_file_path('tmp')).to eq ('tmp/metadata/Files.csv')
+    end
+
+    it 'returns the FILES.csv file path from the metadata directory in lower case' do
+      allow(Dir).to receive(:glob).with('tmp/metadata/*').and_return(
+        ['tmp/metadata/a.txt', 'tmp/metadata/files.csv'])
+      allow(Dir).to receive(:glob).with('tmp/*').and_return(
+        ['tmp/a.txt'])
+      expect(FileLocations.files_file_path('tmp')).to eq ('tmp/metadata/files.csv')
+    end
+
+    it 'returns the FILES.csv file path from the source directory' do
+      allow(Dir).to receive(:glob).with('tmp/metadata/*').and_return(
+        ['tmp/metadata/a.txt'])
+      allow(Dir).to receive(:glob).with('tmp/*').and_return(
+        ['tmp/a.txt', 'tmp/FILES.csv'])
       expect(FileLocations.files_file_path('tmp')).to eq ('tmp/FILES.csv')
     end
 
-    it 'returns FILES.csv from the metadata dir if both are vailable' do
-      allow(File).to receive(:file?).with('tmp/FILES.csv').and_return(true)
-      allow(File).to receive(:file?).with('tmp/metadata/FILES.csv').and_return(true)
-      expect(FileLocations.files_file_path('tmp')).to eq ('tmp/metadata/FILES.csv')
+    it 'returns the FILES.csv file path from the source directory in mixed case' do
+      allow(Dir).to receive(:glob).with('tmp/metadata/*').and_return(
+        ['tmp/metadata/a.txt'])
+      allow(Dir).to receive(:glob).with('tmp/*').and_return(
+        ['tmp/a.txt', 'tmp/Files.csv'])
+      expect(FileLocations.files_file_path('tmp')).to eq ('tmp/Files.csv')
+    end
+
+    it 'returns the FILES.csv file path from the source directory in lower case' do
+      allow(Dir).to receive(:glob).with('tmp/metadata/*').and_return(
+        ['tmp/metadata/a.txt'])
+      allow(Dir).to receive(:glob).with('tmp/*').and_return(
+        ['tmp/a.txt', 'tmp/files.csv'])
+      expect(FileLocations.files_file_path('tmp')).to eq ('tmp/files.csv')
+    end
+
+    it 'returns the FILES.csv file path from the metadata dir if both are available' do
+      allow(Dir).to receive(:glob).with('tmp/metadata/*').and_return(
+        ['tmp/metadata/a.txt', 'tmp/metadata/Files.csv'])
+      allow(Dir).to receive(:glob).with('tmp/*').and_return(
+        ['tmp/a.txt', 'tmp/files.csv'])
+      expect(FileLocations.files_file_path('tmp')).to eq ('tmp/metadata/Files.csv')
+    end
+
+    it 'returns the default FILES.csv file path if no metadata file is found' do
+      allow(Dir).to receive(:glob).with('tmp/metadata/*').and_return(
+        ['tmp/metadata/a.txt'])
+      allow(Dir).to receive(:glob).with('tmp/*').and_return(
+        ['tmp/a.txt',])
+      expect(FileLocations.files_file_path('tmp')).to eq ('tmp/FILES.csv')
     end
   end
 
   describe 'metadata files' do
     it 'returns the default location for FILES.csv and DESCRIPTION.csv' do
-      allow(File).to receive(:file?).with('tmp/FILES.csv').and_return(false)
-      allow(File).to receive(:file?).with('tmp/metadata/FILES.csv').and_return(false)
-      allow(File).to receive(:file?).with('tmp/DESCRIPTION.csv').and_return(false)
-      allow(File).to receive(:file?).with('tmp/metadata/DESCRIPTION.csv').and_return(false)
+      allow(Dir).to receive(:glob).with('tmp/metadata/*').and_return(['tmp/metadata/a.txt'])
+      allow(Dir).to receive(:glob).with('tmp/*').and_return(['tmp/a.txt'])
       expect(FileLocations.metadata_files('tmp')).to match_array(['tmp/DESCRIPTION.csv', 'tmp/FILES.csv'])
     end
 
     it 'returns the FILES.csv and DESCRIPTION.csv file path from the metadata directory' do
-      allow(File).to receive(:file?).with('tmp/metadata/FILES.csv').and_return(true)
-      allow(File).to receive(:file?).with('tmp/FILES.csv').and_return(false)
-      allow(File).to receive(:file?).with('tmp/metadata/DESCRIPTION.csv').and_return(true)
-      allow(File).to receive(:file?).with('tmp/DESCRIPTION.csv').and_return(false)
+      allow(Dir).to receive(:glob).with('tmp/metadata/*').and_return(
+        ['tmp/metadata/a.txt', 'tmp/metadata/DESCRIPTION.csv', 'tmp/metadata/FILES.csv'])
+      allow(Dir).to receive(:glob).with('tmp/*').and_return(['tmp/a.txt'])
       expect(FileLocations.metadata_files('tmp')).to match_array (['tmp/metadata/DESCRIPTION.csv', 'tmp/metadata/FILES.csv'])
     end
 
     it 'returns the default FILES.csv and DESCRIPTION.csv file path' do
-      allow(File).to receive(:file?).with('tmp/FILES.csv').and_return(true)
-      allow(File).to receive(:file?).with('tmp/metadata/FILES.csv').and_return(false)
-      allow(File).to receive(:file?).with('tmp/DESCRIPTION.csv').and_return(true)
-      allow(File).to receive(:file?).with('tmp/metadata/DESCRIPTION.csv').and_return(false)
+      allow(Dir).to receive(:glob).with('tmp/metadata/*').and_return(
+        ['tmp/metadata/a.txt'])
+      allow(Dir).to receive(:glob).with('tmp/*').and_return(
+        ['tmp/a.txt', 'tmp/DESCRIPTION.csv', 'tmp/FILES.csv'])
       expect(FileLocations.metadata_files('tmp')).to match_array(['tmp/DESCRIPTION.csv', 'tmp/FILES.csv'])
     end
 
     it 'returns FILES.csv and DESCRIPTION.csv from the metadata dir if both are vailable' do
-      allow(File).to receive(:file?).with('tmp/FILES.csv').and_return(true)
-      allow(File).to receive(:file?).with('tmp/metadata/FILES.csv').and_return(true)
-      allow(File).to receive(:file?).with('tmp/DESCRIPTION.csv').and_return(true)
-      allow(File).to receive(:file?).with('tmp/metadata/DESCRIPTION.csv').and_return(true)
-      expect(FileLocations.metadata_files('tmp')).to match_array (['tmp/metadata/DESCRIPTION.csv', 'tmp/metadata/FILES.csv'])
+      allow(Dir).to receive(:glob).with('tmp/metadata/*').and_return(
+        ['tmp/metadata/a.txt', 'tmp/metadata/Description.csv', 'tmp/metadata/Files.csv'])
+      allow(Dir).to receive(:glob).with('tmp/*').and_return(
+        ['tmp/a.txt', 'tmp/DESCRIPTION.csv', 'tmp/FILE.csv'])
+      expect(FileLocations.metadata_files('tmp')).to match_array (['tmp/metadata/Description.csv', 'tmp/metadata/Files.csv'])
     end
   end
 
