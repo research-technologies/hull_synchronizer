@@ -10,10 +10,10 @@ RSpec.describe Archivematica::ApproveTransferJob do
     before do
       stub_request(:post, 'http://test.host/api/transfer/approve')
         .to_return(status: 200, body: { message: 'Approval successful.', uuid: 'uuid' }.to_json)
-      subject.payloads = [{ output: { directory: 'directory' } }]
+      subject.payloads = [{ output: { directory: 'directory', accession: 'accession' } }]
     end
     it 'performs the job and sets the payload for the next job' do
-      expect(subject).to receive(:output).with(event: 'success', message: 'Approval successful.', uuid: 'uuid')
+      expect(subject).to receive(:output).with(event: 'success', message: 'Approval successful.', uuid: 'uuid', accession: 'accession')
       subject.perform
     end
   end
@@ -22,7 +22,7 @@ RSpec.describe Archivematica::ApproveTransferJob do
     before do
       stub_request(:post, 'http://test.host/api/transfer/approve')
         .to_return(status: 418, body: { message: 'Something went wrong' }.to_json, headers: { warning: 'warning message' })
-      subject.payloads = [{ output: { directory: 'directory' } }]
+      subject.payloads = [{ output: { directory: 'directory', accession: 'accession' } }]
     end
     it 'performs the job and sets the payload for the next job' do
       expect(subject).to receive(:output).with(event: 'failed', message: 'Something went wrong')

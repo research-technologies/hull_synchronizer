@@ -23,8 +23,11 @@
 
 .byebug_history
 
-# Ignore any key files
+# Ignore .rbenv-vars
+.rbenv-vars
+
+# Ignore any keys (pem files)
 *.pem
 
-# Ignore rbenv-vars
-.rbenv-vars
+# Ignore any coverage
+coverage

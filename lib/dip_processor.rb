@@ -1,7 +1,10 @@
+require 'dip_reader'
+require 'willow_sword'
+require 'file_locations'
+
 class DIPProcessor
-  require 'dip_reader'
-  require 'willow_sword'
-  attr_reader :params, :dip, :dip_id, :bag_key, :package_payload, :works_payload
+
+  attr_reader :params, :dip, :dip_id, :bag_key, :package_payload, :works_payload, :work_metadata
 
   # Processes a DIP from Archivematica and creates a zip
   #   creates one zip per directory in the original deposit
@@ -10,21 +13,22 @@ class DIPProcessor
   #   params[:dip_location]
   #   params[:package_metadata][:dip_uuid]
   def initialize(params:)
+    raise('Missing required params: [:dip_location] and [:package_metadata][:dip_uuid] are required') unless params[:dip_location] && params[:package_metadata][:dip_uuid]
     @params = params
     @package_payload = {}
     @works_payload = []
     @dip = DIPReader.new(params[:dip_location])
     @dip_id = params[:package_metadata][:dip_uuid]
     @bag_key = dip_id
-    rescue StandardError => e
-     raise e
+  rescue StandardError => e
+    raise e
   end
 
   def process
     process_package
     process_works
   end
-
+  
   def cleanup
     FileUtils.rm_r(src) if Dir.exist?(src)
     FileUtils.rm_r(dst) if Dir.exist?(dst)
@@ -33,7 +37,7 @@ class DIPProcessor
   private
 
     def process_package
-      make_src
+      make_locations
       build_package
       build_bag
       build_zip
@@ -47,14 +51,14 @@ class DIPProcessor
       dip.package.each do |file|
         FileUtils.cp_r(file, src)
       end
-      write_json
+      write_json(params[:package_metadata])
       write_dc
     end
 
     def process_works
       dip.works.each do |key, value|
         @bag_key = "#{dip_id}_#{key}"
-        make_src
+        make_locations
         build_work(value)
         build_bag
         build_zip
@@ -62,17 +66,23 @@ class DIPProcessor
           {
             file: { path: "#{dst}.zip", content_type: 'application/zip' },
             packaging: 'http://purl.org/net/sword/package/BagIt',
-            calm_metdata: build_calm_metadata
+            calm_metadata: work_metadata
           }
         cleanup
       end
     end
 
+    # Build each work:
+    #   copy files to destination for zipping
+    #   add 'packaged_by_package_name' to metadata.json
+    #   write metadata.json to destination
     def build_work(work_files)
       work_files.each do |file|
         next if file.blank?
         if file.end_with? '-metadata.json'
-          FileUtils.cp_r(file, File.join(src, 'metadata.json'))
+          @work_metadata = JSON.parse(File.read(file))
+          work_metadata[:packaged_by_package_name] = dip_id
+          write_json(work_metadata)
         else
           FileUtils.cp_r(file, src)
         end
@@ -81,7 +91,6 @@ class DIPProcessor
     end
 
     def build_zip
-      # WillowSword::ZipPackage.new(src, "#{dst}.zip").create_zip
       WillowSword::ZipPackage.new(dst, "#{dst}.zip").create_zip
     end
 
@@ -89,28 +98,23 @@ class DIPProcessor
       WillowSword::BagPackage.new(src, dst)
     end
 
-    # @todo
-    def build_calm_metadata
-      {}
-    end
-
     def src
-      File.join(ENV.fetch('RAILS_TMP', 'tmp'), "#{bag_key}_TMP")
+      File.join(FileLocations.temp_bags_directory, "#{bag_key}_TMP")
     end
 
     def dst
-      File.join(ENV.fetch('BAGS_DIR', 'tmp'), bag_key)
+      File.join(FileLocations.bags_directory, bag_key)
     end
 
-    def make_src
+    def make_locations
       FileUtils.mkdir(src) unless Dir.exist?(src)
       FileUtils.mkdir(dst) unless Dir.exist?(dst)
     end
 
-    def write_json
+    def write_json(json_data)
       # Without the line ending, there is a checksum mismatch when the bag is unzipped
       File.open(File.join(src, 'metadata.json'), "w:UTF-8") do |f|
-        f.write "#{JSON.pretty_generate(params[:package_metadata])}\n"
+        f.write "#{JSON.pretty_generate(json_data)}\n"
       end
     end
 

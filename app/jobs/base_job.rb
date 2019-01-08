@@ -1,7 +1,8 @@
-  # BaseJob for all Archivematica and SWORD jobs.
+  # BaseJob for all API-based jobs (Archivematica, CALM and SWORD).
   class BaseJob < Gush::Job
     require 'archivematica/api'
     require 'sword/api'
+    require 'calm/api'
     attr_reader :response
 
     def perform
@@ -22,9 +23,10 @@
 
       # If response code is 200 or 201, continue
       def act_on_status
-        if status.between?(200,201) 
+        if status and status.between?(200,201) 
           act_on_ok
         else
+          Rails.logger.error("Job failed with: #{message_text}")
           output(event: 'failed', message: message_text)
           fail!
         end

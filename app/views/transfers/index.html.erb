@@ -1,0 +1,61 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Transfers</h1>
+
+<% if @transfers.length > 5 %>
+  <p>
+    <%= link_to 'Goto Reviews', reviews_path %><br />
+    <%= link_to 'Goto Ingests', ingests_path %>
+  </p>
+<% end %>
+
+<table>
+  <thead>
+    <tr>
+      <th>Transfer</th>
+      <th>Started at</th>
+      <th>Finished at</th>
+      <th>Status</th>
+      <th>Failure info</th>
+      <th>Delete</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% jobs_in_order(@transfers).each do | transfer | %>
+      
+      <tr>
+        <td>
+          <%= transfer.id %><br />
+          <%= link_to 'Show', :action => "show", :id => transfer.id %>
+          </td>
+        <td><%= Time.at(transfer.started_at) unless transfer.started_at.blank? %></td>
+        <td><%= Time.at(transfer.finished_at) unless transfer.finished_at.blank? %></td>
+        <td><%= transfer.status %></td>
+        <td>
+          <% transfer.jobs.select(&:failed?).sort_by(&:failed_at).each do | job | %>
+            Job: <%= job.name %><br />
+            &nbsp;&nbsp;Failed at: <%= Time.at(job.failed_at) %><br />
+            &nbsp;&nbsp;Message: <%= job.output_payload[:message] if job.output_payload %>
+            <% if job.output_payload && job.output_payload[:event] == 'retry' %>
+            <br /><br />
+            Event state: <%= job.output_payload[:event] %><br />
+            <% end %>
+          <% end %>
+        </td>
+        <td>
+          <%= link_to 'Delete', 
+             transfer_path(transfer.id), 
+             method: :delete, 
+             data: { confirm: 'Are you sure you want to delete this transfer?' } %>
+        </td>
+        
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<br />
+<p>
+  <%= link_to 'Goto Reviews', reviews_path %><br />
+  <%= link_to 'Goto Ingests', ingests_path %>
+</p>

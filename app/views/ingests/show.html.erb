@@ -22,27 +22,28 @@
       <td>Total Jobs:</td><td><%= @ingest.jobs.count %></td>
     </tr>
     <tr>
-      <td>Enqueued jobs:</td><td><%= count('enqueued') %></td>
+      <td>Enqueued jobs:</td><td><%= count(@ingest, 'enqueued') %></td>
     </tr>
     <tr>
-      <td>&nbsp;&nbsp;Running jobs:</td><td><%= count('running') %></td>
+      <td>&nbsp;&nbsp;Running jobs:</td><td><%= count(@ingest, 'running') %></td>
     </tr>
     <tr>
-      <td>&nbsp;&nbsp;Remaining jobs:</td><td><%= count('remaining') %></td>
+      <td>&nbsp;&nbsp;Remaining jobs:</td><td><%= count(@ingest, 'remaining') %></td>
     </tr>
     <tr>
-      <td>&nbsp;&nbsp;Succeeded jobs:</td><td><%= count('succeeded') %></td>
+      <td>&nbsp;&nbsp;Succeeded jobs:</td><td><%= count(@ingest, 'succeeded') %></td>
     </tr>
     <tr>
       <td>Number of Works:</td><td><%= @ingest.number_of_works %> (plus 1 Package)</td>
     </tr>
-    <% succeeded_jobs_in_order.each do | job |  %>
+    <% succeeded_jobs_in_order(@ingest).each do | job |  %>
       <tr>
         <td></td>
         <td>
           <%= job.name %><br />
           <% if job.output_payload %>
             <% job.output_payload.each do | key,value | %>
+              <% next if value.blank? %>
               &nbsp;&nbsp;<%= "#{key}: #{value}" %><br />
             <% end %>
           <% end %>
@@ -52,13 +53,14 @@
     <tr>
       <td>Failed jobs:</td><td><%= @ingest.jobs.select(&:failed?).count %></td>
     </tr>
-    <% failed_jobs_in_order.each do | job | %>
+    <% failed_jobs_in_order(@ingest).each do | job | %>
       <tr>
         <td></td>
         <td>
           <%= job.name %><br />
           <% if job.output_payload %>
             <% job.output_payload.each do | key,value | %>
+              <% next if value.blank? %>
               &nbsp;&nbsp;<%= "#{key}: #{value}" %><br />
             <% end %>
           <% end %>
@@ -69,12 +71,12 @@
 </table>
 <br />
 
-<%= link_to 'Refresh', ingest_path %> | 
+<%= link_to 'Refresh', review_path %> | 
 <% unless @ingest.finished? %>
-  <%= link_to 'Retry', retry_path(@ingest.id) %> | 
+  <%= link_to 'Retry', retry_ingest_path(@ingest.id) %> | 
 <% end %>
 <%= link_to 'Delete', 
-             ingest_path(@ingest.id), 
+             review_path(@ingest.id), 
              method: :delete, 
              data: { confirm: 'Are you sure you want to delete this ingest?' } %> | 
 <%= link_to 'Back', ingests_path %>

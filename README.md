@@ -1,5 +1,8 @@
 # Hull Synchronizer
 
+[![Build Status](https://travis-ci.org/research-technologies/hull_synchronizer.svg?branch=master)](https://travis-ci.org/research-technologies/hull_synchronizer)
+[![Coverage Status](https://coveralls.io/repos/github/research-technologies/hull_synchronizer/badge.svg?branch=master)](https://coveralls.io/github/research-technologies/hull_synchronizer?branch=master)
+
 Hull Synchronizer is a rails application that supports a digital preservation and digital asset management solution by providing an integration and monitoring point between different services.
 
 ## Prerequisities

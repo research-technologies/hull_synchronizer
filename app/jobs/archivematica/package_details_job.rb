@@ -51,6 +51,7 @@ module Archivematica
             package_metadata: metadata
           )
         else
+          Rails.logger.error("Job was sent for a retry with: #{message_text}")
           output(event: 'retry', message: message_text)
           fail!
         end
@@ -62,11 +63,12 @@ module Archivematica
         metadata_hash.each_pair do |key, value|
           next if %w[package_type misc_attributes related_packages].include? key
           if key == 'origin_pipeline'
-            @metadata[key.to_sym] = value
+            metadata[key.to_sym] = value
           else
-            @metadata["#{p_type}_#{key}".to_sym] = value
+            metadata["#{p_type}_#{key}".to_sym] = value
           end
         end
+        metadata[:accession] = payloads.first[:output][:accession]
       end
   end
 end

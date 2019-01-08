@@ -1,0 +1,80 @@
+<p id="notice"><%= notice %></p>
+
+<table>
+
+  <tbody>
+    <tr>
+      <td>ID:</td><td><%= @review.id %></td>
+    </tr>
+    <tr>
+      <td>Name:</td><td><%= @review.class.to_s %></td>
+    </tr>
+    <tr>
+      <td>Status</td><td><%= @review.status %></td>
+    </tr>
+    <tr>
+      <td>Started at:</td><td><%= Time.at(@review.started_at) unless @review.started_at.blank? %></td>
+    </tr>
+    <tr>
+      <td>Finished at:</td><td><%= Time.at(@review.finished_at) unless @review.finished_at.blank? %></td>
+    </tr>
+    <tr>
+      <td>Total Jobs:</td><td><%= @review.jobs.count %></td>
+    </tr>
+    <tr>
+      <td>Enqueued jobs:</td><td><%= count(@review, 'enqueued') %></td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;Running jobs:</td><td><%= count(@review, 'running') %></td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;Remaining jobs:</td><td><%= count(@review, 'remaining') %></td>
+    </tr>
+    <tr>
+      <td>&nbsp;&nbsp;Succeeded jobs:</td><td><%= count(@review, 'succeeded') %></td>
+    </tr>
+    <% succeeded_jobs_in_order(@review).each do | job |  %>
+      <tr>
+        <td></td>
+        <td>
+          <%= job.name %><br />
+          <% if job.output_payload %>
+            <% job.output_payload.each do | key,value | %>
+              <% next if value.blank? %>
+              &nbsp;&nbsp;<%= "#{key}: #{value}" %><br />
+            <% end %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+    <tr>
+      <td>Failed jobs:</td><td><%= @review.jobs.select(&:failed?).count %></td>
+    </tr>
+    <% failed_jobs_in_order(@review).each do | job | %>
+      <tr>
+        <td></td>
+        <td>
+          <%= job.name %><br />
+          <% if job.output_payload %>
+            <% job.output_payload.each do | key,value | %>
+              <% next if value.blank? %>
+              &nbsp;&nbsp;<%= "#{key}: #{value}" %><br />
+            <% end %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<br />
+
+<%= link_to 'Refresh', review_path %> |
+<% unless @review.finished? %>
+  <%= link_to 'Retry', retry_review_path(@review.id) %> |
+<% end %>
+<%= link_to 'Delete',
+             review_path(@review.id),
+             method: :delete,
+             data: { confirm: 'Are you sure you want to delete this review?' } %> |
+<%= link_to 'Back', reviews_path %>
+

@@ -18,9 +18,11 @@ module Archivematica
           output(
             event: 'success',
             message: message_text,
-            uuid: body['uuid']
+            uuid: body['uuid'],
+            accession: payloads.first[:output][:accession]
           )
         else
+          Rails.logger.error("Job failed with: #{message_text}")
           output(event: 'failed', message: message_text)
           fail!
         end
