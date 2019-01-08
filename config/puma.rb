@@ -6,7 +6,7 @@
 # see https://stackoverflow.com/questions/19946153/how-do-i-use-pumas-configuration-file
 
 # Setup paths
-log_dir = ENV.fetch('LOGS_PATH', ENV.fetch('RAILS_TMP', 'tmp'))
+# log_dir = ENV.fetch('LOGS_PATH', ENV.fetch('RAILS_TMP', 'tmp'))
 pids_dir = ENV.fetch('PIDS_PATH', ENV.fetch('RAILS_TMP', 'tmp'))
 
 # The directory to operate out of.
@@ -86,7 +86,7 @@ if ENV['RAILS_ENV'] == 'production'
   # Redirect STDOUT and STDERR to files specified. The 3rd parameter
   # (“append”) specifies whether the output is appended, the default is
   # “false”.
-  stdout_redirect File.join(log_dir, 'puma.stdout.log'), File.join(log_dir, 'puma.stderr.log'), true
+  # stdout_redirect File.join(log_dir, 'puma.stdout.log'), File.join(log_dir, 'puma.stderr.log'), true
 
   # Store the pid of the server in the file at “path”.
   pidfile File.join(pids_dir, 'puma.pid')
