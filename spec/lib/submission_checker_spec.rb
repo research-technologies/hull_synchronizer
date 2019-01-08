@@ -262,7 +262,7 @@ RSpec.describe SubmissionChecker do
     before(:each) do
       @sc = SubmissionChecker.new({ params: {source_dir: 'spec/fixtures/files/submission/test1/'} })
       @rows = [
-        {"path"=>"files.csv", "filename"=>"files.csv", "file_size"=>"6798", "checksum"=>"2885e7"},
+        {"path"=>"FILES.csv", "filename"=>"FILES.csv", "file_size"=>"6798", "checksum"=>"2885e7"},
         {"path"=>"new_file.txt", "filename"=>"new_file.txt", "file_size"=>"67658", "checksum"=>"2885e7"}
       ]
       allow(ENV).to receive(:[]).with('LOCAL_EFS_DATA_DIR').and_return('/data_dir/efs')
@@ -376,12 +376,12 @@ RSpec.describe SubmissionChecker do
       allow(@rows[0]).to receive(:fetch).with('file_size', nil).and_return nil
       allow(File).to receive(:size).with(filepath).and_return 221193
       expect(@sc.send(:has_required_size?, filepath, @rows[0], 1)).to eq false
-      expect(@sc.errors).to eq (["File #{filepath} in spec/fixtures/files/submission/test1/files.csv, row 1 has file size mismatch with original"])
+      expect(@sc.errors).to eq (["File #{filepath} in spec/fixtures/files/submission/test1/FILES.csv, row 1 has file size mismatch with original"])
     end
     it 'returns false if the file sizes do not match' do
       filepath = 'spec/fixtures/files/submission/test1/README.txt'
       expect(@sc.send(:has_required_size?, filepath, @rows[0], 1)).to eq false
-      expect(@sc.errors).to eq (["File #{filepath} in spec/fixtures/files/submission/test1/files.csv, row 1 has file size mismatch with original"])
+      expect(@sc.errors).to eq (["File #{filepath} in spec/fixtures/files/submission/test1/FILES.csv, row 1 has file size mismatch with original"])
     end
   end
 
@@ -403,12 +403,12 @@ RSpec.describe SubmissionChecker do
       allow(@rows[0]).to receive(:fetch).with('checksum', nil).and_return nil
       allow(@sc).to receive(:get_hash).with(filepath).and_return '93d7c1702e662083ae3083f452b7a472'
       expect(@sc.send(:has_required_hash?, filepath, @rows[0], 1)).to eq false
-      expect(@sc.errors).to eq (["File #{filepath} in spec/fixtures/files/submission/test1/files.csv, row 1 has file hash mismatch with original"])
+      expect(@sc.errors).to eq (["File #{filepath} in spec/fixtures/files/submission/test1/FILES.csv, row 1 has file hash mismatch with original"])
     end
     it 'returns false if the file hashes do not match' do
       filepath = 'spec/fixtures/files/submission/test1/README.txt'
       expect(@sc.send(:has_required_hash?, filepath, @rows[0], 1)).to eq false
-      expect(@sc.errors).to eq (["File #{filepath} in spec/fixtures/files/submission/test1/files.csv, row 1 has file hash mismatch with original"])
+      expect(@sc.errors).to eq (["File #{filepath} in spec/fixtures/files/submission/test1/FILES.csv, row 1 has file hash mismatch with original"])
     end
   end
 
@@ -449,7 +449,7 @@ RSpec.describe SubmissionChecker do
     end
     it 'returns false if the required fields do not exist' do
       expect(@sc.send(:has_required_fields?, @rows[1], 2)).to eq false
-      expect(@sc.errors).to eq (["Required fields error in spec/fixtures/files/submission/test1/description.csv, row 2"])
+      expect(@sc.errors).to eq (["Required fields error in spec/fixtures/files/submission/test1/DESCRIPTION.csv, row 2"])
     end
   end
 
@@ -464,7 +464,7 @@ RSpec.describe SubmissionChecker do
     end
     it 'returns false if the reference field does not exist' do
       expect(@sc.send(:has_calm_collection?, @rows[1], 2)).to eq false
-      expect(@sc.errors).to eq (["CALM collection reference is missing in spec/fixtures/files/submission/test1/description.csv, row 2"])
+      expect(@sc.errors).to eq (["CALM collection reference is missing in spec/fixtures/files/submission/test1/DESCRIPTION.csv, row 2"])
     end
     skip 'returns true if the reference is available in calm do' do
       # TODO: The calm_api isn't being mocked
