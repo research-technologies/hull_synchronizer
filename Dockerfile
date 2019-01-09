@@ -9,13 +9,11 @@ ENV RAILS_ENV="$RAILS_ENV" \
     RAILS_LOG_TO_STDOUT=yes_please \
     PATH=/fits/fits-1.0.5/:$PATH \
     BUNDLE_JOBS=2 \
-    APP_PRODUCTION=/data/ \
-    APP_WORKDIR="/data"
+    APP_PRODUCTION=/app/ \
+    APP_WORKDIR="/app"
 
 # Add backports to apt-get sources
 # Install libraries, dependencies, java and fits
-
-RUN echo '==================== I AM IN HULL SYNC DOCKERFILE ======================'
 
 RUN echo 'deb http://deb.debian.org/debian jessie-backports main' > /etc/apt/sources.list.d/jessie-backports.list \
     && apt-get update -qq \
@@ -40,7 +38,7 @@ RUN cd $APP_PRODUCTION && \
 
 # copy the application
 COPY . $APP_PRODUCTION
-COPY hull-sync-docker-entrypoint.sh /bin/docker-entrypoint.sh
+COPY docker-entrypoint.sh /bin/docker-entrypoint.sh
 
 # use the just built Gemfile.lock, not the one copied into the container and verify the gems are correctly installed
 RUN cd $APP_PRODUCTION \
