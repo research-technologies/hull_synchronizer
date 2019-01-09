@@ -14,7 +14,6 @@ fi
 ## Run any pending migrations
 bundle exec rake db:migrate
 
-echo "--------- Starting Hyrax in $RAILS_ENV mode ---------"
-sleep 2000
-# rm -f /tmp/hull_sync.pid
-# bundle exec rails server -p 3000 -b '0.0.0.0' --pid /tmp/hull_sync.pid
+echo "--------- Starting Hull synchronizer in $RAILS_ENV mode ---------"
+rm -f /tmp/hull_sync.pid
+bundle exec rails server -p 3000 -b '0.0.0.0' --pid /tmp/hull_sync.pid

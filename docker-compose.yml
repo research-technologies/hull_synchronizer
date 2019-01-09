@@ -14,6 +14,7 @@ services:
     volumes:
       - db:/var/lib/postgresql/data
     env_file:
+      - .env
       - .rbenv-vars
     healthcheck:
       test: "CMD echo 'SELECT 1' | PGPASSWORD=password psql --host 127.0.0.1 --username postgres --dbname hyrax_development --quiet --no-align --tuples-only"
@@ -24,10 +25,9 @@ services:
       internal:
 
   app:
-    build:
-      context: .
-      dockerfile: hull-sync-Dockerfile
+    build: .
     env_file:
+      - .env
       - .rbenv-vars
     volumes:
       - /data/box:/box
@@ -40,7 +40,7 @@ services:
   web:
     extends:
       service: app
-    command: bash -c "/bin/docker-entrypoint.sh && sleep 1000"
+    command: bash -c "/bin/docker-entrypoint.sh"
     depends_on:
       - db
       - redis
@@ -50,7 +50,7 @@ services:
   workers:
     extends:
       service: app
-    command: bash -c "bundle exec sidekiq && sleep 1000"
+    command: bash -c "bundle exec sidekiq"
     environment:
       - SETTINGS__FITS_PATH=/opt/fits-1.0.5/fits.sh
     depends_on:
