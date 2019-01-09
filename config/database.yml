@@ -21,4 +21,4 @@ test:
 
 production:
   <<: *default
-  database: production
+  database: hull_sync_production
