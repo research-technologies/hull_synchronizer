@@ -28,7 +28,7 @@ gem 'jbuilder', '~> 2.5'
 # gem 'redis', '~> 3.0'
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
-
+gem 'pg'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
@@ -60,7 +60,7 @@ gem 'sidekiq'
 gem 'gush', '~> 1.0.0'
 
 # used for bagit and zip
-gem 'willow_sword', git: 'https://github.com/CottageLabs/willow_sword.git' 
+gem 'willow_sword', git: 'https://github.com/CottageLabs/willow_sword.git'
 gem 'boxr'
 gem 'savon', '~> 2.12.0'
 
