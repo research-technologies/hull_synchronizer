@@ -17,6 +17,8 @@ The application needs to communicate with:
 @todo point to archivematica deployment notes
 @todo point to documentation on the autoarchiver in box
 
+## Getting started
+
 The hull_synchronizer application requires:
 
 * Ruby version: tested with Ruby 2.4.* or above
@@ -24,7 +26,7 @@ The hull_synchronizer application requires:
 * Database (tested with Postgres)
 * Sidekiq
 
-## Setup
+### Setup
 
 ```
 bundle install
@@ -32,9 +34,19 @@ rails db:create
 rails db:migrate
 ```
 
+## Getting Started using docker
+
+Ensure you have docker and docker-compose. See [notes on installing docker](https://github.com/research-technologies/hull_synchronizer/wiki/Notes-on-installing-docker)
+
+To build and run the system in a development environment, issue the docker-compose `up` command:
+```bash
+$ docker-compose up --build
+```
+ * You should see the Synchronizer app at localhost:3000
+
 ## Environment Variables
 
-The application requires several Environment Variables to be set. These are listed in the file `.rbenv-vars-example`. If using `rbenv`, copy `.rbenv-vars-example` to `.rbenv-vars` in the application root directory and set the values. Otherwise, setup the variables however you would normally do so.
+The application requires several Environment Variables to be set. These are listed in the file `.rbenv-vars-example`. If using `rbenv` or using the docker setup, copy `.rbenv-vars-example` to `.rbenv-vars` in the application root directory and set the values. Otherwise, setup the environment variables however you would normally do so.
 
 ## Testing
 
