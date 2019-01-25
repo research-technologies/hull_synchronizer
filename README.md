@@ -38,7 +38,16 @@ rails db:migrate
 
 Ensure you have docker and docker-compose. See [notes on installing docker](https://github.com/research-technologies/hull_synchronizer/wiki/Notes-on-installing-docker)
 
-To build and run the system in a development environment, issue the docker-compose `up` command:
+To build and run the system in your local environment,
+
+Clone the repository and switch to the feature/docker_setup branch
+```
+git clone https://github.com/research-technologies/hull_synchronizer.git
+git fetch
+git checkout feature/docker_setup
+```
+
+Issue the docker-compose `up` command:
 ```bash
 $ docker-compose up --build
 ```
