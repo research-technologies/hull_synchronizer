@@ -1,3 +1,6 @@
+# base URL for the hull synchronizer
+SERVER_URL=http://localhost:3000
+
 # BOX app credentials for jwt auth
 JWT_SECRET_KEY_PATH=pem_file_containing_the_key
 JWT_SECRET_KEY_PASSWORD=
@@ -26,9 +29,10 @@ SS_KEY=
 SWORD_ENDPOINT=
 
 # Data locations and mount points
-LOCAL_BOX_DIR=
-LOCAL_EFS_DATA_DIR=
-LOCAL_EFS_TRANSFER_DIR=
+LOCAL_BOX_DIR=/data/box
+LOCAL_EFS_DATA_DIR=/data/source/
+LOCAL_EFS_TRANSFER_DIR=/data/transfer
 
-POSTGRES_USER=
-POSTGRES_PASSWORD=
+# Used by docker to create the user for the postgres database and by the application
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=password

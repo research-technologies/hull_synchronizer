@@ -51,7 +51,7 @@ Issue the docker-compose `up` command:
 ```bash
 $ docker-compose up --build
 ```
- * You should see the Synchronizer app at localhost:3000
+You should see the Synchronizer app at localhost:3000
 
 ## Environment Variables
 
