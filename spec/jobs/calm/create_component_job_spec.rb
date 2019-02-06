@@ -35,7 +35,7 @@ RSpec.describe Calm::CreateComponentJob do
       end
       it 'contains default values for language and access_status, and the hyrax_work id' do
         calm_job.perform
-        expect(calm_job.fields).to eq("Title" => "File name: my file", "AccNo" => "abc", "AccessStatus" => "closed", "Language" => "English", "Location" => "hyrax_work")
+        expect(calm_job.fields).to eq("Title" => "File name: my file", "AccNo" => "abc", "AccessStatus" => "closed", "Language" => "English", "URL" => "hyrax_work")
       end
     end
 
@@ -44,7 +44,7 @@ RSpec.describe Calm::CreateComponentJob do
 
       it 'contains the supplied values, not the defaults' do
         calm_job.perform
-        expect(calm_job.fields).to eq("Title" => "Title", "AccNo" => "abc", "AccessStatus" => "open", "Description" => "description\nUser Description: description", "Language" => "German", "Location" => "hyrax_work")
+        expect(calm_job.fields).to eq("Title" => "Title", "AccNo" => "abc", "AccessStatus" => "open", "Description" => "description\nUser Description: description", "Language" => "German", "URL" => "hyrax_work")
       end
     end
   end
