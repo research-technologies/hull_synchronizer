@@ -86,7 +86,7 @@ class SubmissionProcessor
     move_metadata_file(package_dir)
     move_submission_doc(package_dir)
     move_metadata_dir(package_dir)
-    move_extra_files(package_dir)
+    # move_extra_files(package_dir)
   end
 
   def build_bag
@@ -189,14 +189,6 @@ class SubmissionProcessor
       dest = File.join(dest_dir, relative_path)
       FileUtils.mkdir_p(File.dirname(dest))
       FileUtils.mv(fn, dest)
-    end
-  end
-
-  def cleanup(src_dir, check_empty: true)
-    if check_empty
-      Dir.rmdir src_dir if Dir.empty?(src_dir)
-    else
-      FileUtils.rm_rf src_dir
     end
   end
 

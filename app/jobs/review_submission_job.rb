@@ -58,7 +58,11 @@ class ReviewSubmissionJob < Gush::Job
         u_params[:unlink] = true # remove collaborator link
       else
         u_params[:status] = 'processing'
-        u_params[:message] = 'Successfully reviewed submission package. It is ready to be processed for archiving'
+        u_params[:message] = ['Successfully reviewed submission package. It is ready to be processed for archiving']
+        if @processor.errors.any?
+          u_params[:message] << "Warning:"
+          u_params[:message] += Array(@processor.errors)
+        end
         u_params[:unlink] = false # do not remove collaborator link
       end
       Box::InformUserJob.perform_later(u_params)

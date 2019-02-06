@@ -51,16 +51,16 @@ RSpec.describe SubmissionChecker do
       expect(@sc.status).to eq false
       expect(@sc.errors).to eq []
     end
-    it 'has a status of false if it has unverified files' do
+    it 'has a status of true even if it has unverified files' do
       allow(@sc).to receive(:has_unverified_files?).and_return(true)
       @sc.check_submission
-      expect(@sc.status).to eq false
+      expect(@sc.status).to eq true
       expect(@sc.errors).to eq []
     end
-    it 'has a status of false if it has unused files' do
+    it 'has a status of true even if it has unused files' do
       allow(@sc).to receive(:has_unused_files?).and_return(true)
       @sc.check_submission
-      expect(@sc.status).to eq false
+      expect(@sc.status).to eq true
       expect(@sc.errors).to eq []
     end
     it 'has a status of true if it has all the required files, listed files,
