@@ -1,4 +1,3 @@
-require 'fileutils'
 require 'csv'
 require 'json'
 require 'digest/md5'
@@ -49,8 +48,10 @@ class SubmissionChecker
     end
     @status = false unless has_listed_files?
     @status = false unless has_valid_metadata?
-    @status = false if has_unverified_files?
-    @status = false if has_unused_files?
+    has_unverified_files?
+    has_unused_files?
+    cleanup(@source_dir, check_empty: false) unless @status
+    @status
   end
 
   private

@@ -1,3 +1,5 @@
+require 'fileutils'
+
 module SubmissionHelper
 
   private
@@ -31,6 +33,14 @@ module SubmissionHelper
   def sanitized_filepath(filename)
     # File name could contain either forward slash or back slash
     File.join(filename.strip.split /[\\\/]/)
+  end
+
+  def cleanup(src_dir, check_empty: true)
+    if check_empty
+      Dir.rmdir src_dir if Dir.empty?(src_dir)
+    else
+      FileUtils.rm_rf src_dir
+    end
   end
 
 end
