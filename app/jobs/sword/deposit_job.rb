@@ -26,7 +26,7 @@ module Sword
         message_text = "#{sword_api.deposit[:content].split('/').last} successfully deposited"
         output(
           event: calm_job_output[:event],
-          message: "#{message_text}; #{calm_job[:message]}",
+          message: "#{message_text}; #{calm_job_output[:message]}",
           package_id: payloads.first[:output][:package_id],
           works: payloads.first[:output][:works]
         )
