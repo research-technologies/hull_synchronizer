@@ -21,4 +21,4 @@ test:
 
 production:
   <<: *default
-  database: hull_sync_production
+  database: <%= ENV['POSTGRES_DB'] || 'production' %>
