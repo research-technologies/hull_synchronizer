@@ -1,3 +1,4 @@
+// was scaffolds.scss
 body {
   background-color: #fff;
   color: #333;
@@ -20,15 +21,15 @@ pre {
 }
 
 a {
-  color: #000;
+  color: cornflowerblue;
 
   &:visited {
-    color: #666;
+    color: cornflowerblue;
   }
 
   &:hover {
-    color: #fff;
-    background-color: #000;
+    color: orange;
+    background-color: lightgrey;
   }
 }
 
