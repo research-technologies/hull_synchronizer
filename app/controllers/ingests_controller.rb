@@ -1,4 +1,5 @@
 class IngestsController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_ingest, only: [:show, :retry_ingest]
   attr_reader :client, :ingest
 

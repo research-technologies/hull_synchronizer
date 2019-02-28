@@ -58,6 +58,8 @@ gem 'jquery-rails'
 gem 'paperclip', '>= 5.2.0'
 gem 'sidekiq'
 gem 'gush', '~> 1.0.0'
+gem 'devise'
+gem 'cancancan', '~> 2.0'
 
 # used for bagit and zip
 gem 'willow_sword', git: 'https://github.com/CottageLabs/willow_sword.git' 
