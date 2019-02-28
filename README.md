@@ -36,9 +36,10 @@ rails db:migrate
 The application is configured with `devise` to require login. There is a rake task available to create the initial user:
 
 ```
+  rake sync:setup_admin_user[email, password]
 ```
 
-This user can then be used to create subsequent user accounts by logging in and navigating to the 'Manage Users' tab. Check the 'admin' box to allow the new user to access the Manage Users panel.
+This user can then be used to create subsequent user accounts by logging in and navigating to the 'Manage Users' tab. Check the 'admin' box to allow the new user add/edit/delete Users.
 
 ## Getting Started using docker
 
