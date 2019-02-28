@@ -7,6 +7,7 @@
 # end
 
 Gush.configure do |config|
+  config.redis_url = "redis://#{ENV.fetch('REDIS_HOST', 'localhost')}:#{ENV.fetch('REDIS_PORT', '6379')}"
   config.concurrency = 1
   # config.ttl = 3600*24*7
 end

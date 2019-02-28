@@ -20,7 +20,7 @@
             <Field name="Category" />
             <Field name="NormalLocation" />
             <Field name="CurrentLocation" />
-            <Field name="Location" />
+            <Field name="URL" />
             <Field name="ClosedUntil" />
             <Field name="AccessConditions" />
             <Field name="AccessStatus">Open</Field>

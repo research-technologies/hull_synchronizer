@@ -1,0 +1,79 @@
+version: '3'
+
+volumes:
+  db:
+  redis:
+  app:
+
+networks:
+  internal:
+
+services:
+  ##
+  # Postgres database server
+  db: 
+    image: postgres:10-alpine
+    networks:
+      internal:
+    volumes:
+      - db:/var/lib/postgresql/data
+    env_file:
+      - .env
+    healthcheck:
+      test: "CMD echo 'SELECT 1' | POSTGRES_PASSWORD=${POSTGRES_PASSWORD} psql --host 127.0.0.1 --username #{POSTGRES_USER} --dbname #{POSTGRES_DB} --quiet --no-align --tuples-only"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      internal:
+  ##
+  # Hyrax applications
+  app: &app
+    build: 
+      context: .
+      args:
+        - RAILS_ENV=${RAILS_ENV}
+        - APP_WORKDIR=${APP_WORKDIR}
+        - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+    env_file:
+      - .env
+    volumes:
+      - /data/box:/box
+      - /data/source:/data
+      - /data/transfer:/transfer
+    networks:
+      internal:
+
+  web:
+    <<: *app
+    command: bash -c "/bin/docker-entrypoint.sh"
+    depends_on:
+      - db
+      - redis
+    expose:
+      - ${RAILS_PORT}
+    ports:
+      - ${EXTERNAL_PORT}:${RAILS_PORT}
+
+  workers:
+    <<: *app
+    command: bash -c "bundle exec sidekiq"
+    depends_on:
+      - db
+      - redis
+  ##
+  # Redis
+  redis:
+    image: redis:5
+    command: redis-server --appendonly yes
+    volumes:
+      - redis:/data
+    expose:
+      - 6379
+    networks:
+      internal:
+    healthcheck:
+      test: "CMD redis-cli ping"
+      interval: 30s
+      timeout: 5s
+      retries: 3

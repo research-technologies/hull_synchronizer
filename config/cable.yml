@@ -5,6 +5,7 @@ test:
   adapter: async
 
 production:
-  adapter: redis
-  url: redis://localhost:6379/1
-  channel_prefix: hull_synchronizer_production
+  adapter: async
+  # adapter: redis
+  # url: redis://<%= ENV['REDIS_HOST'] || 'redis' %>:<%= ENV['REDIS_PORT'] || '6379' %>/1
+  # channel_prefix: hull_synchronizer_production
