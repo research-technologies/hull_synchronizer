@@ -1,4 +1,4 @@
-version: '2.1'
+version: '3'
 
 volumes:
   db:
@@ -9,54 +9,60 @@ networks:
   internal:
 
 services:
-  db:
-    build: docker/db
+  ##
+  # Postgres database server
+  db: 
+    image: postgres:10-alpine
+    networks:
+      internal:
     volumes:
       - db:/var/lib/postgresql/data
     env_file:
       - .env
-      - .rbenv-vars
     healthcheck:
-      test: "CMD echo 'SELECT 1' | PGPASSWORD=password psql --host 127.0.0.1 --username postgres --dbname hyrax_development --quiet --no-align --tuples-only"
+      test: "CMD echo 'SELECT 1' | POSTGRES_PASSWORD=${POSTGRES_PASSWORD} psql --host 127.0.0.1 --username #{POSTGRES_USER} --dbname #{POSTGRES_DB} --quiet --no-align --tuples-only"
       interval: 30s
       timeout: 5s
       retries: 3
     networks:
       internal:
-
-  app:
-    build: .
+  ##
+  # Hyrax applications
+  app: &app
+    build: 
+      context: .
+      args:
+        - RAILS_ENV=${RAILS_ENV}
+        - APP_WORKDIR=${APP_WORKDIR}
+        - SECRET_KEY_BASE=${SECRET_KEY_BASE}
     env_file:
       - .env
-      - .rbenv-vars
     volumes:
       - /data/box:/box
       - /data/source:/data
       - /data/transfer:/transfer
-      - app:/data/tmp/uploads
     networks:
       internal:
 
   web:
-    extends:
-      service: app
+    <<: *app
     command: bash -c "/bin/docker-entrypoint.sh"
     depends_on:
       - db
       - redis
+    expose:
+      - ${RAILS_PORT}
     ports:
-      - 3000:3000
+      - ${EXTERNAL_PORT}:${RAILS_PORT}
 
   workers:
-    extends:
-      service: app
+    <<: *app
     command: bash -c "bundle exec sidekiq"
-    environment:
-      - SETTINGS__FITS_PATH=/opt/fits-1.0.5/fits.sh
     depends_on:
       - db
       - redis
-
+  ##
+  # Redis
   redis:
     image: redis:5
     command: redis-server --appendonly yes

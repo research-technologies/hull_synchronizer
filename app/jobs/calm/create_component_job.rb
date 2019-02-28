@@ -30,8 +30,7 @@ module Calm
         fields[name] = field_content(f, calm_metadata[f] || nil) unless name.nil?
         fields.compact!
       end
-      # @todo replace with proper DAO field
-      fields['Location'] = work_id
+      fields['URL'] = work_id
       fields
     end
 

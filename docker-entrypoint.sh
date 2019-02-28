@@ -15,5 +15,5 @@ fi
 bundle exec rake db:migrate
 
 echo "--------- Starting Hull synchronizer in $RAILS_ENV mode ---------"
-rm -f /tmp/hull_sync.pid
-bundle exec rails server -p 3000 -b '0.0.0.0' --pid /tmp/hull_sync.pid
+rm -f /tmp/"$APP_KEY".pid
+bundle exec rails server -p "$RAILS_PORT" --pid /tmp/"$APP_KEY".pid
