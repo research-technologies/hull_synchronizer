@@ -1,4 +1,5 @@
 class TransfersController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_transfer, only: [:show, :retry_transfer]
   attr_reader :client, :transfer
 

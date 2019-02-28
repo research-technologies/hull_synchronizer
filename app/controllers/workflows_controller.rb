@@ -1,4 +1,6 @@
 class WorkflowsController < ApplicationController
+  before_action :authenticate_user!
+  
   # GET /workflows
   def index
     @client = Gush::Client.new

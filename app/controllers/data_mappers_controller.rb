@@ -1,4 +1,5 @@
 class DataMappersController < ApplicationController
+  before_action :authenticate_user!
   def index
     @data_mappers = DataMapper.order('created_at')
   end
