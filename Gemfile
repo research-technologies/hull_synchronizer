@@ -52,10 +52,10 @@ end
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
-gem 'bootstrap-sass'
+gem 'bootstrap-sass', '>= 3.4.1'
 gem 'faraday'
 gem 'jquery-rails'
-gem 'paperclip', '~> 5.0.0'
+gem 'paperclip', '>= 5.2.0'
 gem 'sidekiq'
 gem 'gush', '~> 1.0.0'
 
@@ -63,6 +63,8 @@ gem 'gush', '~> 1.0.0'
 gem 'willow_sword', git: 'https://github.com/CottageLabs/willow_sword.git' 
 gem 'boxr'
 gem 'savon', '~> 2.12.0'
+
+gem 'nokogiri', '>= 1.8.5'
 
 group :development, :test do
   gem 'bixby'
