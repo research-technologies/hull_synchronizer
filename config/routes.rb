@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
-  root 'data_mappers#index'
+  
+  root 'home#index'
+  
   resources :data_mappers
   resources :workflows, only: [:index]
   resources :ingests, only: [:index, :show, :destroy]
