@@ -10,6 +10,12 @@ RSpec.describe IngestsController, type: :controller do
   
   let(:client) { Gush::Client.new }
   let(:ingest) { instance_double(IngestWorkflow) }
+  
+  before(:each) do
+    user = instance_double('user')
+    allow(request.env['warden']).to receive(:authenticate!).and_return(user)
+    allow(controller).to receive(:current_user).and_return(user)
+  end
 
   describe "GET #index" do
     it "assigns @client and @ingests" do

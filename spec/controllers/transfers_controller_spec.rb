@@ -10,6 +10,12 @@ RSpec.describe TransfersController, type: :controller do
   
   let(:client) { Gush::Client.new }
   let(:transfer) { instance_double(TransferWorkflow) }
+  
+  before(:each) do
+    user = instance_double('user')
+    allow(request.env['warden']).to receive(:authenticate!).and_return(user)
+    allow(controller).to receive(:current_user).and_return(user)
+  end
 
   describe "GET #index" do
     it "assigns @client and @transfers" do

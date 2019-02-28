@@ -31,3 +31,6 @@
 
 # Ignore any coverage
 coverage
+
+# docker pids
+shared/pids/*

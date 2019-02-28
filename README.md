@@ -10,18 +10,15 @@ Hull Synchronizer is a rails application that supports a digital preservation an
 The application needs to communicate with:
 
 * An instance of [Archivematica](https://www.archivematica.org/en/) and the Archivematica Storage Service
-* An instance of [Hyrax](https://github.com/samvera/hyrax)
-* A [Box](https://www.box.com) application and Box subscription
+* An instance of [Hyrax](https://github.com/samvera/hyrax), setup with the appropriate models. Ideally you shoud use (https://github.com/research-technologies/hull_culture)[hull_culture] with (https://github.com/research-technologies/hyrax_leaf)[hyrax_leaf]
+* A [Box](https://www.box.com) application and Box subscription setup using the following documentation: (https://github.com/research-technologies/hull_synchronizer/wiki/Create-a-Box-application-with-JWT-auth)[Creating a Box Application]
 
-@todo point to documentation on hull_culture
-@todo point to archivematica deployment notes
-@todo point to documentation on the autoarchiver in box
 
 ## Getting started
 
 The hull_synchronizer application requires:
 
-* Ruby version: tested with Ruby 2.4.* or above
+* Ruby version: Ruby 2.4.* or above
 * Redis
 * Database (tested with Postgres)
 * Sidekiq
@@ -33,6 +30,16 @@ bundle install
 rails db:create
 rails db:migrate
 ```
+
+# Login
+
+The application is configured with `devise` to require login. There is a rake task available to create the initial user:
+
+```
+  rake sync:setup_admin_user[email, password]
+```
+
+This user can then be used to create subsequent user accounts by logging in and navigating to the 'Manage Users' tab. Check the 'admin' box to allow the new user add/edit/delete Users.
 
 ## Getting Started using docker
 
@@ -55,7 +62,7 @@ You should see the Synchronizer app at localhost:3000
 
 ## Environment Variables
 
-The application requires several Environment Variables to be set. These are listed in the file `.rbenv-vars-example`. If using `rbenv` or using the docker setup, copy `.rbenv-vars-example` to `.rbenv-vars` in the application root directory and set the values. Otherwise, setup the environment variables however you would normally do so.
+The application requires several Environment Variables to be set. These are listed in the file `.env.template`. If using `rbenv` or using the docker setup, copy `.env.template` to `.rbenv-vars` in the application root directory and set the values. Otherwise, setup the environment variables however you would normally do so.
 
 ## Testing
 
