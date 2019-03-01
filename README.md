@@ -10,9 +10,8 @@ Hull Synchronizer is a rails application that supports a digital preservation an
 The application needs to communicate with:
 
 * An instance of [Archivematica](https://www.archivematica.org/en/) and the Archivematica Storage Service
-* An instance of [Hyrax](https://github.com/samvera/hyrax), setup with the appropriate models. Ideally you shoud use (https://github.com/research-technologies/hull_culture)[hull_culture] with (https://github.com/research-technologies/hyrax_leaf)[hyrax_leaf]
-* A [Box](https://www.box.com) application and Box subscription setup using the following documentation: (https://github.com/research-technologies/hull_synchronizer/wiki/Create-a-Box-application-with-JWT-auth)[Creating a Box Application]
-
+* An instance of [Hyrax](https://github.com/samvera/hyrax), setup with the appropriate models. Ideally you shoud use [hull_culture](https://github.com/research-technologies/hull_culture) with [hyrax_leaf](https://github.com/research-technologies/hyrax_leaf)
+* A [Box](https://www.box.com) application and Box subscription setup using the following documentation: [Creating a Box Application](https://github.com/research-technologies/hull_synchronizer/wiki/Create-a-Box-application-with-JWT-auth)
 
 ## Getting started
 
