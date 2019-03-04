@@ -3,6 +3,8 @@ require 'json'
 RSpec.describe Calm::Api do
   # include the helper module
   include Savon::SpecHelper
+  
+  ENV['CALM_ENDPOINT'] = 'http://www.calmhosting01.com/CalmAPI-HullUni/archive/catalogue.asmx?WSDL'
   # set Savon in and out of mock mode
   before(:all) do
     savon.mock!

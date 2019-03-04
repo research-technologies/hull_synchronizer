@@ -23,8 +23,9 @@
 
 .byebug_history
 
-# Ignore .rbenv-vars
+# Ignore env files
 .rbenv-vars
+.env
 
 # Ignore any keys (pem files)
 *.pem
@@ -32,5 +33,5 @@
 # Ignore any coverage
 coverage
 
-# docker pids
-shared/pids/*
+# docker files
+shared/*
