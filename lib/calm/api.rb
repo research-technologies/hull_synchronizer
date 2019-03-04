@@ -5,8 +5,9 @@ module Calm
     attr_reader :cookies
 
     def initialize
+      raise('CALM_ENDPOINT environment variable is not set') if ENV['CALM_ENDPOINT'].blank?
       @client = Savon.client(
-        wsdl: 'http://www.calmhosting01.com/CalmAPI-HullUni/archive/catalogue.asmx?WSDL',
+        wsdl: ENV['CALM_ENDPOINT'],
         log: true,
         logger: Rails.logger,
         log_level: :debug,
