@@ -57,11 +57,21 @@ Issue the docker-compose `up` command:
 ```bash
 $ docker-compose up --build
 ```
-You should see the Synchronizer app at localhost:3000
+You should see the rails app at localhost:3000 (if you set EXTERNAL_PORT to a different port, it will be running on that port)
 
 ## Environment Variables
 
-The application requires several Environment Variables to be set. These are listed in the file `.env.template`. If using `rbenv` or using the docker setup, copy `.env.template` to `.rbenv-vars` in the application root directory and set the values. Otherwise, setup the environment variables however you would normally do so.
+ * The environment variables used by docker when running the containers and by the rails application should be in file named .env
+ * For docker, copy the file .env.template to .env and change / add the necessary information
+ * For running the application without docker, setup the ENVIRONMENT VARIABLES as you would normally do so (eg. .rbenv-vars)
+
+### Secrets
+
+Generate a new secret with:
+
+```
+rails secret
+```
 
 ## Testing
 
