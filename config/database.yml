@@ -21,4 +21,4 @@ test:
 
 production:
   <<: *default
-  database: <%= ENV['POSTGRES_DB'] || 'production' %>
+  database: <%= ENV['HULLSYNC_DB'] || 'production' %>
