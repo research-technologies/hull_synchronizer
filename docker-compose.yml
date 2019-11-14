@@ -54,10 +54,13 @@ services:
       - db
       - redis
     expose:
-      - ${RAILS_PORT}
+#      - ${RAILS_PORT}
+       - 443
+       - 80
     ports:
-      - ${EXTERNAL_PORT}:${RAILS_PORT}
-
+#      - ${EXTERNAL_PORT}:${RAILS_PORT}
+      - 443:443
+      - 80:80
   workers:
     <<: *app
     command: bash -c "bundle exec sidekiq"
