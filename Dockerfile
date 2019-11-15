@@ -4,6 +4,9 @@ FROM ruby:2.6
 ARG RAILS_ENV
 ARG SECRET_KEY_BASE
 ARG APP_WORKDIR
+ARG SSL_CERT
+ARG SSL_KEY
+ARG SSL_CA
 
 ENV RAILS_ENV="$RAILS_ENV" \
     LANG=C.UTF-8 \
@@ -17,9 +20,26 @@ RUN apt-get update -qq \
     libpq-dev \
     libxml2-dev libxslt1-dev \
     nodejs \
-    bzip2 unzip xz-utils
+    bzip2 unzip xz-utils \
+    vim tree \
+    apache2 \
+    software-properties-common
 
 WORKDIR $APP_WORKDIR
+
+## install apache, certs and modules for proxy##
+COPY docker/ssl.conf /etc/apache2/conf-available/
+RUN a2enconf ssl
+
+COPY docker/hullsync.conf /etc/apache2/sites-available/
+RUN a2ensite hullsync
+
+RUN a2enmod ssl
+RUN a2enmod headers
+RUN a2enmod rewrite
+RUN a2enmod proxy
+RUN a2enmod proxy_balancer
+RUN a2enmod proxy_http
 
 # copy gemfiles to production folder
 COPY Gemfile Gemfile.lock $APP_WORKDIR
