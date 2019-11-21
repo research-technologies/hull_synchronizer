@@ -1,0 +1,10 @@
+#!/bin/sh
+
+for domain in $RENEWED_DOMAINS; do
+    case $domain in
+#    azpu01c0101.northeurope.cloudapp.azure.com)
+    leaf.cosector.com)
+        systemctl reload apache2.service
+        ;;
+    esac
+done

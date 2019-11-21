@@ -4,9 +4,6 @@ FROM ruby:2.6
 ARG RAILS_ENV
 ARG SECRET_KEY_BASE
 ARG APP_WORKDIR
-ARG SSL_CERT
-ARG SSL_KEY
-ARG SSL_CA
 
 ENV RAILS_ENV="$RAILS_ENV" \
     LANG=C.UTF-8 \
@@ -32,6 +29,9 @@ COPY docker/ssl.conf /etc/apache2/conf-available/
 RUN a2enconf ssl
 
 COPY docker/hullsync.conf /etc/apache2/sites-available/
+COPY docker/hullsync_ssl.conf /etc/apache2/sites-available/
+
+#SSL will be started after we are up and certbot has done its thang (so just the 80 vhost for now)
 RUN a2ensite hullsync
 
 RUN a2enmod ssl

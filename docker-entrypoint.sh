@@ -15,29 +15,35 @@ add-apt-repository ppa:certbot/certbot -y
 apt-get update
 apt-get install python-certbot-apache -y --no-install-recommends
 
-echo "-------------- setting up certbot and getting cert(s) -----------"
-
 #Copy in certbot config
 cp $APP_WORKDIR/docker/cli.ini /etc/letsencrypt/cli.ini
 #make dir that will be used for challenges (if you must change this look at hullsync.conf too)
 mkdir -p /var/www/acme-docroot/.well-known/acme-challenge
-
-# We'll register each time as certs are not stored on a persistent volume
-certbot register
-certbot certonly -n --cert-name base -d $SERVER_NAME
-
-# copy autorenewal script. Dest directory only exists after the first cert is in place
-cp $APP_WORKDIR/docker/00_apache2 /etc/letsencrypt/renewal-hooks/deploy/
 
 ##########
 # apache #
 ##########
 
 #put server name in apache conf
-sed -i "s/#SERVER_NAME#/$SERVER_NAME/" /etc/apache2/sites-available/hullsync.conf
+sed -i "s/#SERVER_NAME#/$HULLSYNC_SERVER_NAME/" /etc/apache2/sites-available/hullsync.conf
+sed -i "s/#SERVER_NAME#/$HULLSYNC_SERVER_NAME/" /etc/apache2/sites-available/hullsync_ssl.conf
 
 echo "--------- Starting Apache -----------"
 service apache2 start
+
+echo "-------------- Getting cert(s) -----------"
+
+# We'll register each time as certs are not stored on a persistent volume
+certbot register
+certbot certonly -n --cert-name base -d $HULLSYNC_SERVER_NAME
+
+# copy autorenewal script. Dest directory only exists after the first cert is in place
+cp $APP_WORKDIR/docker/00_apache2 /etc/letsencrypt/renewal-hooks/deploy/
+
+echo "--------- Restarting Apache with ssl ---------"
+a2ensite hullsync_ssl
+service apache2 reload
+service apache2 restart
 
 #########
 # Rails #
