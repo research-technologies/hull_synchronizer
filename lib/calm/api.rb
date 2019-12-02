@@ -6,7 +6,10 @@ module Calm
 
     def initialize
       raise('CALM_ENDPOINT environment variable is not set') if ENV['CALM_ENDPOINT'].blank?
-      Rails.logger.info("CALM_ENDPOiNT: "+ENV['CALM_ENDPOINT'])
+      puts("################################### Something ########################################")
+      logger.info("------------------------")
+      logger.info("CALM_ENDPOiNT: "+ENV['CALM_ENDPOINT'])
+      logger.info("------------------------")
       @client = Savon.client(
         wsdl: ENV['CALM_ENDPOINT'],
         log: true,
