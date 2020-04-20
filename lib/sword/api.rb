@@ -103,9 +103,7 @@ module Sword
       # @return [FaradayResponse] response
       def request
         raise '[:file] hash with [:content_type] and [:path] is required' if file_hash?
-
-        @response = connection.post do |req|
-          req.url "/sword/collections/#{ENV.fetch('SWORD_COLLECTION', 'default')}/works"
+        @response = connection.post "/sword/collections/#{ENV.fetch('SWORD_COLLECTION', 'default')}/works" do |req|
           req.body = File.read(params[:file][:path])
           req.headers['Packaging'] = packaging
           req.headers['In-Progress'] = in_progress
