@@ -14,7 +14,8 @@ module DataCrosswalks
         user_description,
         keywords,
         language,
-        depositor
+        depositor,
+        level
       ]
     end
 
@@ -144,6 +145,10 @@ module DataCrosswalks
 
     def user_description
       'user_description'
+    end
+
+    def level
+      'level'
     end
 
   end
