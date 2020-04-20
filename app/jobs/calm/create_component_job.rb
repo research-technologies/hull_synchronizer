@@ -12,7 +12,8 @@ module Calm
                         :date,
                         :description,
                         :keywords,
-                        :language].freeze
+                        :language,
+                        :level].freeze
 
     def perform
       @calm_metadata = params[:calm_metadata]
@@ -31,6 +32,7 @@ module Calm
         fields.compact!
       end
       fields['URL'] = work_id
+      fields['catalogueStatus'] = "Catalogued"
       fields
     end
 
@@ -82,7 +84,8 @@ module Calm
           user_description: 'Description',
           keywords: 'Keyword',
           language: 'Language',
-          filename: 'Title'
+          filename: 'Title',
+          level: 'Level'
         }
       end
 
@@ -108,7 +111,7 @@ module Calm
         desc = value
         if calm_metadata[:user_description]
           desc += "\n" unless value.nil?
-          desc += "User Description: #{value}"
+          desc += "User Description: #{calm_metadata[:user_description]}"
         end
         desc
       end
