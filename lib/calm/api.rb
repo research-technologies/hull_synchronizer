@@ -6,9 +6,6 @@ module Calm
 
     def initialize
       raise('CALM_ENDPOINT environment variable is not set') if ENV['CALM_ENDPOINT'].blank?
-#      logger.info("------------------------")
-#      logger.info("CALM_ENDPOiNT: "+ENV['CALM_ENDPOINT'])
-#      logger.info("------------------------")
       @client = Savon.client(
         wsdl: ENV['CALM_ENDPOINT'],
         log: true,
@@ -72,6 +69,7 @@ module Calm
       #   type = 'Component'
       #   conform = true
       operation = :create_child_record
+
       params = {
         recordType: type,
         parentID: parentID,
@@ -79,7 +77,31 @@ module Calm
         fields: { Field: fields.values, :attributes! => { Field: { name: fields.keys } } },
         conform: conform
       }
-      perform_operation(operation, params)
+#      Rails.logger.info("------------------------")
+#      Rails.logger.info("CREATE_CHILD_RECORD: #{fields}")
+#      Rails.logger.info("------------------------")
+      result, child_id = perform_operation(operation, params)
+
+      if result == true 
+        u_result, body = get_record_by_id(child_id)
+        if u_result == true && body.key?('RefNo')
+          mods = {:AltRefNo => body['RefNo'][0].to_s}
+          update_record(child_id,{},mods)
+        end
+      end
+      return result, child_id
+    end
+
+    def update_record(recordID, add={}, modify={}, delete=[])
+      operation = :update_record
+
+      params = {
+        id: recordID,
+        fieldsToAdd: { Field: add.values, :attributes! => { Field: { name: add.keys } } },
+        fieldsToModify: { Field: modify.values, :attributes! => { Field: { name: modify.keys } } },
+        fieldsToDelete: delete,
+      }
+      result, body = perform_operation(operation, params)
     end
 
     def search(query)
