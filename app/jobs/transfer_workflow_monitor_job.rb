@@ -19,10 +19,20 @@ class TransferWorkflowMonitorJob < ActiveJob::Base
   def perform(params)
     @params = params
     @flow = TransferWorkflow.find(params[:workflow_id])
-    inform_user if done?
-    next_workflow if flow.finished?
-    continue if retry?
-    retry_later if retry? or flow.running?
+    if retry?
+      continue
+    end
+    if retry? or flow.running?
+      retry_later
+    end
+    # only continue if there is no retry...
+    # warning this will need to be stopped for occaisions of nevery ending retries.... maybe?
+    if job_event.include?('retry')
+      Rails.logger.info("retry? is not false so we DON'T inform user or go to next workflow")
+    else
+      inform_user if done?
+      next_workflow if flow.finished?
+    end
   end
 
   def next_workflow
@@ -34,14 +44,14 @@ class TransferWorkflowMonitorJob < ActiveJob::Base
   def inform_user
     # params need to cointain item_id, item_name, status, message, unlink
     u_params = {item_id: params[:item_id], item_name: params[:item_name]}
-    if flow.finished?
-      u_params[:status] = 'revewing'
-      u_params[:unlink] = false # do not remove collaborator link
-      u_params[:message] = 'Starting review of metadata and associated files'
-    elsif failed?
+    if failed?
       u_params[:status] = 'transfering_failed'
       u_params[:unlink] = true # remove collaborator link
       u_params[:message] = log_failure
+    elsif flow.finished?
+      u_params[:status] = 'reviewing'
+      u_params[:unlink] = false # do not remove collaborator link
+      u_params[:message] = 'Starting review of metadata and associated files'
     end
     Box::InformUserJob.perform_later(u_params)
   end
@@ -52,11 +62,15 @@ class TransferWorkflowMonitorJob < ActiveJob::Base
   def continue
     flow.continue
     sleep(5)
+    Rails.logger.info("Reloading flow #{flow}")
     @flow = flow.reload
   end
 
   def retry?
     flow.failed? && job_event.include?('retry') && (flow_start > 1.day.ago.to_i)
+#    Let's not trust flow.failed as this will report as false even when the stuff in it has failed...
+#    we just want to be sure that no jobs in the workflow failed so testing job_event should be enough
+    #job_event.include?('retry') && (flow_start > 1.day.ago.to_i)
   end
 
   def failed?
@@ -78,10 +92,12 @@ class TransferWorkflowMonitorJob < ActiveJob::Base
 
   # @return [Array] list of event parameters from the payload
   def job_event
-    flow.jobs.collect do |job|
+    job_events = flow.jobs.collect do |job|
       next unless job.output_payload
       job.output_payload[:event]
-    end.compact!
+#    end.compact!
+    end
+    job_events
   end
 
   def flow_start
@@ -93,6 +109,7 @@ class TransferWorkflowMonitorJob < ActiveJob::Base
   #  @todo consider whether we should limit the number of retries
   #    if so, this method could raise an error and use Sidekiq's retry functionality instead
   def retry_later
+    Rails.logger.info("Retyring later")
     # sleep(60)
     # TransferWorkflowMonitorJob.perform_now(params)
     TransferWorkflowMonitorJob.set(wait: 1.minutes).perform_later(params)
