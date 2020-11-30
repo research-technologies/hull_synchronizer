@@ -29,13 +29,14 @@ module Sword
       def setup_connection(conn_for:)
         raise 'environment variables are not set' if ENV['SWORD_ENDPOINT'].blank?
 
-        @connection = Faraday.new(url: ENV['SWORD_ENDPOINT']) do |faraday|
+        @connection = Faraday.new(url: ENV['SWORD_ENDPOINT'], request: { timeout: 4800 }) do |faraday|
           faraday.headers['Authorization'] = auth unless auth.nil?
           faraday.headers['Content-Type'] = 'application/xml' unless conn_for == 'Sword::Api::Work'
           faraday.adapter :net_http
           # @todo REMOVE ONCE SSL IN PLACE if Rails.env == 'development' && ENV['SWORD_ENDPOINT'].include?('https')
           faraday.ssl[:verify] = false
           faraday.ssl[:verify_mode] = OpenSSL::SSL::VERIFY_NONE
+#          Rails.logger.info("Faraday timeout is : #{connection.request.options.timeout}")
           # end
         end
       end
