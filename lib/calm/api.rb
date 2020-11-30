@@ -11,7 +11,9 @@ module Calm
         log: true,
         logger: Rails.logger,
         log_level: :debug,
-        convert_request_keys_to: :none)
+        convert_request_keys_to: :none,
+        read_timeout: 600,
+        write_timeout: 600)
       @cookies = []
     end
 
@@ -78,15 +80,30 @@ module Calm
         conform: conform
       }
 #      Rails.logger.info("------------------------")
-#      Rails.logger.info("CREATE_CHILD_RECORD: #{fields}")
+#      Rails.logger.info("CREATE_CHILD_RECORD with: #{fields}")
 #      Rails.logger.info("------------------------")
       result, child_id = perform_operation(operation, params)
 
+#      Rails.logger.info("------------------------")
+#      Rails.logger.info("Result: #{result}")
+#      Rails.logger.info("------------------------")
+
+#      Rails.logger.info("------------------------")
+#      Rails.logger.info("child_id: #{child_id}")
+#      Rails.logger.info("------------------------")
+
       if result == true 
+        # Record has been created we will now update it so that the ALtREFNo is the same as the RefNo
+ #       Rails.logger.info("------------------------")
+ #       Rails.logger.info("Updating ALtRefNo for #{child_id}")
+ #       Rails.logger.info("------------------------")
         u_result, body = get_record_by_id(child_id)
         if u_result == true && body.key?('RefNo')
           mods = {:AltRefNo => body['RefNo'][0].to_s}
           update_record(child_id,{},mods)
+#          Rails.logger.info("------------------------")
+#          Rails.logger.info("Updated #{child_id}")
+#          Rails.logger.info("------------------------")
         end
       end
       return result, child_id
