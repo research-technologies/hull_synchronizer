@@ -5,20 +5,6 @@ mkdir -p $APP_WORKDIR/log
 echo "Creating share folders"
 mkdir -p $LOCAL_BOX_DIR $LOCAL_EFS_DATA_DIR $LOCAL_EFS_TRANSFER_DIR /data/dipstore
 
-###########
-# certbot #
-###########
-
-echo "------------- installing certbot -----------"
-
-add-apt-repository ppa:certbot/certbot -y -q
-apt-get -qq update
-apt-get install python-certbot-apache -qq -y --no-install-recommends
-
-#Copy in certbot config
-cp $APP_WORKDIR/docker/cli.ini /etc/letsencrypt/cli.ini
-#make dir that will be used for challenges (if you must change this look at hullsync.conf too)
-mkdir -p /var/www/acme-docroot/.well-known/acme-challenge
 
 ##########
 # apache #
@@ -36,23 +22,27 @@ if [ -z "$DOCKER_UP_BUILD"  ]; then
         if [ -f /data/pki/$APP_KEY/letsencrypt/live/base/fullchain.pem ]; then
 
                 echo "We should already have a cert so lets not encrypt at this precise moment...."
-                mkdir -p /etc/letsencrypt #not sure this step needed anymore...
-                cp -r /data/pki/$APP_KEY/letsencrypt/* /etc/letsencrypt/
+                cp -r /data/pki/$APP_KEY/letsencrypt /etc/
         else
                 echo "-------------## Getting cert(s) ##----------"
 
+                #Copy in certbot config
+                cp $APP_WORKDIR/docker/cli.ini /etc/letsencrypt/cli.ini
+                #make dir that will be used for challenges (if you must change this look at hullsync.conf too)
+                mkdir -p /var/www/acme-docroot/.well-known/acme-challenge
+
                 # We'll register each time as certs are not stored on a persistent volume
                 certbot register
-		certbot certonly -n --cert-name base -d $HULLSYNC_SERVER_NAME -d www.$HULLSYNC_SERVER_NAME
+		certbot certonly -n --cert-name base -d $HULLSYNC_SERVER_NAME
 
                 # copy autorenewal script. Dest directory only exists after the first cert is in place
         fi
 
         cp $APP_WORKDIR/docker/00_apache2 /etc/letsencrypt/renewal-hooks/deploy/
 
-        if [ ! -d /data/pki/$APP_KEY/letsencrypt ]; then
+        if [ ! -d /data/pki/$APP_KEY/letsencrypt/live ]; then
             echo "copy the certs for later use"
-            mkdir /data/pki/$APP_KEY #in case
+            mkdir -p /data/pki/$APP_KEY #in case
             cp -rL /etc/letsencrypt /data/pki/$APP_KEY/
         fi
 
