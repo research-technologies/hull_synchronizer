@@ -36,7 +36,7 @@ module Archivematica
           faraday.headers['Authorization'] = auth
           faraday.request :url_encoded
           faraday.adapter Faraday.default_adapter do |client|
-            client.read_timeout = 60
+            client.read_timeout = 600
           end
         end
       end
