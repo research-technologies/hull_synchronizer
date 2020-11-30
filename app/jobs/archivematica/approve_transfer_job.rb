@@ -22,7 +22,7 @@ module Archivematica
             accession: payloads.first[:output][:accession]
           )
         else
-          Rails.logger.error("Job failed with: #{message_text}")
+          Rails.logger.error("Approve transfer Job failed with: #{message_text}")
           output(event: 'failed', message: message_text)
           fail!
         end

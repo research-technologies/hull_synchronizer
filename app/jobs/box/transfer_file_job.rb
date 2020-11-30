@@ -19,9 +19,13 @@ module Box
     rescue StandardError => e
       # processor.cleanup unless processor.blank?
       output(
-        event: 'failed',
-        message: ["Failed to download file #{params[:relative_path]}", e.message],
+        event: 'retry',
+        message: ["Failed to download file #{params[:relative_path]} sending for retry", e.message],
         )
+#      output(
+#        event: 'failed',
+#        message: ["Failed to download file #{params[:relative_path]}", e.message],
+#        )
       fail!
     end
 
@@ -44,6 +48,13 @@ module Box
       end
 
       def build_output
+
+# uncomment to emulate a failed download
+#      output(
+#        event: 'retry',
+#        message: ["PRETEND Failed to download file #{params[:relative_path]} sending for retry"],
+#        )
+
         output(
           event: 'success',
           message: "Downloaded file #{params[:relative_path]}",

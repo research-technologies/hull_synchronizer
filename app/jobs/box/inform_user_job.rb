@@ -16,7 +16,7 @@ module Box
       unlink = params.fetch(:unlink, false)
       @processor.inform_user(item_id, item_name, status, message, unlink: unlink)
     rescue Boxr::BoxrError => e
-      Rails.logger.error "#{self.class.name} - #{exception.to_s}"
+      Rails.logger.error "#{self.class.name} - #{e.to_s}"
     end
   end
 end
