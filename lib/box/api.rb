@@ -15,6 +15,11 @@ module Box
     def list_folder(folder_id, path: nil, base_path: nil)
       items = {}
       folder = client.folder_from_id(folder_id)
+      # folder_from_id will only get 100 items from a folder
+      # folder_items will get them all paged or whatever the limit/offset says to
+      # in lieu of page processing down stream we will just use a very big limit
+      folder_items = client.folder_items(folder, fields:[], offset:0, limit: ENV['BOX_FILE_LIMIT'])
+      
       s_id = get_status_folder(folder_id)
       if path
         current_path = File.join(path, folder.name)
@@ -23,7 +28,8 @@ module Box
       else
         current_path = folder.name
       end
-      folder.item_collection.entries.each do |f|
+#      folder.item_collection.entries.each do |f|
+      folder_items.entries.each do |f|
         if f.type == 'file'
           items[f.id] = File.join(current_path, f.name)
         elsif f.id != s_id
