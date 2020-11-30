@@ -14,13 +14,21 @@ ENV RAILS_ENV="$RAILS_ENV" \
 # Install libraries, dependencies
 RUN apt-get update -qq \
     && apt-get install -y --no-install-recommends \
-    libpq-dev \
-    libxml2-dev libxslt1-dev \
-    nodejs \
-    bzip2 unzip xz-utils \
-    vim tree \
     apache2 \
-    software-properties-common
+    bzip2 \
+    certbot \
+    git \
+    libpq-dev \
+    libxml2-dev \
+    libxslt1-dev \
+    nodejs \
+    python-certbot-apache \
+    tree \
+    unzip \
+    vim \
+    xz-utils 
+
+#    software-properties-common
 
 WORKDIR $APP_WORKDIR
 
