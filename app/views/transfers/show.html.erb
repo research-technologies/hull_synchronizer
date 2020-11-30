@@ -72,9 +72,9 @@
 <br />
 
 <%= link_to 'Refresh', transfer_path %> |
-<% unless @transfer.finished? %>
+<%# unless @transfer.finished? %>
   <%= link_to 'Retry', retry_transfer_path(@transfer.id) %> |
-<% end %>
+<%# end %>
 <%= link_to 'Delete',
              transfer_path(@transfer.id),
              method: :delete,
