@@ -5,8 +5,17 @@ module Sword
 
     # Prepare and perform a single SWORD deposit
     def perform
+#      Rails.logger.info("------------------------")
+#      Rails.logger.info("DepositJob: in perform")
+#      Rails.logger.info("------------------------")
       setup_sword
+#      Rails.logger.info("------------------------")
+#      Rails.logger.info("DepositJob: set_sword complete")
+#      Rails.logger.info("------------------------")
       @response = sword_api.request
+#      Rails.logger.info("------------------------")
+#      Rails.logger.info("DepositJob: sword_api request complete")
+#      Rails.logger.info("------------------------")
       act_on_status
     end
 
@@ -22,7 +31,13 @@ module Sword
       end
 
       def act_on_calm
+ #       Rails.logger.info("------------------------")
+ #       Rails.logger.info("DepositJob: act_on_calm called (assume that sword response was ok")
+ #       Rails.logger.info("------------------------")
         calm_job_output = calm_job
+ #       Rails.logger.info("------------------------")
+ #       Rails.logger.info("DepositJob: calm_job complete: calm_job_output #{calm_job_output[:event]}")
+ #       Rails.logger.info("------------------------")
         message_text = "#{sword_api.deposit[:content].split('/').last} successfully deposited"
         output(
           event: calm_job_output[:event],
