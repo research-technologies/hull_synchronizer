@@ -47,7 +47,7 @@ module Calm
         if response.first == true
           act_on_ok
         else
-          message_text = "Job failed with: #{response.last}"
+          message_text = "Calm Job failed with: #{response.last}"
           Rails.logger.error(message_text)
           {
             event: 'failed',
