@@ -1,7 +1,7 @@
 version: '3'
 
 volumes:
-  db:
+  postgresdb:
   redis:
   app:
 
@@ -11,10 +11,10 @@ networks:
 services:
   ##
   # Postgres database server
-  db:
+  postgresdb:
     image: postgres:11-alpine
     volumes:
-      - db:/var/lib/postgresql/data
+      - postgresdb:/var/lib/postgresql/data
     env_file:
       - .env
     environment:
@@ -51,7 +51,7 @@ services:
     <<: *app
     command: bash -c "/bin/docker-entrypoint.sh"
     depends_on:
-      - db
+      - postgresdb
       - redis
     expose:
 #      - ${RAILS_PORT}
@@ -65,7 +65,7 @@ services:
     <<: *app
     command: bash -c "bundle exec sidekiq"
     depends_on:
-      - db
+      - postgresdb
       - redis
   ##
   # Redis
