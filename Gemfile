@@ -67,7 +67,11 @@ gem 'cancancan', '~> 2.0'
 # Use notch8 willow_sword
 gem 'willow_sword', git: 'https://github.com/notch8/willow_sword.git'
 gem 'boxr'
-gem 'savon', '~> 2.12.0'
+
+# To help stop Savon timingout when writing bit updates to Calm, we resort to this not uite released enhancement (crosses fingers)
+# https://github.com/savonrb/savon/commit/ce5390dcb25c757b3a8a2226d0eba007cb0700b0
+#gem 'savon', '~> 2.12.0'
+gem 'savon', git: 'https://github.com/savonrb/savon.git', ref: 'ce5390d'
 
 gem 'nokogiri', '>= 1.8.5'
 
