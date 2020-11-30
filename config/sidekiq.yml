@@ -3,7 +3,7 @@
 production:
   :concurrency: 1
   :verbose: false
-  :pidfile: <%= File.join(ENV.fetch('PIDS_PATH', 'tmp'),'sidekiq.pid') %>
+  :pidfile: <%= File.join(ENV.fetch('PIDS_PATH', 'tmp'),'hullsyncsidekiq.pid') %>
 development:
   :verbose: true
 :queues:
