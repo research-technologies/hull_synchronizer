@@ -107,8 +107,8 @@ class DIPProcessor
     end
 
     def make_locations
-      FileUtils.mkdir(src) unless Dir.exist?(src)
-      FileUtils.mkdir(dst) unless Dir.exist?(dst)
+      FileUtils.mkdir_p(src) unless Dir.exist?(src)
+      FileUtils.mkdir_p(dst) unless Dir.exist?(dst)
     end
 
     def write_json(json_data)
