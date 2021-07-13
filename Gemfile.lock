@@ -7,6 +7,21 @@ GIT
       rails (>= 5.1.6)
       rubyzip (>= 1.0.0)
 
+GIT
+  remote: https://github.com/savonrb/savon.git
+  revision: ce5390dcb25c757b3a8a2226d0eba007cb0700b0
+  ref: ce5390d
+  specs:
+    savon (2.12.0)
+      akami (~> 1.2)
+      builder (>= 2.1.2)
+      gyoku (~> 1.2)
+      httpi (~> 2.4.5)
+      mail (~> 2.5)
+      nokogiri (>= 1.8.1)
+      nori (~> 2.4)
+      wasabi (~> 3.4)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -51,8 +66,8 @@ GEM
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
       tzinfo (~> 1.1)
-    addressable (2.5.2)
-      public_suffix (>= 2.0.2, < 4.0)
+    addressable (2.8.0)
+      public_suffix (>= 2.0.2, < 5.0)
     akami (1.3.1)
       gyoku (>= 0.4.0)
       nokogiri
@@ -145,7 +160,7 @@ GEM
     http-cookie (1.0.3)
       domain_name (~> 0.5)
     httpclient (2.8.3)
-    httpi (2.4.3)
+    httpi (2.4.5)
       rack
       socksify
     i18n (1.8.3)
@@ -176,7 +191,9 @@ GEM
     mime-types (3.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0521)
-    mimemagic (0.3.3)
+    mimemagic (0.3.10)
+      nokogiri (~> 1)
+      rake
     mini_mime (1.0.2)
     mini_portile2 (2.4.0)
     minitest (5.14.1)
@@ -199,7 +216,7 @@ GEM
       ast (~> 2.4.0)
     pg (1.1.4)
     powerpack (0.1.2)
-    public_suffix (3.0.2)
+    public_suffix (4.0.6)
     puma (3.12.6)
     rack (2.2.2)
     rack-protection (2.0.0)
@@ -292,14 +309,6 @@ GEM
     sassc (2.0.1)
       ffi (~> 1.9)
       rake
-    savon (2.12.0)
-      akami (~> 1.2)
-      builder (>= 2.1.2)
-      gyoku (~> 1.2)
-      httpi (~> 2.3)
-      nokogiri (>= 1.8.1)
-      nori (~> 2.4)
-      wasabi (~> 3.4)
     selenium-webdriver (3.12.0)
       childprocess (~> 0.5)
       rubyzip (~> 1.2)
@@ -351,7 +360,8 @@ GEM
     validatable (1.6.7)
     warden (1.2.8)
       rack (>= 2.0.6)
-    wasabi (3.5.0)
+    wasabi (3.6.1)
+      addressable
       httpi (~> 2.0)
       nokogiri (>= 1.4.2)
     web-console (3.6.2)
@@ -395,7 +405,7 @@ DEPENDENCIES
   rails-controller-testing
   rspec-rails (~> 3.7)
   sass-rails (~> 5.0)
-  savon (~> 2.12.0)
+  savon!
   selenium-webdriver
   sidekiq
   spring
