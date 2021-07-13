@@ -217,7 +217,8 @@ GEM
     pg (1.1.4)
     powerpack (0.1.2)
     public_suffix (4.0.6)
-    puma (3.12.6)
+    puma (4.3.8)
+      nio4r (~> 2.0)
     rack (2.2.2)
     rack-protection (2.0.0)
       rack
@@ -400,7 +401,7 @@ DEPENDENCIES
   nokogiri (>= 1.8.5)
   paperclip (>= 5.2.0)
   pg
-  puma (~> 3.12)
+  puma (~> 4.3)
   rails (~> 5.2.4.3)
   rails-controller-testing
   rspec-rails (~> 3.7)
