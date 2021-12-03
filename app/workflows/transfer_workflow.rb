@@ -3,6 +3,10 @@ class TransferWorkflow < Gush::Workflow
 
   # @params params [Hash] supply any params needed to start the first job
   def configure(params)
+    starting = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    #STDERR.puts("==================== Transfer Workflow CONFIGURE called =========================")
+    #STDERR.puts(" With thses params: #{params} ")
+
     item_list = params.fetch(:item_list, {})
     @number_of_files = item_list.size
     item_list.each do |file_id, relative_path|
@@ -12,6 +16,9 @@ class TransferWorkflow < Gush::Workflow
       }
       run Box::TransferFileJob, params: job_params
     end
+    ending = Process.clock_gettime(Process::CLOCK_MONOTONIC)
+    elapsed = ending - starting
+    #STDERR.puts("TransferWorkflow.configure took #{elapsed}")
   end
 
 end

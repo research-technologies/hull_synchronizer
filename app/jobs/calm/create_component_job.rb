@@ -99,7 +99,7 @@ module Calm
         when :language
           value.nil? ? 'English' : value
         when :access_status
-          value.nil? ? 'closed' : value
+          value.nil? ? 'Open' : value
         when :title
           value.nil? ? "File name: #{calm_metadata[:filename]}" : value
         else

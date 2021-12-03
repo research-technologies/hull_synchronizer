@@ -7,9 +7,9 @@ production:
 development:
   :verbose: true
 :queues:
-  - default
   - crosswalk
   - gush
   - workflow_monitor
   - transfer_workflow_monitor
   - inform_user
+#  - default

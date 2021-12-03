@@ -14,10 +14,12 @@ development:
   timeout: 5000
 
 test:
-  adapter: sqlite3
-  database: db/test.sqlite3
-  pool: 5
-  timeout: 5000
+  <<: *default
+  database: <%= ENV['HULLSYNC_DB'] || 'test' %>
+#  adapter: sqlite3
+#  database: db/test.sqlite3
+#  pool: 5
+#  timeout: 5000
 
 production:
   <<: *default

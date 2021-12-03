@@ -105,7 +105,7 @@ class SubmissionChecker
     file_count = 0
     all_valid = true
     files_file_path = FileLocations.files_file_path(@source_dir)
-    ::CSV.foreach(files_file_path, headers: true).each do |csv_row|
+    ::CSV.foreach(files_file_path, headers: true, :encoding => 'windows-1251:utf-8').each do |csv_row|
       next if csv_row.blank?
       # Each file listed in FILES.csv should be valid
       row = strip_csv_row(csv_row)
@@ -126,7 +126,8 @@ class SubmissionChecker
     @row_count = 0
     all_valid = true
     metadata_file_path = FileLocations.metadata_file_path(@source_dir)
-    ::CSV.foreach(metadata_file_path, headers: true).each do |csv_row|
+    ::CSV.foreach(metadata_file_path, headers: true, :encoding => 'windows-1251:utf-8').each do |csv_row|
+      
       next if csv_row.blank?
       # Each row of metadata listed in DESCRIPTION.csv should be valid
       row = strip_csv_row(csv_row)
@@ -197,6 +198,8 @@ class SubmissionChecker
     current_hash = get_hash(filepath)
     has_hash = false
     has_hash = true if listed_hash == current_hash
+    # Hash checking is optional so we return tru if hash value is this here special phrase
+    has_hash = true if listed_hash == "not_created"
     files_file_path = FileLocations.files_file_path(@source_dir)
     @errors << "File #{filepath} in #{files_file_path}, row #{row_index} has file hash mismatch with original" unless has_hash
     has_hash
@@ -231,13 +234,13 @@ class SubmissionChecker
       return has_collection
     end
     parent = Calm::Api.new.get_record_by_field('RefNo', reference)
-    if parent.present? and parent.first != false
+    if parent.present? and parent.second.present?
       collection = parent.last['RecordID'].join
     end
     unless collection.blank?
       has_collection = true
     else
-      @errors << "CALM collection with reference #{reference} in #{metadata_file_path}, row #{row_index} is missing in CALM"
+      @errors << "CALM collection with reference #{reference} in #{metadata_file_path}, row #{row_index} is missing in CALM (possibly check status of record in CALM is set to 'Catalogued')"
     end
     has_collection
   end
@@ -272,7 +275,7 @@ class SubmissionChecker
     # log error if unused files exist
     if unused_files.any?
       metadata_file_path = FileLocations.metadata_file_path(@source_dir)
-      @errors << "There are files in the submission not listed in #{metadata_file_path} and so not used."
+      @errors << "There are files in the submission not listed in #{metadata_file_path} and so not used to make distinct DAO(s)"
       @errors += unused_files.map { |e| "  - #{e}" }
     end
     unused_files.any?

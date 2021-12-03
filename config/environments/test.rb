@@ -37,6 +37,21 @@ Rails.application.configure do
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
 
+  config.log_level = :info
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+
+  if ENV['RAILS_LOG_TO_STDOUT'].present?
+    logger = ActiveSupport::Logger.new(STDOUT)
+  elsif ENV['LOGS_PATH'].present?
+    log_dir = File.join(ENV['LOGS_PATH'], ENV.fetch('APPLICATION_KEY', ''))
+    logger = ActiveSupport::Logger.new(File.join(log_dir, "#{ENV.fetch('APPLICATION_KEY', '')}_#{ENV['RAILS_ENV']}.log"))
+  else
+    logger = ActiveSupport::Logger.new('log/production.log')
+  end
+  logger.formatter = config.log_formatter
+  config.logger = ActiveSupport::TaggedLogging.new(logger)
+
+  Rails.application.routes.default_url_options[:protocol] = config.force_ssl ? 'https' : 'http'
+
 end

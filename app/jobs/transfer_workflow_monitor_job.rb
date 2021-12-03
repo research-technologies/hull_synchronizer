@@ -19,6 +19,9 @@ class TransferWorkflowMonitorJob < ActiveJob::Base
   def perform(params)
     @params = params
     @flow = TransferWorkflow.find(params[:workflow_id])
+    Rails.logger.warn("==================== Transfer Workflow MONITOR JOB perform called =========================")
+    Rails.logger.warn(" With thses params: #{params} ")
+
     if retry?
       continue
     end

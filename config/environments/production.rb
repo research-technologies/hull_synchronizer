@@ -55,7 +55,7 @@ Rails.application.configure do
 
   # Use the lowest log level to ensure availability of diagnostic information
   # when problems arise.
-  config.log_level = :debug
+  config.log_level = :info
 
   # Prepend all log lines with the following tags.
   config.log_tags = [:request_id]
@@ -88,11 +88,16 @@ Rails.application.configure do
   # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
 
   if ENV['RAILS_LOG_TO_STDOUT'].present?
-    logger           = ActiveSupport::Logger.new(STDOUT)
-    logger.formatter = config.log_formatter
-    config.logger    = ActiveSupport::TaggedLogging.new(logger)
+    logger = ActiveSupport::Logger.new(STDOUT)
+  elsif ENV['LOGS_PATH'].present?
+    log_dir = File.join(ENV['LOGS_PATH'], ENV.fetch('APP_KEY', ''))
+    logger = ActiveSupport::Logger.new(File.join(log_dir, "#{ENV.fetch('APP_KEY', '')}_#{ENV['RAILS_ENV']}.log"))
+  else
+    logger = ActiveSupport::Logger.new('log/production.log')
   end
 
+  logger.formatter = config.log_formatter
+  config.logger = ActiveSupport::TaggedLogging.new(logger)
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 end

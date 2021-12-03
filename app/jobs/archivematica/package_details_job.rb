@@ -35,6 +35,7 @@ module Archivematica
         if dip_r.status == 200
           act_on_ok_dip(dip_r: dip_r)
         else
+          # TODO define act_on_error(!)
           act_on_error
         end
       end
