@@ -103,9 +103,16 @@ module Sword
       # params must contain [:file] hash with [:content_type] and [:path]
       # @return [FaradayResponse] response
       def request
+
         raise '[:file] hash with [:content_type] and [:path] is required' if file_hash?
+        body = Faraday::UploadIO.new(params[:file][:path],params[:file][:content_type],params[:file][:path].split('/').last)
         @response = connection.post "/sword/collections/#{ENV.fetch('SWORD_COLLECTION', 'default')}/works" do |req|
-          req.body = File.read(params[:file][:path])
+          req.body = body
+          if body.respond_to?(:length)
+            req.headers['Content-Length'] = body.length.to_s
+          elsif body.respond_to?(:stat)
+            req.headers['Content-Length'] = body.stat.size.to_s
+          end
           req.headers['Packaging'] = packaging
           req.headers['In-Progress'] = in_progress
           req.headers['On-Behalf-Of'] = params[:on_behalf_of] if params[:on_behalf_of]
