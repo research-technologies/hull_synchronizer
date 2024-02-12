@@ -11,8 +11,9 @@ class DataMappersController < ApplicationController
 
   def create
     @data_mapper = DataMapper.new(data_mapper_params)
+    path = ActiveStorage::Blob.service.path_for(@data_mapper.original_file.key)
     if @data_mapper.save
-      @data_mapper.rows = `wc -l "#{@data_mapper.original_file.path}"`.strip.split(' ')[0].to_i
+      @data_mapper.rows = `wc -l "#{path}"`.strip.split(' ')[0].to_i
       @data_mapper.rows_processed = 0
       @data_mapper.status = 'Waiting'
       @data_mapper.save!

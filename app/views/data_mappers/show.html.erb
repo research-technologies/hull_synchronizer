@@ -16,11 +16,11 @@
     <dd><%= @data_mapper.message %></dd>
 
     <dt>Files</dt>
-    <% if @data_mapper.original_file.exists? %>
-      <dd><%= link_to "Original file", @data_mapper.original_file.url(:original, false) %></dd>
+    <% if @data_mapper.original_file.attached? %>
+      <dd><%= link_to "Original file", url_for(@data_mapper.original_file) %></dd>
     <% end %>
-    <% if @data_mapper.mapped_file.exists? %>
-      <dd><%= link_to "Mapped file", @data_mapper.mapped_file.url(:original, false) %></dd>
+    <% if @data_mapper.mapped_file.attached? %>
+      <dd><%= link_to "Mapped file", url_for(@data_mapper.mapped_file) %></dd>
     <% end %>
 
     <dt>Time Uploaded</dt>

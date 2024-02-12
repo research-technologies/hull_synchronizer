@@ -37,11 +37,11 @@
         </td>
         <td>
           <!-- files -->
-          <% if dm.original_file.exists? %>
-            <%= link_to "Original file", dm.original_file.url(:original, false) %><br/>
+          <% if dm.original_file.attached? %>
+            <%= link_to "Original file", url_for(dm.original_file) %><br/>
           <% end %>
-          <% if dm.mapped_file.exists? %>
-            <%= link_to "Mapped file", dm.mapped_file.url(:original, false) %>
+          <% if dm.mapped_file.attached? %>
+            <%= link_to "Mapped file", url_for(dm.mapped_file) %>
           <% end %>
         </td>
         <td>

@@ -4,14 +4,14 @@ module DataCrosswalks
 
     def initialize(data_mapper)
       @data_mapper = data_mapper
-      output_file_dir = 'tmp'
-      output_file_name = "#{Time.now.strftime('%Y-%m-%d_%H-%M-%S-%L')}.csv"
-      @output_file_path = File.join(output_file_dir, output_file_name)
+      output_file_dir = '/tmp'
+      @output_file_name = "#{Time.now.strftime('%Y-%m-%d_%H-%M-%S-%L')}.csv"
+      @output_file_path = File.join(output_file_dir, @output_file_name)
       @rows = 1
     end
 
     def generate_file
-      if @data_mapper.original_file.exists?
+      if @data_mapper.original_file.attached?
         @data_mapper.status = 'Processing'
         @data_mapper.save!
         begin
@@ -19,7 +19,7 @@ module DataCrosswalks
             # Write the headers
             output_csv << header.values
             # read each row
-            ::CSV.foreach(@data_mapper.original_file.path, headers: true).each do |row|
+            ::CSV.foreach(ActiveStorage::Blob.service.path_for(@data_mapper.original_file.key), headers: true).each do |row|
               # process it
               new_row = deep_copy(row)
               to_process.each do |attr, func|
@@ -40,9 +40,9 @@ module DataCrosswalks
           @data_mapper.rows_processed = @rows
           @data_mapper.status = 'Done'
         ensure
-          @data_mapper.mapped_file = File.open(@output_file_path, 'rb')
+          @data_mapper.mapped_file.attach(io: File.open(@output_file_path), filename: @output_file_name, content_type: 'text/csv')
           @data_mapper.save!
-          @output_file.unlink
+          File.unlink(@output_file_path)
         end
       end
     end
