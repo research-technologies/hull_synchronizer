@@ -7,15 +7,10 @@ class TransferWorkflow < Gush::Workflow
     #STDERR.puts("==================== Transfer Workflow CONFIGURE called =========================")
     #STDERR.puts(" With thses params: #{params} ")
 
-    item_list = params.fetch(:item_list, {})
-    @number_of_files = item_list.size
-    item_list.each do |file_id, relative_path|
-      job_params = {
-        item_id: file_id,
-        relative_path: relative_path
-      }
-      run Box::TransferFileJob, params: job_params
-    end
+    item_path = params.fetch(:item_path) #TODO test and make safe
+
+    run Fs::TransferDirJob, params: params
+
     ending = Process.clock_gettime(Process::CLOCK_MONOTONIC)
     elapsed = ending - starting
     #STDERR.puts("TransferWorkflow.configure took #{elapsed}")

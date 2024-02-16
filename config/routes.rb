@@ -20,6 +20,11 @@ Rails.application.routes.draw do
     get ":id", to: "reviews#retry_review", on: :collection
   end
   resources :notifications
+  resources :starts do
+    collection do
+      get :start_transfer
+    end
+  end
 
   require 'sidekiq/web'
   mount Sidekiq::Web => '/sidekiq'

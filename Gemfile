@@ -82,3 +82,5 @@ group :development, :test do
   gem 'coveralls'
   gem 'rails-controller-testing'
 end
+
+gem 'jstree-rails-4'

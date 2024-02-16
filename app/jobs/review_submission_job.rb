@@ -65,7 +65,7 @@ class ReviewSubmissionJob < Gush::Job
         end
         u_params[:unlink] = false # do not remove collaborator link
       end
-      Box::InformUserJob.perform_later(u_params)
+      #Box::InformUserJob.perform_later(u_params)
     end
 end
 

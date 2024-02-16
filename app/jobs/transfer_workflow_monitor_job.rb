@@ -56,7 +56,7 @@ class TransferWorkflowMonitorJob < ActiveJob::Base
       u_params[:unlink] = false # do not remove collaborator link
       u_params[:message] = 'Starting review of metadata and associated files'
     end
-    Box::InformUserJob.perform_later(u_params)
+#    Box::InformUserJob.perform_later(u_params)
   end
 
   # Continue a failed transfer

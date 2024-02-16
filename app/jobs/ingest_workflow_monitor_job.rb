@@ -101,6 +101,6 @@ class IngestWorkflowMonitorJob < ActiveJob::Base
       4. Create entries in CALM\n
       Details of the job can be viewed at #{ENV['SERVER_URL']}/ingests/#{flow.id}"
     end
-    Box::InformUserJob.perform_later(u_params)
+    #Box::InformUserJob.perform_later(u_params)
   end
 end

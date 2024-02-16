@@ -173,6 +173,7 @@ GEM
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
     json (2.3.1)
+    jstree-rails-4 (3.3.8)
     jwt (1.5.6)
     launchy (2.4.3)
       addressable (~> 2.3)
@@ -398,6 +399,7 @@ DEPENDENCIES
   gush (~> 1.0.0)
   jbuilder (~> 2.5)
   jquery-rails
+  jstree-rails-4
   listen (>= 3.0.5, < 3.2)
   nokogiri (>= 1.8.5)
   paperclip (>= 5.2.0)

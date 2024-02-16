@@ -1,0 +1,27 @@
+<h1> start here</h1>
+
+<div id="container"></div>
+<script>
+//<![CDATA[ 
+$(function() {
+  $('#container')
+  // listen for event
+  .on('changed.jstree', function (e, data) {
+    var i, j, r = [];
+    // As we reroute on select we will never expect more than one selected item
+    var item_id = data.instance.get_node(data.selected[0]).data.item_id;
+    var item_name = data.instance.get_node(data.selected[0]).data.item_name;
+    var item_path = data.instance.get_node(data.selected[0]).data.item_path;
+/*    for(i = 0, j = data.selected.length; i < j; i++) {
+      r.push(data.instance.get_node(data.selected[i]).text);
+    }
+    console.log('SELECTED : ' + r.join(', '));
+*/
+    window.location.href = '/starts/start_transfer?item_id='+item_id+'&item_name='+item_name+'&item_path='+item_path
+  })
+
+  $('#container').jstree(<%= @tree_data.to_json.html_safe %>);
+
+});
+// ]]>
+</script>

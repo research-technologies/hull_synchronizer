@@ -1,4 +1,4 @@
-require 'box'
+require 'fs'
 require 'file_locations'
 
 class TransferWorkflowManager
@@ -19,14 +19,14 @@ class TransferWorkflowManager
   end
 
   private
-
   def start_transfer_workflow
     starting = Process.clock_gettime(Process::CLOCK_MONOTONIC)
     @workflow_params = {
       item_name: params[:item_name],
       item_id: params[:item_id],
+      item_path: params[:item_path],
       item_list: list_files,
-      source_dir: File.join(FileLocations.local_box_dir, @base_path)
+      source_dir: File.join(FileLocations.local_ready_dir, @base_path)
     }
     @flow = TransferWorkflow.create(workflow_params) 
 
@@ -46,10 +46,16 @@ class TransferWorkflowManager
     #STDERR.puts("start_transfer_workflow took #{elapsed}")
   end
 
+#  def list_files
+#    # get list of files in folder from box
+#    b = Box::Api.new
+#    b.list_folder(@params[:item_id], base_path: @base_path)
+#  end
+
   def list_files
     # get list of files in folder from box
-    b = Box::Api.new
-    b.list_folder(@params[:item_id], base_path: @base_path)
+    STDERR.puts "LIST FILES in #{FileLocations.local_ready_dir}"
+    Dir[FileLocations.local_ready_dir]
   end
 
   # Monitor the workflow for retry events
@@ -71,7 +77,7 @@ class TransferWorkflowManager
     u_params[:status] = 'transfering'
     u_params[:unlink] = false # do not remove collaborator link
     u_params[:message] = 'Starting file transfer'
-    Box::InformUserJob.perform_later(u_params)
+#    Box::InformUserJob.perform_later(u_params)
     ending = Process.clock_gettime(Process::CLOCK_MONOTONIC)
     elapsed = ending - starting
     #STDERR.puts("inform_user #{elapsed}")

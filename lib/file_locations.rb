@@ -1,6 +1,10 @@
 module FileLocations
   class << self
-    def local_box_dir
+    def local_working_dir
+      ENV['LOCAL_FILESHARE_DIR']
+    end
+
+    def local_ready_dir
       ENV['LOCAL_BOX_DIR']
     end
 
